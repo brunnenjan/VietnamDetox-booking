@@ -3,6 +3,7 @@
   "builds": [
     { "src": "index.html", "use": "@vercel/static" },
     { "src": "screening.html", "use": "@vercel/static" },
+    { "src": "vietnam-detox-logo.svg", "use": "@vercel/static" },
     { "src": "public/**/*", "use": "@vercel/static" }
   ]
 }
