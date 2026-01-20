@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Medical Screening</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <style>
+      :root {
+        color-scheme: light;
+      }
+      body {
+        font-family: 'Roboto', system-ui, -apple-system, 'Segoe UI', sans-serif;
+        margin: 0;
+        min-height: 100vh;
+        background: #f7f4ef;
+        color: #1f1c19;
+      }
+      .page {
+        max-width: 760px;
+        margin: 0 auto;
+        padding: 48px 20px 64px;
+      }
+      .card {
+        background: #fff;
+        border-radius: 32px;
+        padding: 36px;
+        box-shadow: 0 30px 80px rgba(31, 28, 25, 0.08);
+      }
+      h1 {
+        margin: 0 0 8px;
+        font-size: 2.6rem;
+      }
+      p {
+        line-height: 1.6;
+        margin: 0 0 16px;
+      }
+      section + section {
+        margin-top: 28px;
+        padding-top: 24px;
+        border-top: 1px solid #eee5da;
+      }
+      label {
+        display: block;
+        text-transform: uppercase;
+        letter-spacing: 0.25em;
+        font-size: 0.75rem;
+        color: #7a6f65;
+        margin-bottom: 6px;
+      }
+      input,
+      textarea,
+      select {
+        width: 100%;
+        border-radius: 18px;
+        border: 1px solid #e3dbd2;
+        padding: 13px 15px;
+        font-size: 1rem;
+        font-family: inherit;
+        box-sizing: border-box;
+        background: #fbfaf7;
+      }
+      textarea {
+        min-height: 90px;
+        resize: vertical;
+      }
+      .field {
+        margin-bottom: 18px;
+      }
+      .options-row {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+      }
+      .checkbox-label {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        letter-spacing: normal;
+        text-transform: none;
+        font-size: 0.95rem;
+        color: #1f1c19;
+      }
+      .info-box {
+        background: #fff8ee;
+        border: 1px solid #f3e0c5;
+        border-radius: 22px;
+        padding: 16px 18px;
+        font-size: 0.95rem;
+        display: none;
+      }
+      button {
+        border: none;
+        border-radius: 999px;
+        padding: 14px 22px;
+        font-weight: 600;
+        font-size: 1rem;
+        cursor: pointer;
+        font-family: inherit;
+      }
+      button[type='submit'] {
+        background: #0b7c57;
+        color: #fff;
+        width: 100%;
+        margin-top: 12px;
+      }
+      button[type='submit']:hover {
+        background: #096348;
+      }
+      .success {
+        margin-top: 24px;
+        padding: 20px;
+        border-radius: 22px;
+        background: #e7f7f0;
+        color: #0b7c57;
+        font-weight: 600;
+        display: none;
+      }
+      .success-actions {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+        margin-top: 12px;
+      }
+      .success-actions a,
+      .success-actions button {
+        flex: 1 1 220px;
+        text-align: center;
+        padding: 12px 16px;
+        background: #fff;
+        border: 1px solid #cde8db;
+        color: #0b7c57;
+      }
+      .success-actions button {
+        background: #0b7c57;
+        color: #fff;
+        border: none;
+      }
+      .callout {
+        margin-top: 30px;
+        padding: 18px;
+        border-radius: 24px;
+        background: #edf8f3;
+        border: 1px solid #cde8db;
+      }
+      .callout button {
+        background: #0b7c57;
+        color: #fff;
+        width: auto;
+        margin-top: 10px;
+      }
+      @media (max-width: 640px) {
+        .card {
+          padding: 24px;
+          border-radius: 24px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="page">
+      <div class="card">
+        <p style="text-transform: uppercase; letter-spacing: 0.3em; font-size: 0.75rem; color: #9a8f85; margin-bottom: 10px">Medical Screening</p>
+        <h1>Medical Screening</h1>
+        <p id="guest-line" style="color: #6f655c"></p>
+        <p>
+          This questionnaire helps us make sure fasting is safe and well suited for you. It takes about 5–8 minutes and is reviewed by the Vietnam Detox medical
+          team personally.
+        </p>
+
+        <form id="screening-form">
+          <section>
+            <h2 style="margin-bottom: 16px">Basic information</h2>
+            <div class="field">
+              <label for="dob">Date of birth</label>
+              <input type="date" id="dob" required />
+            </div>
+            <div class="field">
+              <label for="age">Age</label>
+              <input type="number" id="age" required min="18" />
+            </div>
+            <div class="field">
+              <label for="height">Height (cm)</label>
+              <input type="number" id="height" required min="100" />
+            </div>
+            <div class="field">
+              <label for="weight">Weight (kg)</label>
+              <input type="number" id="weight" required min="35" />
+            </div>
+          </section>
+
+          <section>
+            <h2 style="margin-bottom: 16px">Fasting experience & goals</h2>
+            <div class="field">
+              <label for="fasted-before">Have you fasted or detoxed before?</label>
+              <select id="fasted-before" required>
+                <option value="">Select</option>
+                <option value="no">No</option>
+                <option value="yes">Yes</option>
+              </select>
+            </div>
+            <div id="fasting-details" style="display: none">
+              <div class="field">
+                <label for="fast-count">How many times?</label>
+                <input type="number" id="fast-count" min="1" />
+              </div>
+              <div class="field">
+                <label for="fast-longest">Longest fast (days)</label>
+                <input type="number" id="fast-longest" min="1" />
+              </div>
+              <div class="field">
+                <label for="fast-last">When was your last fast?</label>
+                <input type="text" id="fast-last" placeholder="e.g. March 2024" />
+              </div>
+            </div>
+            <div class="field">
+              <label>What do you want to achieve with fasting?</label>
+              <div class="options-row">
+                <label class="checkbox-label"><input type="checkbox" value="Detox" /> Detox</label>
+                <label class="checkbox-label"><input type="checkbox" value="Reset habits" /> Reset habits</label>
+                <label class="checkbox-label"><input type="checkbox" value="Mental clarity" /> Mental clarity</label>
+                <label class="checkbox-label"><input type="checkbox" value="Weight balance" /> Weight balance</label>
+                <label class="checkbox-label"><input type="checkbox" value="Other" /> Other</label>
+              </div>
+            </div>
+            <div class="field">
+              <label for="retreat-focus">What would you like to focus on during this retreat?</label>
+              <textarea id="retreat-focus" placeholder="Share what support you hope to receive"></textarea>
+            </div>
+          </section>
+
+          <section>
+            <h2 style="margin-bottom: 16px">Lifestyle & medication</h2>
+            <div class="field">
+              <label for="coffee">Do you drink coffee or tea regularly?</label>
+              <select id="coffee" required>
+                <option value="">Select</option>
+                <option value="no">No</option>
+                <option value="yes">Yes</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="smoke">Do you smoke or vape?</label>
+              <select id="smoke" required>
+                <option value="">Select</option>
+                <option value="no">No</option>
+                <option value="yes">Yes</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="medication">Are you currently taking prescription medication?</label>
+              <select id="medication" required>
+                <option value="">Select</option>
+                <option value="no">No</option>
+                <option value="yes">Yes</option>
+              </select>
+            </div>
+            <div class="field" id="medication-details" style="display: none">
+              <label for="medication-text">If yes, please list the medication(s)</label>
+              <input type="text" id="medication-text" />
+            </div>
+          </section>
+
+          <section>
+            <h2 style="margin-bottom: 16px">Safety pre-check</h2>
+            <div class="field">
+              <label for="pregnant">Are you pregnant or breastfeeding?</label>
+              <select class="precheck" id="pregnant" required>
+                <option value="">Select</option>
+                <option value="no">No</option>
+                <option value="yes">Yes</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="eating-disorder">Have you ever had an eating disorder?</label>
+              <select class="precheck" id="eating-disorder" required>
+                <option value="">Select</option>
+                <option value="no">No</option>
+                <option value="yes">Yes</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="diabetes">Are you being treated for diabetes?</label>
+              <select class="precheck" id="diabetes" required>
+                <option value="">Select</option>
+                <option value="no">No</option>
+                <option value="yes">Yes</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="organ-disease">Do you have heart, liver, or kidney disease?</label>
+              <select class="precheck" id="organ-disease" required>
+                <option value="">Select</option>
+                <option value="no">No</option>
+                <option value="yes">Yes</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="weight-loss">Have you lost more than 5% of your body weight unintentionally in the last 6 months?</label>
+              <select class="precheck" id="weight-loss" required>
+                <option value="">Select</option>
+                <option value="no">No</option>
+                <option value="yes">Yes</option>
+              </select>
+            </div>
+            <div id="precheck-message" class="info-box">
+              Thank you for your honesty. Our medical team will carefully review your answers and discuss the safest options with you personally.
+            </div>
+          </section>
+
+          <section>
+            <h2 style="margin-bottom: 16px">General health</h2>
+            <div class="field">
+              <label for="headaches">Headaches or migraines?</label>
+              <select data-details="headaches-details" required>
+                <option value="">Select</option>
+                <option value="no">No</option>
+                <option value="yes">Yes</option>
+              </select>
+              <input type="text" id="headaches-details" placeholder="If yes, please share details" style="display: none; margin-top: 10px" />
+            </div>
+            <div class="field">
+              <label for="blood-pressure">Blood pressure issues?</label>
+              <select data-details="blood-pressure-details" required>
+                <option value="">Select</option>
+                <option value="no">No</option>
+                <option value="yes">Yes</option>
+              </select>
+              <input type="text" id="blood-pressure-details" placeholder="If yes, please share details" style="display: none; margin-top: 10px" />
+            </div>
+            <div class="field">
+              <label for="digestive">Digestive issues?</label>
+              <select data-details="digestive-details" required>
+                <option value="">Select</option>
+                <option value="no">No</option>
+                <option value="yes">Yes</option>
+              </select>
+              <input type="text" id="digestive-details" placeholder="If yes, please share details" style="display: none; margin-top: 10px" />
+            </div>
+            <div class="field">
+              <label for="thyroid">Thyroid disorders?</label>
+              <select data-details="thyroid-details" required>
+                <option value="">Select</option>
+                <option value="no">No</option>
+                <option value="yes">Yes</option>
+              </select>
+              <input type="text" id="thyroid-details" placeholder="If yes, please share details" style="display: none; margin-top: 10px" />
+            </div>
+            <div class="field">
+              <label for="allergies">Food allergies or intolerances?</label>
+              <select data-details="allergies-details" required>
+                <option value="">Select</option>
+                <option value="no">No</option>
+                <option value="yes">Yes</option>
+              </select>
+              <input type="text" id="allergies-details" placeholder="If yes, please share details" style="display: none; margin-top: 10px" />
+            </div>
+            <div class="field">
+              <label for="mental-health">Mental health conditions (current or past)?</label>
+              <select data-details="mental-health-details" required>
+                <option value="">Select</option>
+                <option value="no">No</option>
+                <option value="yes">Yes</option>
+              </select>
+              <input type="text" id="mental-health-details" placeholder="If yes, please share details" style="display: none; margin-top: 10px" />
+            </div>
+          </section>
+
+          <section>
+            <h2 style="margin-bottom: 16px">Final notes</h2>
+            <div class="field">
+              <label for="other-notes">Any other health concerns we should know about?</label>
+              <textarea id="other-notes"></textarea>
+            </div>
+          </section>
+
+          <section>
+            <h2 style="margin-bottom: 16px">Consent</h2>
+            <div class="field">
+              <label class="checkbox-label">
+                <input type="checkbox" id="consent" required />
+                I confirm that the information provided is true and complete to the best of my knowledge.
+              </label>
+            </div>
+            <div class="field">
+              <label for="signature">Full name</label>
+              <input type="text" id="signature" required placeholder="Type your name" />
+            </div>
+          </section>
+
+          <button type="submit">Submit medical screening</button>
+        </form>
+
+        <div id="success-state" class="success">
+          <p>Medical screening received</p>
+          <p style="font-weight: 400; color: #1f1c19">
+            Thank you. Our medical team will review your answers within 24–48 hours. A complimentary 30-minute personal medical review call with Vietnam Detox is included and will be scheduled after review.
+          </p>
+          <div class="success-actions">
+            <button type="button" id="close-button">Close</button>
+            <a href="index.html?step=review_state">Back to booking overview</a>
+          </div>
+        </div>
+
+        <div class="callout">
+          <p style="margin: 0 0 10px; font-weight: 600">Included personal medical review call</p>
+          <p style="margin: 0; font-size: 0.95rem">
+            After submitting the medical questionnaire, the Vietnam Detox medical team offers a complimentary 30-minute 1-on-1 call to review your answers, answer questions, and make sure the program is safe and well suited for you. This call is included in your retreat and will be scheduled after the medical screening is submitted.
+          </p>
+          <button type="button" onclick="alert('Thank you. We will contact you to schedule your personal medical review call.')">Request my medical review call</button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      (function () {
+        const params = new URLSearchParams(window.location.search);
+        const guest = params.get('guest') || '1';
+        const name = params.get('name') ? decodeURIComponent(params.get('name')) : `Guest ${guest}`;
+        const booking = params.get('booking') || 'VDX-DEMO';
+        const guestLine = document.getElementById('guest-line');
+        guestLine.textContent = `Guest ${guest} – ${name} • Booking ${booking}`;
+
+        const fastedBefore = document.getElementById('fasted-before');
+        const fastingDetails = document.getElementById('fasting-details');
+        fastedBefore.addEventListener('change', () => {
+          fastingDetails.style.display = fastedBefore.value === 'yes' ? 'block' : 'none';
+        });
+
+        const medicationSelect = document.getElementById('medication');
+        const medicationDetails = document.getElementById('medication-details');
+        medicationSelect.addEventListener('change', () => {
+          medicationDetails.style.display = medicationSelect.value === 'yes' ? 'block' : 'none';
+        });
+
+        document.querySelectorAll('select[data-details]').forEach((select) => {
+          const target = document.getElementById(select.dataset.details);
+          select.addEventListener('change', () => {
+            target.style.display = select.value === 'yes' ? 'block' : 'none';
+          });
+        });
+
+        const precheckFields = Array.from(document.querySelectorAll('.precheck'));
+        const precheckMessage = document.getElementById('precheck-message');
+        precheckFields.forEach((field) =>
+          field.addEventListener('change', () => {
+            const show = precheckFields.some((select) => select.value === 'yes');
+            precheckMessage.style.display = show ? 'block' : 'none';
+          })
+        );
+
+        const form = document.getElementById('screening-form');
+        const successState = document.getElementById('success-state');
+        form.addEventListener('submit', (event) => {
+          event.preventDefault();
+          form.style.display = 'none';
+          successState.style.display = 'block';
+        });
+
+        document.getElementById('close-button').addEventListener('click', () => {
+          if (window.history.length > 1) {
+            window.history.back();
+          } else {
+            window.close();
+          }
+        });
+      })();
+    </script>
+  </body>
+</html>
