@@ -85,6 +85,20 @@
         }
       };
 
+      let RETREATS = [];
+
+      const fetchRetreats = async () => {
+        try {
+          const response = await fetch('/wp-json/retreats/v1/all');
+          if (!response.ok) throw new Error(`HTTP ${response.status}`);
+          RETREATS = await response.json();
+          return true;
+        } catch (error) {
+          console.error('Failed to fetch retreats:', error);
+          return false;
+        }
+      };
+
       const startBookingApp = () => {
         if (!window.React || !window.ReactDOM) {
           showInlineError('Required files did not load. Please check your connection and try again.', { retry: true });
@@ -154,48 +168,6 @@
             </svg>
           ),
         };
-
-      const RETREATS = [
-        {
-          id: 'herbal',
-          name: 'Vietnamese Herbal Detox',
-          location: 'Namia River Retreat, Hoi An',
-          image: './public/retreats/herbal-detox-Namia-Lantern-ceremony-3-1024x683.webp',
-          description: 'A gentle Vietnamese herbal fasting retreat rooted in tradition, nature, and mindful renewal.',
-          earlyBirdNote: 'Early bird offer until 01 Apr 2026',
-          dates: [
-            { label: '22 Apr – 26 Apr 2026', start: '2026-04-22', end: '2026-04-26', limited: true, earlyBirdDeadline: '2026-04-01' },
-            { label: '24 Jun – 28 Jun 2026', start: '2026-06-24', end: '2026-06-28', limited: false, earlyBirdDeadline: '2026-05-24' },
-            { label: '12 Aug – 16 Aug 2026', start: '2026-08-12', end: '2026-08-16', limited: false, earlyBirdDeadline: '2026-07-20' },
-          ],
-        },
-        {
-          id: 'an-retreat',
-          name: '“An” Retreat',
-          location: 'Legacy Yen Tu MGallery',
-          image: './public/retreats/an-retreat-meditation-on-top-of-mountain.webp',
-          description: 'A serene mountain retreat designed for quiet reflection, gentle movement, and cultural immersion.',
-          earlyBirdNote: 'Early bird offer until 06 Feb 2026',
-          dates: [
-            { label: '25 Feb – 01 Mar 2026', start: '2026-02-25', end: '2026-03-01', limited: true, earlyBirdDeadline: '2026-02-06' },
-            { label: '08 Apr – 12 Apr 2026', start: '2026-04-08', end: '2026-04-12', limited: false, earlyBirdDeadline: '2026-03-08' },
-            { label: '29 Jul – 02 Aug 2026', start: '2026-07-29', end: '2026-08-02', limited: false, earlyBirdDeadline: '2026-06-29' },
-          ],
-        },
-        {
-          id: 'buong-retreat',
-          name: '“Buông” Retreat',
-          location: 'Le Ba Dang Memory Space, Hue',
-          image: './public/retreats/buong-retreat-Welcome-dinner-An-Nhien-Garden.webp',
-          description: 'An art-inspired release set amidst Hue’s creative landscape, blending architecture, nature, and relaxation.',
-          earlyBirdNote: 'Early bird offer until 25 Jun 2026',
-          dates: [
-            { label: '15 Jul – 19 Jul 2026', start: '2026-07-15', end: '2026-07-19', limited: true, earlyBirdDeadline: '2026-06-25' },
-            { label: '26 Aug – 30 Aug 2026', start: '2026-08-26', end: '2026-08-30', limited: false, earlyBirdDeadline: '2026-07-26' },
-            { label: '16 Dec – 20 Dec 2026', start: '2026-12-16', end: '2026-12-20', limited: false, earlyBirdDeadline: '2026-11-16' },
-          ],
-        },
-      ];
 
       const DATES = RETREATS.flatMap((retreat) =>
         retreat.dates.map((date) => ({
@@ -1878,8 +1850,13 @@
       bookingRoot.render(<RootApp />);
     };
 
-    const bootBookingApp = () => {
+    const bootBookingApp = async () => {
       try {
+        const retreatsLoaded = await fetchRetreats();
+        if (!retreatsLoaded) {
+          showInlineError('Unable to load retreat options. Please try again.', { retry: true });
+          return;
+        }
         startBookingApp();
       } catch (error) {
         console.error('Booking app failed during init', error);
