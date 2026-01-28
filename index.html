@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -8,57 +8,70 @@
     <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600;700&display=swap" rel="stylesheet" />
     <style>
-      body { font-family: 'Roboto', system-ui, -apple-system, 'Segoe UI', Arial, sans-serif; }
-      .hide-scrollbar::-webkit-scrollbar { display: none; }
-      .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+      body {
+        font-family:
+          "Roboto",
+          system-ui,
+          -apple-system,
+          "Segoe UI",
+          Arial,
+          sans-serif;
+      }
+      .hide-scrollbar::-webkit-scrollbar {
+        display: none;
+      }
+      .hide-scrollbar {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+      }
     </style>
   </head>
   <body class="bg-white">
     <div id="root"></div>
 
     <script type="text/babel">
-      const FALLBACK_IMAGE = './vietnam-detox-logo.svg';
+      const FALLBACK_IMAGE = "./vietnam-detox-logo.svg";
       let bookingRoot = null;
 
       const showInlineError = (message, options = {}) => {
         const { retry = false } = options;
-        const container = document.getElementById('root');
+        const container = document.getElementById("root");
         if (!container) return;
-        container.innerHTML = '';
-        const wrapper = document.createElement('div');
-        wrapper.style.padding = '48px 24px';
+        container.innerHTML = "";
+        const wrapper = document.createElement("div");
+        wrapper.style.padding = "48px 24px";
         wrapper.style.fontFamily = 'system-ui, -apple-system, "Segoe UI", Roboto, sans-serif';
-        wrapper.style.maxWidth = '560px';
-        wrapper.style.margin = '64px auto';
-        wrapper.style.textAlign = 'center';
-        const heading = document.createElement('h2');
-        heading.textContent = 'We hit a snag';
-        heading.style.marginBottom = '12px';
-        heading.style.color = '#0f172a';
-        const body = document.createElement('p');
-        body.textContent = message || 'Please try again in a moment.';
-        body.style.color = '#475569';
-        body.style.marginBottom = retry ? '20px' : '0';
+        wrapper.style.maxWidth = "560px";
+        wrapper.style.margin = "64px auto";
+        wrapper.style.textAlign = "center";
+        const heading = document.createElement("h2");
+        heading.textContent = "We hit a snag";
+        heading.style.marginBottom = "12px";
+        heading.style.color = "#0f172a";
+        const body = document.createElement("p");
+        body.textContent = message || "Please try again in a moment.";
+        body.style.color = "#475569";
+        body.style.marginBottom = retry ? "20px" : "0";
         wrapper.appendChild(heading);
         wrapper.appendChild(body);
         if (retry) {
-          const button = document.createElement('button');
-          button.type = 'button';
-          button.textContent = 'Try again';
-          button.style.background = '#065f46';
-          button.style.color = '#fff';
-          button.style.border = 'none';
-          button.style.padding = '12px 24px';
-          button.style.borderRadius = '999px';
-          button.style.fontWeight = '600';
-          button.style.cursor = 'pointer';
-          button.addEventListener('click', () => {
+          const button = document.createElement("button");
+          button.type = "button";
+          button.textContent = "Try again";
+          button.style.background = "#065f46";
+          button.style.color = "#fff";
+          button.style.border = "none";
+          button.style.padding = "12px 24px";
+          button.style.borderRadius = "999px";
+          button.style.fontWeight = "600";
+          button.style.cursor = "pointer";
+          button.addEventListener("click", () => {
             button.disabled = true;
-            button.textContent = 'Reconnecting…';
+            button.textContent = "Reconnecting…";
             bootBookingApp();
           });
           wrapper.appendChild(button);
@@ -68,45 +81,55 @@
 
       const handleImageError = (event) => {
         const target = event?.target;
-        if (!target || target.dataset?.fallbackApplied === 'true') return;
+        if (!target || target.dataset?.fallbackApplied === "true") return;
         target.src = FALLBACK_IMAGE;
-        target.setAttribute('data-fallback-applied', 'true');
-        target.alt = target.alt ? `${target.alt} unavailable` : 'Image unavailable';
+        target.setAttribute("data-fallback-applied", "true");
+        target.alt = target.alt ? `${target.alt} unavailable` : "Image unavailable";
       };
 
       const safeHistoryUpdate = (method, state, url) => {
         try {
           const historyMethod = window?.history?.[method];
-          if (typeof historyMethod === 'function') {
-            historyMethod.call(window.history, state, '', url);
+          if (typeof historyMethod === "function") {
+            historyMethod.call(window.history, state, "", url);
           }
         } catch (error) {
-          console.warn('History update blocked', error);
+          console.warn("History update blocked", error);
         }
       };
 
       let RETREATS = [];
+      let TRANSPORT_OPTIONS = [];
+      let ROOMS_BY_RETREAT = [];
 
       const fetchRetreats = async () => {
         try {
-          const response = await fetch('/wp-json/retreats/v1/all');
+          const response = await fetch("/wp-json/retreats/v1/all");
           if (!response.ok) throw new Error(`HTTP ${response.status}`);
           RETREATS = await response.json();
+
+          for (const retreat of RETREATS) {
+            console.log("packages:", retreat.packages);
+            console.log("transportations:", retreat.transportations);
+            TRANSPORT_OPTIONS = retreat.transportations;
+            ROOMS_BY_RETREAT[retreat.id] = retreat.packages || [];
+          }
+
           return true;
         } catch (error) {
-          console.error('Failed to fetch retreats:', error);
+          console.error("Failed to fetch retreats:", error);
           return false;
         }
       };
 
       const startBookingApp = () => {
         if (!window.React || !window.ReactDOM) {
-          showInlineError('Required files did not load. Please check your connection and try again.', { retry: true });
+          showInlineError("Required files did not load. Please check your connection and try again.", { retry: true });
           return;
         }
-        const rootNode = document.getElementById('root');
+        const rootNode = document.getElementById("root");
         if (!rootNode) {
-          showInlineError('Unable to initialize the booking experience.');
+          showInlineError("Unable to initialize the booking experience.");
           return;
         }
 
@@ -114,7 +137,7 @@
 
         const CURRENCY_RATE = 25400;
         const STRIPE_FEE_RATE = 0.03;
-        const STEPS = ['config', 'details', 'review', 'health_check', 'payment', 'screening', 'review_state', 'confirmed'];
+        const STEPS = ["config", "details", "review", "health_check", "payment", "screening", "review_state", "confirmed"];
         const PRETTY_PATHS = false;
         const PRICES = {
           superior: 33800000,
@@ -125,24 +148,51 @@
           hph: 2100000,
         };
 
-        const formatVND = (value) => new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(Math.round(value));
-        const formatUSD = (value) => `~ $${Math.round(value / CURRENCY_RATE).toLocaleString('en-US')} USD`;
+        const formatVND = (value) => new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(Math.round(value));
+        const formatUSD = (value) => `~ $${Math.round(value / CURRENCY_RATE).toLocaleString("en-US")} USD`;
 
-        const BOOKING_REFERENCE = 'VDX-DEMO-001';
+        const BOOKING_REFERENCE = "VDX-DEMO-001";
 
         const Icons = {
           ChevronRight: () => (
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
               <path d="m9 18 6-6-6-6" />
             </svg>
           ),
           ChevronLeft: () => (
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
               <path d="m15 18-6-6 6-6" />
             </svg>
           ),
           Users: () => (
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
               <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
               <circle cx="9" cy="7" r="4" />
               <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
@@ -150,18 +200,45 @@
             </svg>
           ),
           User: () => (
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
               <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
               <circle cx="12" cy="7" r="4" />
             </svg>
           ),
           Check: () => (
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
               <path d="M20 6 9 17l-5-5" />
             </svg>
           ),
           Info: () => (
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
               <circle cx="12" cy="12" r="10" />
               <path d="M12 16v-4" />
               <path d="M12 8h.01" />
@@ -169,587 +246,524 @@
           ),
         };
 
-      const DATES = RETREATS.flatMap((retreat) =>
-        retreat.dates.map((date) => ({
-          ...date,
-          retreatId: retreat.id,
-          retreatName: retreat.name,
-          location: retreat.location,
-          image: retreat.image,
-          earlyBirdNote: retreat.earlyBirdNote,
-        }))
-      );
+        const DATES = RETREATS.flatMap((retreat) =>
+          retreat.dates.map((date) => ({
+            ...date,
+            retreatId: retreat.id,
+            retreatName: retreat.name,
+            location: retreat.location,
+            image: retreat.image,
+            earlyBirdNote: retreat.earlyBirdNote,
+          })),
+        );
 
-      const ROOMS_BY_RETREAT = {
-        herbal: [
+        const COUNTRY_DIAL_CODES = {
+          vietnam: "+84",
+          "united states": "+1",
+          usa: "+1",
+          canada: "+1",
+          singapore: "+65",
+          australia: "+61",
+          germany: "+49",
+          france: "+33",
+          "united kingdom": "+44",
+          uk: "+44",
+          thailand: "+66",
+          japan: "+81",
+        };
+        const PHONE_CODE_OPTIONS = Array.from(new Set(Object.values(COUNTRY_DIAL_CODES)));
+
+        const SAFETY_QUESTIONS = [
           {
-            id: 'herbal-suite',
-            name: 'Namia Private Suite',
-            benefit: 'River-view suite with nightly herbal steam ritual and guided breathing.',
-            price: PRICES.superior,
-            images: [
-              './public/rooms/Nipa-Family-Villa-Living-room-2-Namia-River-Retreat-SLH.webp',
-              './public/rooms/Nipa-Family-Villa-bedroom-double-1-Namia-River-Retreat-SLH.jpg.jpg.jpg.jpg.webp',
-              './public/rooms/Nipa-Family-Villa-bedroom-double-2-Namia-River-Retreat-SLH.webp',
-              './public/rooms/Nipa-Pool-Villa-11-Bedroom-2-Namia-River-Retreat-SLH.webp',
-            ],
+            id: "underweight",
+            title: "Severe underweight / eating disorder",
+            description:
+              "Do you currently suffer from severe underweight (for example a BMI below 18) or from a diagnosed eating disorder such as anorexia?",
           },
           {
-            id: 'herbal-garden',
-            name: 'Namia Garden Pool Villa',
-            benefit: 'Garden residence with plunge pool and daily herbal bath preparation.',
-            price: PRICES.garden,
-            images: [
-              './public/rooms/River-Pool-Villa-2-Interior-1-Namia-River-Retreat-SLH.webp',
-              './public/rooms/River-Pool-Villa-4-Interior-8-Namia-River-Retreat-SLH.webp',
-              './public/rooms/River-Pool-Villa-5-Interior-7-Namia-River-Retreat-SLH.webp',
-              './public/rooms/River-Pool-Villa-6-Interior-6-Namia-River-Retreat-SLH.webp',
-            ],
-          },
-        ],
-        'an-retreat': [
-          {
-            id: 'an-deluxe',
-            name: 'Legacy Deluxe King',
-            benefit: 'Mountain-facing room with daily tea ceremony and gentle stretching sessions.',
-            price: PRICES.superior,
-            images: ['./public/rooms/An-retreat-Deluxe_King.webp'],
+            id: "liverKidney",
+            title: "Advanced liver or kidney condition",
+            description: "Have you been diagnosed with advanced liver or kidney disease (reduced liver or kidney function)?",
           },
           {
-            id: 'an-superior',
-            name: 'Legacy Superior Room',
-            benefit: 'Serene interior with natural materials and evening sound bath preparation.',
-            price: PRICES.garden,
-            images: ['./public/rooms/An-retreat-Superior_room.webp'],
-          },
-        ],
-        'buong-retreat': [
-          {
-            id: 'buong-deluxe',
-            name: 'Buông Deluxe Suite',
-            benefit: 'Architecture-led space overlooking Hue gardens with guided art journaling.',
-            price: PRICES.superior,
-            images: ['./public/rooms/buong-room-deluxe.webp'],
+            id: "pregnancy",
+            title: "Pregnancy or breastfeeding",
+            description: "Are you currently pregnant or breastfeeding a child?",
           },
           {
-            id: 'buong-classic',
-            name: 'Buông Classic Room',
-            benefit: 'Calm interior connected to the sculpture garden and mindful breathing nook.',
-            price: PRICES.garden,
-            images: ['./public/rooms/buong-room.webp'],
+            id: "cardio",
+            title: "Severe heart or cardiovascular condition",
+            description:
+              "Have you been diagnosed with a severe heart or cardiovascular condition (for example heart failure or advanced coronary heart disease)?",
           },
-        ],
-      };
+        ];
 
-      const TRANSPORT_OPTIONS = [
-        { id: 'none', label: 'No airport transfer', price: 0 },
-        { id: 'han', label: 'Noi Bai (HAN) ↔ Retreat Center', price: TRANSFER_PRICES.han },
-        { id: 'hph', label: 'Cat Bi (HPH) ↔ Retreat Center', price: TRANSFER_PRICES.hph },
-      ];
+        const parseRouteFromLocation = () => {
+          const params = new URLSearchParams(window.location.search || "");
+          const wantsScreening = params.get("view") === "screening" || params.get("screening") === "true";
+          if (wantsScreening) {
+            const search = window.location.search || "";
+            window.location.href = `screening.html${search}`;
+            return { step: "config" };
+          }
+          let stepParam = params.get("step");
+          if (!STEPS.includes(stepParam)) {
+            stepParam = "config";
+          }
+          return { step: stepParam };
+        };
 
-      const COUNTRY_DIAL_CODES = {
-        vietnam: '+84',
-        'united states': '+1',
-        usa: '+1',
-        canada: '+1',
-        singapore: '+65',
-        australia: '+61',
-        germany: '+49',
-        france: '+33',
-        'united kingdom': '+44',
-        uk: '+44',
-        thailand: '+66',
-        japan: '+81',
-      };
-      const PHONE_CODE_OPTIONS = Array.from(new Set(Object.values(COUNTRY_DIAL_CODES)));
+        const buildRouteUrl = (routeState) => {
+          const params = new URLSearchParams();
+          const nextStep = STEPS.includes(routeState.step) ? routeState.step : "config";
+          params.set("step", nextStep);
+          return `index.html?${params.toString()}`;
+        };
 
-      const SAFETY_QUESTIONS = [
-        {
-          id: 'underweight',
-          title: 'Severe underweight / eating disorder',
-          description:
-            'Do you currently suffer from severe underweight (for example a BMI below 18) or from a diagnosed eating disorder such as anorexia?',
-        },
-        {
-          id: 'liverKidney',
-          title: 'Advanced liver or kidney condition',
-          description: 'Have you been diagnosed with advanced liver or kidney disease (reduced liver or kidney function)?',
-        },
-        {
-          id: 'pregnancy',
-          title: 'Pregnancy or breastfeeding',
-          description: 'Are you currently pregnant or breastfeeding a child?',
-        },
-        {
-          id: 'cardio',
-          title: 'Severe heart or cardiovascular condition',
-          description:
-            'Have you been diagnosed with a severe heart or cardiovascular condition (for example heart failure or advanced coronary heart disease)?',
-        },
-      ];
+        const getRoomsForRetreat = (retreatId) => ROOMS_BY_RETREAT[retreatId] || [];
 
-      const parseRouteFromLocation = () => {
-        const params = new URLSearchParams(window.location.search || '');
-        const wantsScreening = params.get('view') === 'screening' || params.get('screening') === 'true';
-        if (wantsScreening) {
-          const search = window.location.search || '';
-          window.location.href = `screening.html${search}`;
-          return { step: 'config' };
-        }
-        let stepParam = params.get('step');
-        if (!STEPS.includes(stepParam)) {
-          stepParam = 'config';
-        }
-        return { step: stepParam };
-      };
+        const getDialCodeForCountry = (countryName) => {
+          if (!countryName) return null;
+          const normalized = countryName.trim().toLowerCase();
+          return COUNTRY_DIAL_CODES[normalized] || null;
+        };
 
-      const buildRouteUrl = (routeState) => {
-        const params = new URLSearchParams();
-        const nextStep = STEPS.includes(routeState.step) ? routeState.step : 'config';
-        params.set('step', nextStep);
-        return `index.html?${params.toString()}`;
-      };
-
-      const getRoomsForRetreat = (retreatId) => ROOMS_BY_RETREAT[retreatId] || [];
-
-      const getDialCodeForCountry = (countryName) => {
-        if (!countryName) return null;
-        const normalized = countryName.trim().toLowerCase();
-        return COUNTRY_DIAL_CODES[normalized] || null;
-      };
-
-      const PriceSummary = ({ context = 'default', pricing, paymentMethod, stripeFee, paymentDueNow }) => {
-        const showEarlyBird = pricing.earlyBird > 0;
-        const showFriend = pricing.friend > 0;
-        const showDepositLine = context === 'review' || context === 'payment';
-        const showReviewNote = context === 'review';
-        const depositLabel = context === 'payment' ? 'Deposit due now (30%)' : 'Deposit (30%)';
-        return (
-          <div className="bg-white border border-stone-100 rounded-3xl p-6 shadow-sm space-y-4">
-            <div>
-              <p className="text-xs uppercase tracking-[0.3em] text-stone-400 font-semibold">Investment summary</p>
-              <p className="text-sm text-stone-500">Line items update in real-time.</p>
-            </div>
-            <div className="space-y-2 text-sm">
-              <div className="flex justify-between">
-                <span className="text-stone-500">Subtotal</span>
-                <span className="font-semibold">{formatVND(pricing.subtotal)}</span>
+        const PriceSummary = ({ context = "default", pricing, paymentMethod, stripeFee, paymentDueNow }) => {
+          const showEarlyBird = pricing.earlyBird > 0;
+          const showFriend = pricing.friend > 0;
+          const showDepositLine = context === "review" || context === "payment";
+          const showReviewNote = context === "review";
+          const depositLabel = context === "payment" ? "Deposit due now (30%)" : "Deposit (30%)";
+          return (
+            <div className="bg-white border border-stone-100 rounded-3xl p-6 shadow-sm space-y-4">
+              <div>
+                <p className="text-xs uppercase tracking-[0.3em] text-stone-400 font-semibold">Investment summary</p>
+                <p className="text-sm text-stone-500">Line items update in real-time.</p>
               </div>
-              {showEarlyBird && (
-                <div className="flex justify-between text-emerald-700">
-                  <span>Early Bird –10%</span>
-                  <span>-{formatVND(pricing.earlyBird)}</span>
-                </div>
-              )}
-              {showFriend && (
-                <div className="flex justify-between text-emerald-700">
-                  <span>Friend discount –5%</span>
-                  <span>-{formatVND(pricing.friend)}</span>
-                </div>
-              )}
-            <div className="flex justify-between text-stone-500">
-              <span>Airport transfer</span>
-              <span>{formatVND(pricing.transport)}</span>
-            </div>
-            </div>
-            <div className="flex justify-between pt-2 border-t border-stone-100">
-              <span className="text-stone-500">Retreat total</span>
-              <span className="text-2xl font-bold">{formatVND(pricing.total)}</span>
-            </div>
-            {showDepositLine && (
-              <>
+              <div className="space-y-2 text-sm">
                 <div className="flex justify-between">
-                  <span className="text-stone-500">{depositLabel}</span>
-                  <span className="font-semibold">{formatVND(pricing.deposit)}</span>
+                  <span className="text-stone-500">Subtotal</span>
+                  <span className="font-semibold">{formatVND(pricing.subtotal)}</span>
                 </div>
-                <div className="flex justify-between text-sm text-stone-500">
-                  <span>Remaining balance</span>
-                  <span className="font-semibold">{formatVND(pricing.remaining)}</span>
-                </div>
-              </>
-            )}
-            <p className="text-sm text-stone-500">{formatUSD(pricing.total)}</p>
-            {showReviewNote && (
-              <p className="text-sm text-stone-600">A 30% deposit is collected during payment. 100% refund if participation is declined after the health review.</p>
-            )}
-            {context === 'payment' && (
-              <div className="pt-2 border-t border-stone-100 space-y-2">
-                {paymentMethod === 'stripe' && stripeFee > 0 && (
-                  <div className="flex justify-between text-amber-700">
-                  <span>Card processing fee (3.6%)</span>
-                    <span>{formatVND(stripeFee)}</span>
+                {showEarlyBird && (
+                  <div className="flex justify-between text-emerald-700">
+                    <span>Early Bird –10%</span>
+                    <span>-{formatVND(pricing.earlyBird)}</span>
                   </div>
                 )}
-                <div className="flex justify-between">
-                  <span className="text-stone-500">Due today</span>
-                  <span className="text-xl font-bold">{formatVND(paymentDueNow)}</span>
+                {showFriend && (
+                  <div className="flex justify-between text-emerald-700">
+                    <span>Friend discount –5%</span>
+                    <span>-{formatVND(pricing.friend)}</span>
+                  </div>
+                )}
+                <div className="flex justify-between text-stone-500">
+                  <span>Airport transfer</span>
+                  <span>{formatVND(pricing.transport)}</span>
                 </div>
-                <p className="text-sm text-stone-500">{formatUSD(paymentDueNow)}</p>
               </div>
-            )}
-            {context === 'confirmed' && <p className="text-sm text-emerald-700">Deposit received. Balance collected on arrival.</p>}
-          </div>
-        );
-      };
-
-      const DEFAULT_RETREAT = RETREATS[0];
-      const DEFAULT_DATE = DEFAULT_RETREAT.dates[0];
-      const DEFAULT_ROOMS = getRoomsForRetreat(DEFAULT_RETREAT.id);
-      const DEFAULT_ROOM_ID = DEFAULT_ROOMS[0]?.id || null;
-      const DEFAULT_PHONE_CODE = getDialCodeForCountry('Vietnam') || '+84';
-
-      const App = () => {
-        const [route, setRoute] = useState(parseRouteFromLocation);
-        const [selection, setSelection] = useState(() => ({
-          retreatId: DEFAULT_RETREAT.id,
-          retreatName: DEFAULT_RETREAT.name,
-          retreatLocation: DEFAULT_RETREAT.location,
-          retreatEarlyBirdNote: DEFAULT_RETREAT.earlyBirdNote,
-          retreatImage: DEFAULT_RETREAT.image,
-          date: DEFAULT_DATE.label,
-          guests: 1,
-          roomType: DEFAULT_ROOM_ID,
-          transfer: TRANSPORT_OPTIONS[0].id,
-        }));
-        const [guestDetails, setGuestDetails] = useState({
-          guest1: {
-            firstName: '',
-            lastName: '',
-            email: '',
-            phone: '',
-            phoneCountryCode: DEFAULT_PHONE_CODE,
-            phoneCodeManuallySet: false,
-            street: '',
-            city: '',
-            postalCode: '',
-            country: '',
-            needsCompanyInvoice: false,
-            companyName: '',
-            taxId: '',
-          },
-          guest2: { firstName: '', lastName: '', email: '', phone: '' },
-        });
-        const [paymentMethod, setPaymentMethod] = useState('vnpay');
-        const [galleryRoom, setGalleryRoom] = useState(null);
-        const [galleryIndex, setGalleryIndex] = useState(0);
-        const [depositPaid, setDepositPaid] = useState(false);
-        const [screeningStatus, setScreeningStatus] = useState({ guest1: 'pending', guest2: selection.guests === 2 ? 'pending' : 'not_required' });
-        const [safetyAnswers, setSafetyAnswers] = useState({
-          underweight: '',
-          liverKidney: '',
-          pregnancy: '',
-          cardio: '',
-        });
-        const modalRef = useRef(null);
-        const closeButtonRef = useRef(null);
-        const scrollLockRef = useRef({ top: 0, previousFocus: null });
-        const initialRouteRef = useRef(route);
-
-        const routeStep = route?.step;
-        const flowStep = STEPS.includes(routeStep) ? routeStep : 'config';
-        const controllerStep = flowStep;
-
-        const syncRoute = (nextRoute, replace = false) => {
-          const safeStep = STEPS.includes(nextRoute.step) ? nextRoute.step : 'config';
-          const nextState = { step: safeStep };
-          const url = buildRouteUrl(nextState);
-          const method = replace ? 'replaceState' : 'pushState';
-          safeHistoryUpdate(method, nextState, url);
-          setRoute(nextState);
+              <div className="flex justify-between pt-2 border-t border-stone-100">
+                <span className="text-stone-500">Retreat total</span>
+                <span className="text-2xl font-bold">{formatVND(pricing.total)}</span>
+              </div>
+              {showDepositLine && (
+                <>
+                  <div className="flex justify-between">
+                    <span className="text-stone-500">{depositLabel}</span>
+                    <span className="font-semibold">{formatVND(pricing.deposit)}</span>
+                  </div>
+                  <div className="flex justify-between text-sm text-stone-500">
+                    <span>Remaining balance</span>
+                    <span className="font-semibold">{formatVND(pricing.remaining)}</span>
+                  </div>
+                </>
+              )}
+              <p className="text-sm text-stone-500">{formatUSD(pricing.total)}</p>
+              {showReviewNote && (
+                <p className="text-sm text-stone-600">
+                  A 30% deposit is collected during payment. 100% refund if participation is declined after the health review.
+                </p>
+              )}
+              {context === "payment" && (
+                <div className="pt-2 border-t border-stone-100 space-y-2">
+                  {paymentMethod === "stripe" && stripeFee > 0 && (
+                    <div className="flex justify-between text-amber-700">
+                      <span>Card processing fee (3.6%)</span>
+                      <span>{formatVND(stripeFee)}</span>
+                    </div>
+                  )}
+                  <div className="flex justify-between">
+                    <span className="text-stone-500">Due today</span>
+                    <span className="text-xl font-bold">{formatVND(paymentDueNow)}</span>
+                  </div>
+                  <p className="text-sm text-stone-500">{formatUSD(paymentDueNow)}</p>
+                </div>
+              )}
+              {context === "confirmed" && <p className="text-sm text-emerald-700">Deposit received. Balance collected on arrival.</p>}
+            </div>
+          );
         };
 
-        useEffect(() => {
-          safeHistoryUpdate('replaceState', initialRouteRef.current, buildRouteUrl(initialRouteRef.current));
-        }, []);
+        const DEFAULT_RETREAT = RETREATS[0];
+        const DEFAULT_DATE = DEFAULT_RETREAT.dates[0];
+        const DEFAULT_ROOMS = getRoomsForRetreat(DEFAULT_RETREAT.id);
+        const DEFAULT_ROOM_ID = DEFAULT_ROOMS[0]?.id || null;
+        const DEFAULT_PHONE_CODE = getDialCodeForCountry("Vietnam") || "+84";
 
-        useEffect(() => {
-          const handlePop = () => {
-            setRoute(parseRouteFromLocation());
+        const App = () => {
+          const [route, setRoute] = useState(parseRouteFromLocation);
+          const [selection, setSelection] = useState(() => ({
+            retreatId: DEFAULT_RETREAT.id,
+            retreatName: DEFAULT_RETREAT.name,
+            retreatLocation: DEFAULT_RETREAT.location,
+            retreatEarlyBirdNote: DEFAULT_RETREAT.earlyBirdNote,
+            retreatImage: DEFAULT_RETREAT.image,
+            date: DEFAULT_DATE.label,
+            guests: 1,
+            roomType: DEFAULT_ROOM_ID,
+            transfer: TRANSPORT_OPTIONS[0].id,
+          }));
+          const [guestDetails, setGuestDetails] = useState({
+            guest1: {
+              firstName: "",
+              lastName: "",
+              email: "",
+              phone: "",
+              phoneCountryCode: DEFAULT_PHONE_CODE,
+              phoneCodeManuallySet: false,
+              street: "",
+              city: "",
+              postalCode: "",
+              country: "",
+              needsCompanyInvoice: false,
+              companyName: "",
+              taxId: "",
+            },
+            guest2: { firstName: "", lastName: "", email: "", phone: "" },
+          });
+          const [paymentMethod, setPaymentMethod] = useState("vnpay");
+          const [galleryRoom, setGalleryRoom] = useState(null);
+          const [galleryIndex, setGalleryIndex] = useState(0);
+          const [depositPaid, setDepositPaid] = useState(false);
+          const [screeningStatus, setScreeningStatus] = useState({ guest1: "pending", guest2: selection.guests === 2 ? "pending" : "not_required" });
+          const [safetyAnswers, setSafetyAnswers] = useState({
+            underweight: "",
+            liverKidney: "",
+            pregnancy: "",
+            cardio: "",
+          });
+          const modalRef = useRef(null);
+          const closeButtonRef = useRef(null);
+          const scrollLockRef = useRef({ top: 0, previousFocus: null });
+          const initialRouteRef = useRef(route);
+
+          const routeStep = route?.step;
+          const flowStep = STEPS.includes(routeStep) ? routeStep : "config";
+          const controllerStep = flowStep;
+
+          const syncRoute = (nextRoute, replace = false) => {
+            const safeStep = STEPS.includes(nextRoute.step) ? nextRoute.step : "config";
+            const nextState = { step: safeStep };
+            const url = buildRouteUrl(nextState);
+            const method = replace ? "replaceState" : "pushState";
+            safeHistoryUpdate(method, nextState, url);
+            setRoute(nextState);
           };
-          window.addEventListener('popstate', handlePop);
-          return () => window.removeEventListener('popstate', handlePop);
-        }, []);
 
-        useEffect(() => {
-          window.scrollTo({ top: 0, behavior: 'smooth' });
-        }, [route]);
+          useEffect(() => {
+            safeHistoryUpdate("replaceState", initialRouteRef.current, buildRouteUrl(initialRouteRef.current));
+          }, []);
 
-        useEffect(() => {
-          setScreeningStatus((prev) => {
-            if (selection.guests === 1 && prev.guest2 !== 'not_required') {
-              return { ...prev, guest2: 'not_required' };
-            }
-            if (selection.guests === 2 && prev.guest2 === 'not_required') {
-              return { ...prev, guest2: 'pending' };
-            }
-            return prev;
-          });
-        }, [selection.guests]);
-
-        const goToStep = (nextStep, replace = false) => {
-          let targetStep = STEPS.includes(nextStep) ? nextStep : 'config';
-          if (targetStep === 'payment' && !safetyCleared) {
-            targetStep = 'health_check';
-          }
-          syncRoute({ step: targetStep }, replace);
-        };
-
-        const dateOptions = useMemo(() => {
-          const now = new Date();
-          now.setHours(0, 0, 0, 0);
-          return DATES.map((date) => {
-            const startDate = new Date(date.start);
-            startDate.setHours(0, 0, 0, 0);
-            const earlyBirdDeadline = date.earlyBirdDeadline ? new Date(date.earlyBirdDeadline) : null;
-            const isEarlyBirdActive = earlyBirdDeadline ? now <= earlyBirdDeadline : false;
-            return {
-              ...date,
-              startDate,
-              isEarlyBirdActive,
+          useEffect(() => {
+            const handlePop = () => {
+              setRoute(parseRouteFromLocation());
             };
-          });
-        }, []);
+            window.addEventListener("popstate", handlePop);
+            return () => window.removeEventListener("popstate", handlePop);
+          }, []);
 
-        const roomsForCurrentRetreat = useMemo(() => getRoomsForRetreat(selection.retreatId), [selection.retreatId]);
+          useEffect(() => {
+            window.scrollTo({ top: 0, behavior: "smooth" });
+          }, [route]);
 
-        const pricing = useMemo(() => {
-          const room = roomsForCurrentRetreat.find((r) => r.id === selection.roomType) || roomsForCurrentRetreat[0];
-          const roomPrice = room ? room.price : 0;
-          const transportOption = TRANSPORT_OPTIONS.find((option) => option.id === selection.transfer) || TRANSPORT_OPTIONS[0];
-          const subtotal = roomPrice * selection.guests;
-          const selectedDate = dateOptions.find((d) => d.label === selection.date);
-          const earlyBird = selectedDate?.isEarlyBirdActive ? Math.round(subtotal * 0.1) : 0;
-          const friendBase = subtotal - earlyBird;
-          const friend = selection.guests === 2 ? Math.round(friendBase * 0.05) : 0;
-          const transport = transportOption.price;
-          const total = subtotal - earlyBird - friend + transport;
-          const deposit = Math.round(total * 0.3);
-          const remaining = total - deposit;
-          return { subtotal, earlyBird, friend, transport, total, deposit, remaining };
-        }, [selection, dateOptions, roomsForCurrentRetreat]);
-
-        const stripeFee = paymentMethod === 'stripe' ? Math.round(pricing.deposit * STRIPE_FEE_RATE) : 0;
-        const paymentDueNow = pricing.deposit + stripeFee;
-        const screeningsComplete = screeningStatus.guest1 === 'complete' && (selection.guests === 1 || screeningStatus.guest2 === 'complete');
-        const safetyAllAnswered = Object.values(safetyAnswers).every((value) => value === 'yes' || value === 'no');
-        const safetyHasConcern = Object.values(safetyAnswers).some((value) => value === 'yes');
-        const safetyCleared = safetyAllAnswered && !safetyHasConcern;
-
-        const updateSelection = (updates) => setSelection((prev) => ({ ...prev, ...updates }));
-
-        const updateGuest = (guestKey, field, value) => {
-          setGuestDetails((prev) => ({
-            ...prev,
-            [guestKey]: { ...prev[guestKey], [field]: value },
-          }));
-        };
-
-        const updateSafetyAnswer = (questionId, value) => {
-          setSafetyAnswers((prev) => ({ ...prev, [questionId]: value }));
-        };
-
-        const handlePrimaryCountryChange = (value) => {
-          setGuestDetails((prev) => {
-            const nextGuest1 = { ...prev.guest1, country: value };
-            if (!nextGuest1.phoneCodeManuallySet) {
-              const dial = getDialCodeForCountry(value);
-              if (dial) {
-                nextGuest1.phoneCountryCode = dial;
+          useEffect(() => {
+            setScreeningStatus((prev) => {
+              if (selection.guests === 1 && prev.guest2 !== "not_required") {
+                return { ...prev, guest2: "not_required" };
               }
+              if (selection.guests === 2 && prev.guest2 === "not_required") {
+                return { ...prev, guest2: "pending" };
+              }
+              return prev;
+            });
+          }, [selection.guests]);
+
+          const goToStep = (nextStep, replace = false) => {
+            let targetStep = STEPS.includes(nextStep) ? nextStep : "config";
+            if (targetStep === "payment" && !safetyCleared) {
+              targetStep = "health_check";
             }
-            return { ...prev, guest1: nextGuest1 };
-          });
-        };
+            syncRoute({ step: targetStep }, replace);
+          };
 
-        const handlePrimaryPhoneCodeChange = (value) => {
-          setGuestDetails((prev) => ({
-            ...prev,
-            guest1: { ...prev.guest1, phoneCountryCode: value, phoneCodeManuallySet: true },
-          }));
-        };
+          const dateOptions = useMemo(() => {
+            const now = new Date();
+            now.setHours(0, 0, 0, 0);
+            return DATES.map((date) => {
+              const startDate = new Date(date.start);
+              startDate.setHours(0, 0, 0, 0);
+              const earlyBirdDeadline = date.earlyBirdDeadline ? new Date(date.earlyBirdDeadline) : null;
+              const isEarlyBirdActive = earlyBirdDeadline ? now <= earlyBirdDeadline : false;
+              return {
+                ...date,
+                startDate,
+                isEarlyBirdActive,
+              };
+            });
+          }, []);
 
-        const handleRetreatSelection = (dateOption) => {
-          if (!dateOption) return;
-          setSelection((prev) => {
-            const isSameRetreat = prev.retreatId === dateOption.retreatId;
-            const roomsForSelectedRetreat = getRoomsForRetreat(dateOption.retreatId);
-            return {
+          const roomsForCurrentRetreat = useMemo(() => getRoomsForRetreat(selection.retreatId), [selection.retreatId]);
+
+          const pricing = useMemo(() => {
+            const room = roomsForCurrentRetreat.find((r) => r.id === selection.roomType) || roomsForCurrentRetreat[0];
+            const roomPrice = room ? room.price : 0;
+            const transportOption = TRANSPORT_OPTIONS.find((option) => option.id === selection.transfer) || TRANSPORT_OPTIONS[0];
+            const subtotal = roomPrice * selection.guests;
+            const selectedDate = dateOptions.find((d) => d.label === selection.date);
+            const earlyBird = selectedDate?.isEarlyBirdActive ? Math.round(subtotal * 0.1) : 0;
+            const friendBase = subtotal - earlyBird;
+            const friend = selection.guests === 2 ? Math.round(friendBase * 0.05) : 0;
+            const transport = transportOption.price;
+            const total = subtotal - earlyBird - friend + transport;
+            const deposit = Math.round(total * 0.3);
+            const remaining = total - deposit;
+            return { subtotal, earlyBird, friend, transport, total, deposit, remaining };
+          }, [selection, dateOptions, roomsForCurrentRetreat]);
+
+          const stripeFee = paymentMethod === "stripe" ? Math.round(pricing.deposit * STRIPE_FEE_RATE) : 0;
+          const paymentDueNow = pricing.deposit + stripeFee;
+          const screeningsComplete = screeningStatus.guest1 === "complete" && (selection.guests === 1 || screeningStatus.guest2 === "complete");
+          const safetyAllAnswered = Object.values(safetyAnswers).every((value) => value === "yes" || value === "no");
+          const safetyHasConcern = Object.values(safetyAnswers).some((value) => value === "yes");
+          const safetyCleared = safetyAllAnswered && !safetyHasConcern;
+
+          const updateSelection = (updates) => setSelection((prev) => ({ ...prev, ...updates }));
+
+          const updateGuest = (guestKey, field, value) => {
+            setGuestDetails((prev) => ({
               ...prev,
-              retreatId: dateOption.retreatId,
-              retreatName: dateOption.retreatName,
-              retreatLocation: dateOption.location,
-              retreatEarlyBirdNote: dateOption.earlyBirdNote,
-              retreatImage: dateOption.image,
-              date: dateOption.label,
-              roomType: isSameRetreat ? prev.roomType : roomsForSelectedRetreat[0]?.id || null,
-            };
-          });
-        };
-
-        const openGallery = (room) => {
-          setGalleryRoom(room);
-          setGalleryIndex(0);
-        };
-
-        const closeGallery = () => {
-          setGalleryRoom(null);
-          setGalleryIndex(0);
-        };
-
-        const showNextImage = () => {
-          if (!galleryRoom) return;
-          setGalleryIndex((index) => (index + 1) % galleryRoom.images.length);
-        };
-
-        const showPrevImage = () => {
-          if (!galleryRoom) return;
-          setGalleryIndex((index) => (index - 1 + galleryRoom.images.length) % galleryRoom.images.length);
-        };
-
-        useEffect(() => {
-          if (!galleryRoom) return undefined;
-          const previousFocus = document.activeElement;
-          const top = window.scrollY || 0;
-          scrollLockRef.current = { top, previousFocus };
-          const body = document.body;
-          body.style.position = 'fixed';
-          body.style.top = `-${top}px`;
-          body.style.width = '100%';
-
-          const handleKeyDown = (event) => {
-            if (event.key === 'Escape') {
-              event.preventDefault();
-              closeGallery();
-              return;
-            }
-            if (event.key === 'Tab') {
-              const focusableSelectors = 'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
-              const nodes = modalRef.current?.querySelectorAll(focusableSelectors);
-              const focusable = nodes ? Array.from(nodes).filter((node) => !node.hasAttribute('disabled')) : [];
-              if (focusable.length === 0) return;
-              const first = focusable[0];
-              const last = focusable[focusable.length - 1];
-              if (event.shiftKey) {
-                if (document.activeElement === first) {
-                  event.preventDefault();
-                  last.focus();
-                }
-              } else if (document.activeElement === last) {
-                event.preventDefault();
-                first.focus();
-              }
-            }
-          };
-
-          document.addEventListener('keydown', handleKeyDown);
-          requestAnimationFrame(() => closeButtonRef.current?.focus());
-
-          return () => {
-            document.removeEventListener('keydown', handleKeyDown);
-            body.style.position = '';
-            body.style.top = '';
-            body.style.width = '';
-            window.scrollTo(0, scrollLockRef.current.top || 0);
-            scrollLockRef.current.previousFocus?.focus?.();
-          };
-        }, [galleryRoom]);
-
-        const guestDetailsValid = () => {
-          const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-          const g1 = guestDetails.guest1;
-          const primaryFieldsFilled =
-            g1.firstName.trim() &&
-            g1.lastName.trim() &&
-            g1.email.trim() &&
-            emailPattern.test(g1.email.trim()) &&
-            g1.street.trim() &&
-            g1.city.trim() &&
-            g1.postalCode.trim() &&
-            g1.country.trim();
-          const companyValid = !g1.needsCompanyInvoice || g1.companyName.trim();
-          if (!primaryFieldsFilled || !companyValid) return false;
-          if (selection.guests === 1) return true;
-          const g2 = guestDetails.guest2;
-          const g2Valid = g2.firstName.trim() && g2.lastName.trim();
-          if (g2.email.trim()) {
-            return g2Valid && emailPattern.test(g2.email.trim());
-          }
-          return g2Valid;
-        };
-
-        const handlePayment = () => {
-          if (!depositPaid) {
-            setDepositPaid(true);
-            setScreeningStatus((prev) => ({
-              guest1: prev.guest1 === 'complete' ? 'complete' : 'pending',
-              guest2: selection.guests === 2 ? (prev.guest2 === 'complete' ? 'complete' : 'pending') : 'not_required',
+              [guestKey]: { ...prev[guestKey], [field]: value },
             }));
-          }
-          goToStep('screening');
-        };
+          };
 
-        const renderConfigStep = () => (
-          <div className="space-y-12">
-            <header className="space-y-3">
-              <p className="text-[12px] uppercase tracking-[0.4em] text-stone-400">Step 1</p>
-              <h1 className="text-4xl font-bold">Plan your journey</h1>
-              <p className="text-stone-500">Select the start date, number of guests, and residence. Every price line item updates before we request personal details.</p>
-            </header>
+          const updateSafetyAnswer = (questionId, value) => {
+            setSafetyAnswers((prev) => ({ ...prev, [questionId]: value }));
+          };
 
-            <section className="space-y-4">
-              <div>
-                <p className="text-xs uppercase tracking-[0.3em] text-stone-400 font-semibold">Upcoming retreats</p>
-                <p className="text-sm text-stone-500">Choose the experience and date that resonates most with your well-being goals.</p>
-              </div>
-              <div className="space-y-4">
-                {RETREATS.map((retreat) => {
-                  const retreatDates = dateOptions.filter((option) => option.retreatId === retreat.id);
-                  const isActiveRetreat = selection.retreatId === retreat.id;
-                  const preferredDate =
-                    retreatDates.find((date) => selection.retreatId === retreat.id && date.label === selection.date) || retreatDates[0];
-                  return (
-                    <div key={retreat.id} className="space-y-3 border border-stone-100 rounded-3xl bg-white p-4 md:p-6">
-                      <div
-                        className="flex flex-col md:flex-row md:items-center gap-4 cursor-pointer"
-                        role="button"
-                        tabIndex={0}
-                        onClick={() => preferredDate && handleRetreatSelection(preferredDate)}
-                        onKeyDown={(event) => {
-                          if (event.key === 'Enter' || event.key === ' ') {
-                            event.preventDefault();
-                            preferredDate && handleRetreatSelection(preferredDate);
-                          }
-                        }}
-                      >
-                        <div className="flex-shrink-0 w-full md:w-52">
-                          <div className="relative h-32 w-full overflow-hidden rounded-2xl">
-                            <img
-                              src={retreat.image || FALLBACK_IMAGE}
-                              alt={retreat.name}
-                              className="w-full h-full object-cover"
-                              onError={handleImageError}
-                            />
-                            <div className="absolute inset-0 bg-gradient-to-t from-stone-900/20 to-transparent pointer-events-none" />
+          const handlePrimaryCountryChange = (value) => {
+            setGuestDetails((prev) => {
+              const nextGuest1 = { ...prev.guest1, country: value };
+              if (!nextGuest1.phoneCodeManuallySet) {
+                const dial = getDialCodeForCountry(value);
+                if (dial) {
+                  nextGuest1.phoneCountryCode = dial;
+                }
+              }
+              return { ...prev, guest1: nextGuest1 };
+            });
+          };
+
+          const handlePrimaryPhoneCodeChange = (value) => {
+            setGuestDetails((prev) => ({
+              ...prev,
+              guest1: { ...prev.guest1, phoneCountryCode: value, phoneCodeManuallySet: true },
+            }));
+          };
+
+          const handleRetreatSelection = (dateOption) => {
+            if (!dateOption) return;
+            setSelection((prev) => {
+              const isSameRetreat = prev.retreatId === dateOption.retreatId;
+              const roomsForSelectedRetreat = getRoomsForRetreat(dateOption.retreatId);
+              return {
+                ...prev,
+                retreatId: dateOption.retreatId,
+                retreatName: dateOption.retreatName,
+                retreatLocation: dateOption.location,
+                retreatEarlyBirdNote: dateOption.earlyBirdNote,
+                retreatImage: dateOption.image,
+                date: dateOption.label,
+                roomType: isSameRetreat ? prev.roomType : roomsForSelectedRetreat[0]?.id || null,
+              };
+            });
+          };
+
+          const openGallery = (room) => {
+            setGalleryRoom(room);
+            setGalleryIndex(0);
+          };
+
+          const closeGallery = () => {
+            setGalleryRoom(null);
+            setGalleryIndex(0);
+          };
+
+          const showNextImage = () => {
+            if (!galleryRoom) return;
+            setGalleryIndex((index) => (index + 1) % galleryRoom.images.length);
+          };
+
+          const showPrevImage = () => {
+            if (!galleryRoom) return;
+            setGalleryIndex((index) => (index - 1 + galleryRoom.images.length) % galleryRoom.images.length);
+          };
+
+          useEffect(() => {
+            if (!galleryRoom) return undefined;
+            const previousFocus = document.activeElement;
+            const top = window.scrollY || 0;
+            scrollLockRef.current = { top, previousFocus };
+            const body = document.body;
+            body.style.position = "fixed";
+            body.style.top = `-${top}px`;
+            body.style.width = "100%";
+
+            const handleKeyDown = (event) => {
+              if (event.key === "Escape") {
+                event.preventDefault();
+                closeGallery();
+                return;
+              }
+              if (event.key === "Tab") {
+                const focusableSelectors = 'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
+                const nodes = modalRef.current?.querySelectorAll(focusableSelectors);
+                const focusable = nodes ? Array.from(nodes).filter((node) => !node.hasAttribute("disabled")) : [];
+                if (focusable.length === 0) return;
+                const first = focusable[0];
+                const last = focusable[focusable.length - 1];
+                if (event.shiftKey) {
+                  if (document.activeElement === first) {
+                    event.preventDefault();
+                    last.focus();
+                  }
+                } else if (document.activeElement === last) {
+                  event.preventDefault();
+                  first.focus();
+                }
+              }
+            };
+
+            document.addEventListener("keydown", handleKeyDown);
+            requestAnimationFrame(() => closeButtonRef.current?.focus());
+
+            return () => {
+              document.removeEventListener("keydown", handleKeyDown);
+              body.style.position = "";
+              body.style.top = "";
+              body.style.width = "";
+              window.scrollTo(0, scrollLockRef.current.top || 0);
+              scrollLockRef.current.previousFocus?.focus?.();
+            };
+          }, [galleryRoom]);
+
+          const guestDetailsValid = () => {
+            const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            const g1 = guestDetails.guest1;
+            const primaryFieldsFilled =
+              g1.firstName.trim() &&
+              g1.lastName.trim() &&
+              g1.email.trim() &&
+              emailPattern.test(g1.email.trim()) &&
+              g1.street.trim() &&
+              g1.city.trim() &&
+              g1.postalCode.trim() &&
+              g1.country.trim();
+            const companyValid = !g1.needsCompanyInvoice || g1.companyName.trim();
+            if (!primaryFieldsFilled || !companyValid) return false;
+            if (selection.guests === 1) return true;
+            const g2 = guestDetails.guest2;
+            const g2Valid = g2.firstName.trim() && g2.lastName.trim();
+            if (g2.email.trim()) {
+              return g2Valid && emailPattern.test(g2.email.trim());
+            }
+            return g2Valid;
+          };
+
+          const handlePayment = () => {
+            if (!depositPaid) {
+              setDepositPaid(true);
+              setScreeningStatus((prev) => ({
+                guest1: prev.guest1 === "complete" ? "complete" : "pending",
+                guest2: selection.guests === 2 ? (prev.guest2 === "complete" ? "complete" : "pending") : "not_required",
+              }));
+            }
+            goToStep("screening");
+          };
+
+          const renderConfigStep = () => (
+            <div className="space-y-12">
+              <header className="space-y-3">
+                <p className="text-[12px] uppercase tracking-[0.4em] text-stone-400">Step 1</p>
+                <h1 className="text-4xl font-bold">Plan your journey</h1>
+                <p className="text-stone-500">
+                  Select the start date, number of guests, and residence. Every price line item updates before we request personal details.
+                </p>
+              </header>
+
+              <section className="space-y-4">
+                <div>
+                  <p className="text-xs uppercase tracking-[0.3em] text-stone-400 font-semibold">Upcoming retreats</p>
+                  <p className="text-sm text-stone-500">Choose the experience and date that resonates most with your well-being goals.</p>
+                </div>
+                <div className="space-y-4">
+                  {RETREATS.map((retreat) => {
+                    const retreatDates = dateOptions.filter((option) => option.retreatId === retreat.id);
+                    const isActiveRetreat = selection.retreatId === retreat.id;
+                    const preferredDate =
+                      retreatDates.find((date) => selection.retreatId === retreat.id && date.label === selection.date) || retreatDates[0];
+                    return (
+                      <div key={retreat.id} className="space-y-3 border border-stone-100 rounded-3xl bg-white p-4 md:p-6">
+                        <div
+                          className="flex flex-col md:flex-row md:items-center gap-4 cursor-pointer"
+                          role="button"
+                          tabIndex={0}
+                          onClick={() => preferredDate && handleRetreatSelection(preferredDate)}
+                          onKeyDown={(event) => {
+                            if (event.key === "Enter" || event.key === " ") {
+                              event.preventDefault();
+                              preferredDate && handleRetreatSelection(preferredDate);
+                            }
+                          }}
+                        >
+                          <div className="flex-shrink-0 w-full md:w-52">
+                            <div className="relative h-32 w-full overflow-hidden rounded-2xl">
+                              <img
+                                src={retreat.image || FALLBACK_IMAGE}
+                                alt={retreat.name}
+                                className="w-full h-full object-cover"
+                                onError={handleImageError}
+                              />
+                              <div className="absolute inset-0 bg-gradient-to-t from-stone-900/20 to-transparent pointer-events-none" />
+                            </div>
+                          </div>
+                          <div className="flex-1 min-w-0 space-y-2">
+                            <p className="text-xs uppercase tracking-[0.2em] text-stone-400">{retreat.location}</p>
+                            <div className="flex items-start justify-between gap-3">
+                              <h3 className="text-base font-semibold text-stone-900 truncate">{retreat.name}</h3>
+                              <span
+                                className={`mt-1 w-6 h-6 rounded-full border flex items-center justify-center text-[10px] font-semibold ${
+                                  isActiveRetreat ? "border-emerald-600 bg-emerald-600 text-white" : "border-stone-200 text-stone-300"
+                                }`}
+                              >
+                                {isActiveRetreat ? <Icons.Check /> : null}
+                              </span>
+                            </div>
+                            <p className="text-sm text-stone-500">{retreat.description}</p>
+                            <p className="text-xs text-stone-500">{retreat.earlyBirdNote}</p>
                           </div>
                         </div>
-                        <div className="flex-1 min-w-0 space-y-2">
-                          <p className="text-xs uppercase tracking-[0.2em] text-stone-400">{retreat.location}</p>
-                          <div className="flex items-start justify-between gap-3">
-                            <h3 className="text-base font-semibold text-stone-900 truncate">{retreat.name}</h3>
-                            <span
-                              className={`mt-1 w-6 h-6 rounded-full border flex items-center justify-center text-[10px] font-semibold ${
-                                isActiveRetreat ? 'border-emerald-600 bg-emerald-600 text-white' : 'border-stone-200 text-stone-300'
-                              }`}
-                            >
-                              {isActiveRetreat ? <Icons.Check /> : null}
-                            </span>
-                          </div>
-                          <p className="text-sm text-stone-500">{retreat.description}</p>
-                          <p className="text-xs text-stone-500">{retreat.earlyBirdNote}</p>
-                        </div>
-                      </div>
-                      <div className="space-y-2">
-                        <p className="text-xs uppercase tracking-[0.3em] text-stone-400">Available dates</p>
+                        <div className="space-y-2">
+                          <p className="text-xs uppercase tracking-[0.3em] text-stone-400">Available dates</p>
                           <div className="flex items-center gap-2">
                             {retreatDates.length > 2 && (
                               <button
@@ -758,20 +772,17 @@
                                 onClick={(event) => {
                                   event.stopPropagation();
                                   const container = event.currentTarget.nextSibling;
-                                  container?.scrollBy({ left: -220, behavior: 'smooth' });
+                                  container?.scrollBy({ left: -220, behavior: "smooth" });
                                 }}
                               >
                                 <Icons.ChevronLeft />
                               </button>
                             )}
-                            <div
-                              className="flex gap-2 overflow-x-auto hide-scrollbar pb-1 flex-1"
-                              onWheel={(event) => event.stopPropagation()}
-                            >
+                            <div className="flex gap-2 overflow-x-auto hide-scrollbar pb-1 flex-1" onWheel={(event) => event.stopPropagation()}>
                               {retreatDates.map((dateOption) => {
                                 const activeDate = selection.date === dateOption.label;
-                              const showEarlyBird = dateOption.isEarlyBirdActive;
-                              const showLimited = dateOption.limited;
+                                const showEarlyBird = dateOption.isEarlyBirdActive;
+                                const showLimited = dateOption.limited;
                                 return (
                                   <button
                                     key={dateOption.label}
@@ -782,7 +793,7 @@
                                       handleRetreatSelection(dateOption);
                                     }}
                                     className={`flex-shrink-0 px-3 py-2 text-xs md:text-sm rounded-full border ${
-                                      activeDate ? 'border-emerald-600 bg-white shadow-sm' : 'border-stone-200 hover:border-emerald-200'
+                                      activeDate ? "border-emerald-600 bg-white shadow-sm" : "border-stone-200 hover:border-emerald-200"
                                     }`}
                                   >
                                     <span className="font-semibold text-stone-900 whitespace-nowrap">{dateOption.label}</span>
@@ -798,1077 +809,1105 @@
                                             Limited spots available
                                           </span>
                                         )}
-                                  </div>
-                                )}
-                              </button>
+                                      </div>
+                                    )}
+                                  </button>
                                 );
                               })}
                             </div>
-                          {retreatDates.length > 2 && (
-                            <button
-                              type="button"
-                              className="hidden md:inline-flex h-7 w-7 items-center justify-center rounded-full border border-stone-200 text-stone-500 hover:border-emerald-200"
-                              onClick={(event) => {
-                                event.stopPropagation();
-                                const container = event.currentTarget.previousSibling;
-                                container?.scrollBy({ left: 220, behavior: 'smooth' });
-                              }}
-                            >
-                              <Icons.ChevronRight />
-                            </button>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </section>
-
-            <section className="space-y-4">
-              <p className="text-xs uppercase tracking-[0.3em] text-stone-400 font-semibold">Guests</p>
-              <div className="flex flex-col md:flex-row gap-4">
-                {[1, 2].map((count) => {
-                  const active = selection.guests === count;
-                  return (
-                    <button
-                      key={count}
-                      type="button"
-                      onClick={() => updateSelection({ guests: count })}
-                      className={`flex-1 border-2 rounded-2xl p-4 flex items-center justify-between ${
-                        active ? 'border-emerald-600 bg-emerald-50' : 'border-stone-100 hover:border-stone-200'
-                      }`}
-                    >
-                      <div className="text-left">
-                        <p className="font-semibold">{count === 1 ? 'One guest' : 'Two guests'}</p>
-                        <p className="text-sm text-stone-500">{count === 2 ? 'Save 5% together' : 'Fully private journey'}</p>
-                      </div>
-                      {count === 2 ? <Icons.Users /> : <Icons.User />}
-                    </button>
-                  );
-                })}
-              </div>
-            </section>
-
-            <section className="space-y-4">
-              <p className="text-xs uppercase tracking-[0.3em] text-stone-400 font-semibold">Accommodation</p>
-                <div className="bg-emerald-50 border border-emerald-100 rounded-3xl p-5 text-left">
-                <p className="text-xs uppercase tracking-[0.3em] text-emerald-700 font-semibold">Health preparation first</p>
-                <p className="text-sm text-stone-600">
-                  Every guest completes their own health & lifestyle questionnaire during booking and enjoys a personal preparation call with the Vietnam Detox team after payment.
-                </p>
-              </div>
-
-              <div className="space-y-6">
-                {roomsForCurrentRetreat.length === 0 && <p className="text-sm text-stone-500">Accommodation options will appear here for this retreat.</p>}
-                {roomsForCurrentRetreat.map((room) => {
-                  const active = selection.roomType === room.id;
-                  return (
-                    <button
-                      key={room.id}
-                      type="button"
-                      onClick={() => updateSelection({ roomType: room.id })}
-                      className={`w-full text-left border-2 rounded-3xl overflow-hidden transition ${
-                        active ? 'border-emerald-600 shadow-lg shadow-emerald-100/40' : 'border-stone-100 hover:border-stone-200'
-                      }`}
-                    >
-                      <div className="grid grid-cols-1 md:grid-cols-3">
-                        <div className="md:col-span-1 h-48 overflow-hidden">
-                        <img src={room.images[0]} alt={room.name} className="w-full h-full object-cover" onError={handleImageError} />
-                        </div>
-                        <div className="md:col-span-2 p-6 space-y-4">
-                          <div>
-                            <p className="text-xs uppercase tracking-[0.3em] text-stone-400">{room.benefit}</p>
-                            <div className="flex items-center justify-between mt-2">
-                              <h3 className="text-2xl font-bold">{room.name}</h3>
-                              <p className="text-sm text-stone-500">Per guest {formatVND(room.price)}</p>
-                            </div>
-                          </div>
-                          <div className="flex items-center justify-between pt-3 border-t border-stone-200">
-                            <span className={`text-sm font-semibold ${active ? 'text-emerald-700' : 'text-stone-500'}`}>
-                              {active ? 'Selected' : 'Tap to select'}
-                            </span>
-                            <button
-                              type="button"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                openGallery(room);
-                              }}
-                              className="text-sm font-semibold text-emerald-700 hover:text-emerald-800"
-                            >
-                              View photos
-                            </button>
+                            {retreatDates.length > 2 && (
+                              <button
+                                type="button"
+                                className="hidden md:inline-flex h-7 w-7 items-center justify-center rounded-full border border-stone-200 text-stone-500 hover:border-emerald-200"
+                                onClick={(event) => {
+                                  event.stopPropagation();
+                                  const container = event.currentTarget.previousSibling;
+                                  container?.scrollBy({ left: 220, behavior: "smooth" });
+                                }}
+                              >
+                                <Icons.ChevronRight />
+                              </button>
+                            )}
                           </div>
                         </div>
                       </div>
-                    </button>
-                  );
-                })}
-              </div>
-            </section>
-
-            <section className="space-y-4">
-              <p className="text-xs uppercase tracking-[0.3em] text-stone-400 font-semibold">Airport transfer (optional)</p>
-              <select
-                className="w-full border border-stone-200 rounded-2xl p-4 bg-stone-50 focus:ring-2 focus:ring-emerald-100 outline-none"
-                value={selection.transfer}
-                onChange={(e) => updateSelection({ transfer: e.target.value })}
-              >
-                {TRANSPORT_OPTIONS.map((option) => (
-                  <option key={option.id} value={option.id}>
-                    {option.label} {option.price > 0 ? `(+${formatVND(option.price)})` : ''}
-                  </option>
-                ))}
-              </select>
-            </section>
-
-            <div className="flex justify-end">
-              <button
-                type="button"
-                onClick={() => goToStep('details')}
-                className="inline-flex items-center bg-emerald-800 text-white px-6 py-3 rounded-full font-semibold hover:bg-emerald-900 transition"
-              >
-                Continue <Icons.ChevronRight />
-              </button>
-            </div>
-          </div>
-        );
-
-        const renderGuestDetailsStep = () => {
-          const primary = guestDetails.guest1;
-          const secondary = guestDetails.guest2;
-
-          const renderInput = (label, value, onChange, type = 'text', helper) => (
-            <div className="space-y-2">
-              <label className="text-[11px] uppercase tracking-[0.2em] text-stone-500">{label}</label>
-              <input
-                type={type}
-                className="w-full border border-stone-200 rounded-2xl p-4 bg-stone-50 focus:ring-2 focus:ring-emerald-100 outline-none"
-                value={value}
-                onChange={onChange}
-              />
-              {helper && <p className="text-xs text-stone-500">{helper}</p>}
-            </div>
-          );
-
-          return (
-            <div className="space-y-10">
-              <header className="space-y-2">
-                <p className="text-[12px] uppercase tracking-[0.4em] text-stone-400">Step 2</p>
-                <h1 className="text-4xl font-bold">Details</h1>
-                <p className="text-sm text-stone-500">
-                  Used for booking confirmation and invoicing only. These contacts also receive each guest’s health questionnaire and preparation call details.
-                </p>
-              </header>
-
-              <section className="space-y-6">
-                <div className="space-y-1">
-                  <h2 className="text-xl font-semibold text-stone-900">Primary guest</h2>
-                  <p className="text-sm text-stone-500">This information appears on your booking confirmation and invoice.</p>
-                </div>
-                <div className="space-y-6">
-                  <div className="space-y-4">
-                    {renderInput('First name', primary.firstName, (e) => updateGuest('guest1', 'firstName', e.target.value))}
-                    {renderInput('Last name', primary.lastName, (e) => updateGuest('guest1', 'lastName', e.target.value))}
-                    {renderInput('Email address', primary.email, (e) => updateGuest('guest1', 'email', e.target.value), 'email')}
-                  </div>
-                <div className="space-y-2">
-                  <label className="text-[11px] uppercase tracking-[0.2em] text-stone-500">Phone number (optional)</label>
-                  <div className="flex flex-col sm:flex-row gap-3">
-                    <div className="sm:w-32">
-                      <input
-                        type="text"
-                        list="dial-codes"
-                        className="w-full border border-stone-200 rounded-2xl p-4 bg-stone-50 focus:ring-2 focus:ring-emerald-100 outline-none"
-                        value={primary.phoneCountryCode}
-                        onChange={(e) => handlePrimaryPhoneCodeChange(e.target.value)}
-                      />
-                      <datalist id="dial-codes">
-                        {[...PHONE_CODE_OPTIONS].sort().map((code) => (
-                          <option key={code} value={code} />
-                        ))}
-                      </datalist>
-                    </div>
-                    <input
-                      type="tel"
-                      className="flex-1 border border-stone-200 rounded-2xl p-4 bg-stone-50 focus:ring-2 focus:ring-emerald-100 outline-none"
-                      value={primary.phone}
-                      onChange={(e) => updateGuest('guest1', 'phone', e.target.value)}
-                    />
-                  </div>
-                  <p className="text-xs text-stone-500">Optional. Helpful in case we need to reach you shortly before arrival.</p>
-                </div>
-                  <div className="space-y-2">
-                    <p className="text-xs text-stone-500">
-                      We use this information only to issue your booking confirmation and invoice if required.
-                    </p>
-                    {renderInput('Street & house number', primary.street, (e) => updateGuest('guest1', 'street', e.target.value))}
-                    {renderInput('City', primary.city, (e) => updateGuest('guest1', 'city', e.target.value))}
-                    {renderInput('Postal code', primary.postalCode, (e) => updateGuest('guest1', 'postalCode', e.target.value))}
-                    {renderInput('Country of residence', primary.country, (e) => handlePrimaryCountryChange(e.target.value))}
-                  </div>
-                  <div className="space-y-2">
-                    <label className="flex items-center gap-2 text-sm text-stone-700">
-                      <input
-                        type="checkbox"
-                        checked={primary.needsCompanyInvoice}
-                        onChange={(e) => updateGuest('guest1', 'needsCompanyInvoice', e.target.checked)}
-                      />
-                      I need an invoice issued to a company
-                    </label>
-                    {primary.needsCompanyInvoice && (
-                      <div className="space-y-4">
-                        {renderInput('Company name', primary.companyName, (e) => updateGuest('guest1', 'companyName', e.target.value))}
-                        {renderInput('VAT / Tax ID (optional)', primary.taxId, (e) => updateGuest('guest1', 'taxId', e.target.value))}
-                      </div>
-                    )}
-                  </div>
+                    );
+                  })}
                 </div>
               </section>
 
-              {selection.guests === 2 && (
-                <section className="space-y-6 pt-8 border-t border-stone-200">
-                  <div className="space-y-1">
-                    <h2 className="text-xl font-semibold text-stone-900">Second guest details</h2>
-                    <p className="text-sm text-stone-500">Used to send their questionnaire and schedule their personal preparation call.</p>
-                  </div>
-                  <div className="space-y-4">
-                    {renderInput('First name', secondary.firstName, (e) => updateGuest('guest2', 'firstName', e.target.value))}
-                    {renderInput('Last name', secondary.lastName, (e) => updateGuest('guest2', 'lastName', e.target.value))}
-                    {renderInput('Email address (optional)', secondary.email, (e) => updateGuest('guest2', 'email', e.target.value), 'email')}
-                    {renderInput('Phone number (optional)', secondary.phone, (e) => updateGuest('guest2', 'phone', e.target.value), 'tel')}
-                  </div>
-                </section>
-              )}
+              <section className="space-y-4">
+                <p className="text-xs uppercase tracking-[0.3em] text-stone-400 font-semibold">Guests</p>
+                <div className="flex flex-col md:flex-row gap-4">
+                  {[1, 2].map((count) => {
+                    const active = selection.guests === count;
+                    return (
+                      <button
+                        key={count}
+                        type="button"
+                        onClick={() => updateSelection({ guests: count })}
+                        className={`flex-1 border-2 rounded-2xl p-4 flex items-center justify-between ${
+                          active ? "border-emerald-600 bg-emerald-50" : "border-stone-100 hover:border-stone-200"
+                        }`}
+                      >
+                        <div className="text-left">
+                          <p className="font-semibold">{count === 1 ? "One guest" : "Two guests"}</p>
+                          <p className="text-sm text-stone-500">{count === 2 ? "Save 5% together" : "Fully private journey"}</p>
+                        </div>
+                        {count === 2 ? <Icons.Users /> : <Icons.User />}
+                      </button>
+                    );
+                  })}
+                </div>
+              </section>
 
-              <div className="flex justify-between items-center">
-                <button type="button" onClick={() => goToStep('config')} className="inline-flex items-center text-stone-500 font-semibold">
-                  <Icons.ChevronLeft /> Back
-                </button>
-                <button
-                  type="button"
-                  disabled={!guestDetailsValid()}
-                  onClick={() => goToStep('review')}
-                  className={`inline-flex items-center px-6 py-3 rounded-full font-semibold ${
-                    guestDetailsValid() ? 'bg-emerald-800 text-white hover:bg-emerald-900' : 'bg-stone-200 text-stone-500 cursor-not-allowed'
-                  }`}
+              <section className="space-y-4">
+                <p className="text-xs uppercase tracking-[0.3em] text-stone-400 font-semibold">Accommodation</p>
+                <div className="bg-emerald-50 border border-emerald-100 rounded-3xl p-5 text-left">
+                  <p className="text-xs uppercase tracking-[0.3em] text-emerald-700 font-semibold">Health preparation first</p>
+                  <p className="text-sm text-stone-600">
+                    Every guest completes their own health & lifestyle questionnaire during booking and enjoys a personal preparation call with the
+                    Vietnam Detox team after payment.
+                  </p>
+                </div>
+
+                <div className="space-y-6">
+                  {roomsForCurrentRetreat.length === 0 && (
+                    <p className="text-sm text-stone-500">Accommodation options will appear here for this retreat.</p>
+                  )}
+                  {roomsForCurrentRetreat.map((room) => {
+                    const active = selection.roomType === room.id;
+                    return (
+                      <button
+                        key={room.id}
+                        type="button"
+                        onClick={() => updateSelection({ roomType: room.id })}
+                        className={`w-full text-left border-2 rounded-3xl overflow-hidden transition ${
+                          active ? "border-emerald-600 shadow-lg shadow-emerald-100/40" : "border-stone-100 hover:border-stone-200"
+                        }`}
+                      >
+                        <div className="grid grid-cols-1 md:grid-cols-3">
+                          <div className="md:col-span-1 h-48 overflow-hidden">
+                            <img src={room.images[0]} alt={room.name} className="w-full h-full object-cover" onError={handleImageError} />
+                          </div>
+                          <div className="md:col-span-2 p-6 space-y-4">
+                            <div>
+                              <p className="text-xs uppercase tracking-[0.3em] text-stone-400">{room.benefit}</p>
+                              <div className="flex items-center justify-between mt-2">
+                                <h3 className="text-2xl font-bold">{room.name}</h3>
+                                <p className="text-sm text-stone-500">Per guest {formatVND(room.price)}</p>
+                              </div>
+                            </div>
+                            <div className="flex items-center justify-between pt-3 border-t border-stone-200">
+                              <span className={`text-sm font-semibold ${active ? "text-emerald-700" : "text-stone-500"}`}>
+                                {active ? "Selected" : "Tap to select"}
+                              </span>
+                              <button
+                                type="button"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  openGallery(room);
+                                }}
+                                className="text-sm font-semibold text-emerald-700 hover:text-emerald-800"
+                              >
+                                View photos
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+              </section>
+
+              <section className="space-y-4">
+                <p className="text-xs uppercase tracking-[0.3em] text-stone-400 font-semibold">Airport transfer (optional)</p>
+                <select
+                  className="w-full border border-stone-200 rounded-2xl p-4 bg-stone-50 focus:ring-2 focus:ring-emerald-100 outline-none"
+                  value={selection.transfer}
+                  onChange={(e) => updateSelection({ transfer: e.target.value })}
                 >
-                  Review <Icons.ChevronRight />
-                </button>
-              </div>
-            </div>
-          );
-        };
-
-        const renderReviewStep = () => {
-          const dateInfo = dateOptions.find((d) => d.label === selection.date);
-          const room = roomsForCurrentRetreat.find((r) => r.id === selection.roomType) || roomsForCurrentRetreat[0];
-          const transferOption = TRANSPORT_OPTIONS.find((option) => option.id === selection.transfer) || TRANSPORT_OPTIONS[0];
-          const guests = [
-            { label: 'Guest 1', data: guestDetails.guest1 },
-            ...(selection.guests === 2 ? [{ label: 'Guest 2', data: guestDetails.guest2 }] : []),
-          ];
-
-          return (
-            <div className="space-y-10">
-              <header className="space-y-3">
-                <p className="text-[12px] uppercase tracking-[0.4em] text-stone-400">Step 3</p>
-                <h1 className="text-4xl font-bold">Review</h1>
-                <p className="text-stone-500">Confirm dates, residence, guests, and transfers before the deposit step.</p>
-              </header>
-
-              <div className="space-y-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-xs uppercase tracking-[0.3em] text-stone-400">Retreat</p>
-                    <p className="font-semibold">{selection.retreatName}</p>
-                    <p className="text-sm text-stone-500">{selection.retreatLocation}</p>
-                    {selection.retreatEarlyBirdNote && <p className="text-xs text-emerald-700 mt-1">{selection.retreatEarlyBirdNote}</p>}
-                  </div>
-                </div>
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-xs uppercase tracking-[0.3em] text-stone-400">Retreat dates</p>
-                    <p className="font-semibold">{dateInfo?.label}</p>
-                  </div>
-                  <button className="text-sm text-emerald-700 font-semibold" onClick={() => goToStep('config')}>
-                    Edit
-                  </button>
-                </div>
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-xs uppercase tracking-[0.3em] text-stone-400">Accommodation</p>
-                    <p className="font-semibold">{room?.name}</p>
-                  </div>
-                  <button className="text-sm text-emerald-700 font-semibold" onClick={() => goToStep('config')}>
-                    Edit
-                  </button>
-                </div>
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-xs uppercase tracking-[0.3em] text-stone-400">Airport transfer</p>
-                    <p className="font-semibold">{transferOption.label}</p>
-                  </div>
-                  <button className="text-sm text-emerald-700 font-semibold" onClick={() => goToStep('config')}>
-                    Edit
-                  </button>
-                </div>
-              </div>
-
-              <div className="space-y-6">
-                <div className="flex items-center justify-between">
-                  <p className="text-xs uppercase tracking-[0.3em] text-stone-400">Guests</p>
-                  <button className="text-sm text-emerald-700 font-semibold" onClick={() => goToStep('details')}>
-                    Edit
-                  </button>
-                </div>
-                <div className="space-y-4">
-                  {guests.map((guest, index) => (
-                    <div key={guest.label} className={`${index > 0 ? 'pt-4 border-t border-stone-200' : ''}`}>
-                      <p className="font-semibold">{guest.label}</p>
-                      <p className="text-sm text-stone-500">
-                        {(guest.data.firstName || 'First name')} {(guest.data.lastName || '')}
-                      </p>
-                      <p className="text-sm text-stone-500">{guest.data.email || 'Email pending'}</p>
-                    </div>
+                  {TRANSPORT_OPTIONS.map((option) => (
+                    <option key={option.id} value={option.id}>
+                      {option.label} {option.price > 0 ? `(+${formatVND(option.price)})` : ""}
+                    </option>
                   ))}
-                </div>
-              </div>
+                </select>
+              </section>
 
-              <div className="bg-stone-50 border border-stone-100 rounded-3xl p-6 space-y-2">
-                <h3 className="text-sm font-semibold text-stone-700 uppercase tracking-[0.3em]">Deposit & health review</h3>
-                <ul className="space-y-1 text-sm text-stone-600 list-disc pl-4">
-                  <li>A 30% deposit secures your booking.</li>
-                  <li>After your deposit, each guest receives their own health questionnaire and we schedule a personal preparation call.</li>
-                </ul>
-              </div>
-
-              <div className="flex justify-between items-center">
+              <div className="flex justify-end">
                 <button
                   type="button"
-                onClick={() => goToStep('details')}
-                  className="inline-flex items-center text-stone-500 font-semibold"
-                >
-                  <Icons.ChevronLeft /> Back
-                </button>
-                <button
-                  type="button"
-                  onClick={() => goToStep('health_check')}
-                  className="inline-flex items-center bg-emerald-800 text-white px-6 py-3 rounded-full font-semibold hover:bg-emerald-900"
+                  onClick={() => goToStep("details")}
+                  className="inline-flex items-center bg-emerald-800 text-white px-6 py-3 rounded-full font-semibold hover:bg-emerald-900 transition"
                 >
                   Continue <Icons.ChevronRight />
                 </button>
               </div>
             </div>
           );
-        };
 
-        const renderHealthPreparationStep = () => (
-          <div className="space-y-8">
-            <header className="space-y-3">
-              <p className="text-[12px] uppercase tracking-[0.4em] text-stone-400">Step 4</p>
-              <h1 className="text-4xl font-bold">Health preparation (required)</h1>
-              <p className="text-stone-500">
-                To support your well-being, each guest completes a short health & lifestyle questionnaire followed by a personal preparation call with the
-                Vietnam Detox team. This ensures the retreat is tailored and safe for you.
-              </p>
-            </header>
+          const renderGuestDetailsStep = () => {
+            const primary = guestDetails.guest1;
+            const secondary = guestDetails.guest2;
 
-            <div className="space-y-5">
-              {SAFETY_QUESTIONS.map((question) => {
-                const currentValue = safetyAnswers[question.id];
-                return (
-                  <div key={question.id} className="border border-stone-100 rounded-3xl p-6 space-y-4">
-                    <div className="space-y-1">
-                      <p className="text-sm font-semibold text-stone-800">{question.title}</p>
-                      <p className="text-sm text-stone-600">{question.description}</p>
+            const renderInput = (label, value, onChange, type = "text", helper) => (
+              <div className="space-y-2">
+                <label className="text-[11px] uppercase tracking-[0.2em] text-stone-500">{label}</label>
+                <input
+                  type={type}
+                  className="w-full border border-stone-200 rounded-2xl p-4 bg-stone-50 focus:ring-2 focus:ring-emerald-100 outline-none"
+                  value={value}
+                  onChange={onChange}
+                />
+                {helper && <p className="text-xs text-stone-500">{helper}</p>}
+              </div>
+            );
+
+            return (
+              <div className="space-y-10">
+                <header className="space-y-2">
+                  <p className="text-[12px] uppercase tracking-[0.4em] text-stone-400">Step 2</p>
+                  <h1 className="text-4xl font-bold">Details</h1>
+                  <p className="text-sm text-stone-500">
+                    Used for booking confirmation and invoicing only. These contacts also receive each guest’s health questionnaire and preparation
+                    call details.
+                  </p>
+                </header>
+
+                <section className="space-y-6">
+                  <div className="space-y-1">
+                    <h2 className="text-xl font-semibold text-stone-900">Primary guest</h2>
+                    <p className="text-sm text-stone-500">This information appears on your booking confirmation and invoice.</p>
+                  </div>
+                  <div className="space-y-6">
+                    <div className="space-y-4">
+                      {renderInput("First name", primary.firstName, (e) => updateGuest("guest1", "firstName", e.target.value))}
+                      {renderInput("Last name", primary.lastName, (e) => updateGuest("guest1", "lastName", e.target.value))}
+                      {renderInput("Email address", primary.email, (e) => updateGuest("guest1", "email", e.target.value), "email")}
                     </div>
-                    <div className="flex flex-wrap gap-3">
-                      {[
-                        { label: 'Yes', value: 'yes' },
-                        { label: 'No', value: 'no' },
-                      ].map((option) => {
-                        const active = currentValue === option.value;
-                        return (
-                          <button
-                            key={option.value}
-                            type="button"
-                            aria-pressed={active}
-                            onClick={() => updateSafetyAnswer(question.id, option.value)}
-                            className={`px-4 py-2 rounded-full font-semibold text-sm border ${
-                              active ? 'bg-emerald-800 text-white border-emerald-800' : 'border-stone-200 text-stone-600 hover:border-emerald-200'
-                            }`}
-                          >
-                            {option.label}
-                          </button>
-                        );
-                      })}
+                    <div className="space-y-2">
+                      <label className="text-[11px] uppercase tracking-[0.2em] text-stone-500">Phone number (optional)</label>
+                      <div className="flex flex-col sm:flex-row gap-3">
+                        <div className="sm:w-32">
+                          <input
+                            type="text"
+                            list="dial-codes"
+                            className="w-full border border-stone-200 rounded-2xl p-4 bg-stone-50 focus:ring-2 focus:ring-emerald-100 outline-none"
+                            value={primary.phoneCountryCode}
+                            onChange={(e) => handlePrimaryPhoneCodeChange(e.target.value)}
+                          />
+                          <datalist id="dial-codes">
+                            {[...PHONE_CODE_OPTIONS].sort().map((code) => (
+                              <option key={code} value={code} />
+                            ))}
+                          </datalist>
+                        </div>
+                        <input
+                          type="tel"
+                          className="flex-1 border border-stone-200 rounded-2xl p-4 bg-stone-50 focus:ring-2 focus:ring-emerald-100 outline-none"
+                          value={primary.phone}
+                          onChange={(e) => updateGuest("guest1", "phone", e.target.value)}
+                        />
+                      </div>
+                      <p className="text-xs text-stone-500">Optional. Helpful in case we need to reach you shortly before arrival.</p>
+                    </div>
+                    <div className="space-y-2">
+                      <p className="text-xs text-stone-500">
+                        We use this information only to issue your booking confirmation and invoice if required.
+                      </p>
+                      {renderInput("Street & house number", primary.street, (e) => updateGuest("guest1", "street", e.target.value))}
+                      {renderInput("City", primary.city, (e) => updateGuest("guest1", "city", e.target.value))}
+                      {renderInput("Postal code", primary.postalCode, (e) => updateGuest("guest1", "postalCode", e.target.value))}
+                      {renderInput("Country of residence", primary.country, (e) => handlePrimaryCountryChange(e.target.value))}
+                    </div>
+                    <div className="space-y-2">
+                      <label className="flex items-center gap-2 text-sm text-stone-700">
+                        <input
+                          type="checkbox"
+                          checked={primary.needsCompanyInvoice}
+                          onChange={(e) => updateGuest("guest1", "needsCompanyInvoice", e.target.checked)}
+                        />
+                        I need an invoice issued to a company
+                      </label>
+                      {primary.needsCompanyInvoice && (
+                        <div className="space-y-4">
+                          {renderInput("Company name", primary.companyName, (e) => updateGuest("guest1", "companyName", e.target.value))}
+                          {renderInput("VAT / Tax ID (optional)", primary.taxId, (e) => updateGuest("guest1", "taxId", e.target.value))}
+                        </div>
+                      )}
                     </div>
                   </div>
-                );
-              })}
-            </div>
+                </section>
 
-            {safetyHasConcern && (
-              <div className="bg-rose-50 border border-rose-100 rounded-3xl p-6 space-y-4">
-                <p className="font-semibold text-rose-900">Thank you very much for your honest answer.</p>
-                <div className="space-y-3 text-sm text-stone-700 leading-relaxed">
-                  <p>
-                    Based on established fasting safety guidelines, the condition you have indicated is considered a situation where fasting should only be
-                    undertaken, if at all, under close specialist supervision in a clinical setting.
-                  </p>
-                  <p>
-                    Our fasting retreats are designed for preventive and restorative purposes and cannot provide the level of continuous monitoring required in
-                    this case.
-                  </p>
-                  <p>
-                    Out of responsibility for your safety and well-being, we are therefore unfortunately unable to offer participation in this retreat at this
-                    time. If you wish, you are very welcome to contact Vietnam Detox so we can share information about alternative, gentler lifestyle and
-                    nutrition programs that may be more appropriate for you right now.
-                  </p>
-                </div>
-                <div className="flex flex-wrap gap-3">
-                  <a
-                    href="mailto:hello@vietnamdetox.com"
-                    className="inline-flex items-center justify-center px-4 py-2 rounded-full border border-stone-200 text-sm font-semibold text-stone-700 hover:border-emerald-200"
-                  >
-                    Contact Vietnam Detox
-                  </a>
+                {selection.guests === 2 && (
+                  <section className="space-y-6 pt-8 border-t border-stone-200">
+                    <div className="space-y-1">
+                      <h2 className="text-xl font-semibold text-stone-900">Second guest details</h2>
+                      <p className="text-sm text-stone-500">Used to send their questionnaire and schedule their personal preparation call.</p>
+                    </div>
+                    <div className="space-y-4">
+                      {renderInput("First name", secondary.firstName, (e) => updateGuest("guest2", "firstName", e.target.value))}
+                      {renderInput("Last name", secondary.lastName, (e) => updateGuest("guest2", "lastName", e.target.value))}
+                      {renderInput("Email address (optional)", secondary.email, (e) => updateGuest("guest2", "email", e.target.value), "email")}
+                      {renderInput("Phone number (optional)", secondary.phone, (e) => updateGuest("guest2", "phone", e.target.value), "tel")}
+                    </div>
+                  </section>
+                )}
+
+                <div className="flex justify-between items-center">
+                  <button type="button" onClick={() => goToStep("config")} className="inline-flex items-center text-stone-500 font-semibold">
+                    <Icons.ChevronLeft /> Back
+                  </button>
                   <button
                     type="button"
-                    onClick={() => goToStep('config')}
-                    className="inline-flex items-center justify-center px-4 py-2 rounded-full border border-stone-200 text-sm font-semibold text-stone-700 hover:border-emerald-200"
+                    disabled={!guestDetailsValid()}
+                    onClick={() => goToStep("review")}
+                    className={`inline-flex items-center px-6 py-3 rounded-full font-semibold ${
+                      guestDetailsValid() ? "bg-emerald-800 text-white hover:bg-emerald-900" : "bg-stone-200 text-stone-500 cursor-not-allowed"
+                    }`}
                   >
-                    Return to retreat overview
+                    Review <Icons.ChevronRight />
                   </button>
                 </div>
               </div>
-            )}
-
-            <div className="flex justify-between items-center">
-              <button type="button" onClick={() => goToStep('review')} className="inline-flex items-center text-stone-500 font-semibold">
-                <Icons.ChevronLeft /> Back
-              </button>
-              {!safetyHasConcern && (
-                <button
-                  type="button"
-                  disabled={!safetyAllAnswered}
-                  onClick={() => goToStep('payment')}
-                  className={`inline-flex items-center px-6 py-3 rounded-full font-semibold ${
-                    safetyAllAnswered ? 'bg-emerald-800 text-white hover:bg-emerald-900' : 'bg-stone-200 text-stone-500 cursor-not-allowed'
-                  }`}
-                >
-                  Continue with booking <Icons.ChevronRight />
-                </button>
-              )}
-            </div>
-          </div>
-        );
-        const renderPaymentStep = () => (
-          <div className="space-y-10">
-            <header className="space-y-3">
-              <p className="text-[12px] uppercase tracking-[0.4em] text-stone-400">Step 5</p>
-              <h1 className="text-4xl font-bold">Secure with a deposit</h1>
-              <p className="text-stone-500">30% is charged now. Status after payment: Reserved – preparation pending.</p>
-            </header>
-
-            <div className="bg-white border border-stone-100 rounded-3xl p-6 space-y-2">
-              <div className="flex justify-between">
-                <span className="text-stone-500">Deposit due today</span>
-                <span className="text-2xl font-semibold">{formatVND(pricing.deposit)}</span>
-              </div>
-              <div className="flex justify-between text-sm text-stone-500">
-                <span>Remaining balance on arrival</span>
-                <span className="font-semibold">{formatVND(pricing.remaining)}</span>
-              </div>
-            </div>
-
-            <div className="bg-stone-50 border border-stone-100 rounded-3xl p-6 space-y-3">
-              <h3 className="text-sm font-semibold text-stone-700 uppercase tracking-[0.3em]">Deposit & Health Review</h3>
-              <p className="text-sm text-stone-600">The 30% deposit secures your room and retreat place.</p>
-              <p className="text-sm text-stone-600">After payment, each guest receives a private health questionnaire and a mandatory personal preparation call.</p>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <button
-                type="button"
-                onClick={() => setPaymentMethod('vnpay')}
-                className={`text-left border-2 rounded-2xl p-5 ${
-                  paymentMethod === 'vnpay' ? 'border-emerald-600 bg-emerald-50' : 'border-stone-100 hover:border-stone-200'
-                }`}
-              >
-                <p className="text-xs uppercase tracking-[0.3em] text-stone-400">Local · Best for Vietnam residents</p>
-                <h3 className="text-2xl font-bold">VNPay · VND</h3>
-                <p className="text-sm text-stone-500">Pay in VND via domestic bank transfer.</p>
-              </button>
-              <button
-                type="button"
-                onClick={() => setPaymentMethod('stripe')}
-                className={`text-left border-2 rounded-2xl p-5 ${
-                  paymentMethod === 'stripe' ? 'border-emerald-600 bg-emerald-50' : 'border-stone-100 hover:border-stone-200'
-                }`}
-              >
-                <p className="text-xs uppercase tracking-[0.3em] text-stone-400">International</p>
-                <h3 className="text-2xl font-bold">Stripe · USD</h3>
-                <p className="text-sm text-stone-500">Card processing fee (3.6%) added.</p>
-              </button>
-            </div>
-
-            <div className="flex justify-between items-center">
-              <button
-                type="button"
-                onClick={() => goToStep('health_check')}
-                className="inline-flex items-center text-stone-500 font-semibold"
-              >
-                <Icons.ChevronLeft /> Back
-              </button>
-              <button
-                type="button"
-                onClick={handlePayment}
-                className="inline-flex items-center bg-emerald-800 text-white px-6 py-3 rounded-full font-semibold hover:bg-emerald-900"
-              >
-                Pay deposit & secure booking <Icons.ChevronRight />
-              </button>
-            </div>
-          </div>
-        );
-
-        const renderScreeningStep = () => {
-          const handlePrimary = () => {
-            if (!depositPaid) {
-              goToStep('payment');
-            } else {
-              goToStep('review_state');
-            }
+            );
           };
 
-          const questions = [
-            'Are you currently pregnant or breastfeeding?',
-            'Do you have Type 1 diabetes?',
-            'Do you have a diagnosed eating disorder?',
-            'Are you under active treatment that may affect fasting?',
-          ];
+          const renderReviewStep = () => {
+            const dateInfo = dateOptions.find((d) => d.label === selection.date);
+            const room = roomsForCurrentRetreat.find((r) => r.id === selection.roomType) || roomsForCurrentRetreat[0];
+            const transferOption = TRANSPORT_OPTIONS.find((option) => option.id === selection.transfer) || TRANSPORT_OPTIONS[0];
+            const guests = [
+              { label: "Guest 1", data: guestDetails.guest1 },
+              ...(selection.guests === 2 ? [{ label: "Guest 2", data: guestDetails.guest2 }] : []),
+            ];
 
-          return (
-            <div className="space-y-8 max-w-2xl">
+            return (
+              <div className="space-y-10">
+                <header className="space-y-3">
+                  <p className="text-[12px] uppercase tracking-[0.4em] text-stone-400">Step 3</p>
+                  <h1 className="text-4xl font-bold">Review</h1>
+                  <p className="text-stone-500">Confirm dates, residence, guests, and transfers before the deposit step.</p>
+                </header>
+
+                <div className="space-y-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-xs uppercase tracking-[0.3em] text-stone-400">Retreat</p>
+                      <p className="font-semibold">{selection.retreatName}</p>
+                      <p className="text-sm text-stone-500">{selection.retreatLocation}</p>
+                      {selection.retreatEarlyBirdNote && <p className="text-xs text-emerald-700 mt-1">{selection.retreatEarlyBirdNote}</p>}
+                    </div>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-xs uppercase tracking-[0.3em] text-stone-400">Retreat dates</p>
+                      <p className="font-semibold">{dateInfo?.label}</p>
+                    </div>
+                    <button className="text-sm text-emerald-700 font-semibold" onClick={() => goToStep("config")}>
+                      Edit
+                    </button>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-xs uppercase tracking-[0.3em] text-stone-400">Accommodation</p>
+                      <p className="font-semibold">{room?.name}</p>
+                    </div>
+                    <button className="text-sm text-emerald-700 font-semibold" onClick={() => goToStep("config")}>
+                      Edit
+                    </button>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-xs uppercase tracking-[0.3em] text-stone-400">Airport transfer</p>
+                      <p className="font-semibold">{transferOption.label}</p>
+                    </div>
+                    <button className="text-sm text-emerald-700 font-semibold" onClick={() => goToStep("config")}>
+                      Edit
+                    </button>
+                  </div>
+                </div>
+
+                <div className="space-y-6">
+                  <div className="flex items-center justify-between">
+                    <p className="text-xs uppercase tracking-[0.3em] text-stone-400">Guests</p>
+                    <button className="text-sm text-emerald-700 font-semibold" onClick={() => goToStep("details")}>
+                      Edit
+                    </button>
+                  </div>
+                  <div className="space-y-4">
+                    {guests.map((guest, index) => (
+                      <div key={guest.label} className={`${index > 0 ? "pt-4 border-t border-stone-200" : ""}`}>
+                        <p className="font-semibold">{guest.label}</p>
+                        <p className="text-sm text-stone-500">
+                          {guest.data.firstName || "First name"} {guest.data.lastName || ""}
+                        </p>
+                        <p className="text-sm text-stone-500">{guest.data.email || "Email pending"}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="bg-stone-50 border border-stone-100 rounded-3xl p-6 space-y-2">
+                  <h3 className="text-sm font-semibold text-stone-700 uppercase tracking-[0.3em]">Deposit & health review</h3>
+                  <ul className="space-y-1 text-sm text-stone-600 list-disc pl-4">
+                    <li>A 30% deposit secures your booking.</li>
+                    <li>After your deposit, each guest receives their own health questionnaire and we schedule a personal preparation call.</li>
+                  </ul>
+                </div>
+
+                <div className="flex justify-between items-center">
+                  <button type="button" onClick={() => goToStep("details")} className="inline-flex items-center text-stone-500 font-semibold">
+                    <Icons.ChevronLeft /> Back
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => goToStep("health_check")}
+                    className="inline-flex items-center bg-emerald-800 text-white px-6 py-3 rounded-full font-semibold hover:bg-emerald-900"
+                  >
+                    Continue <Icons.ChevronRight />
+                  </button>
+                </div>
+              </div>
+            );
+          };
+
+          const renderHealthPreparationStep = () => (
+            <div className="space-y-8">
               <header className="space-y-3">
-                <p className="text-[12px] uppercase tracking-[0.4em] text-stone-400">Step 6</p>
-                <h1 className="text-4xl font-bold">Health preparation</h1>
-                <p className="text-stone-500">You’re almost done.</p>
+                <p className="text-[12px] uppercase tracking-[0.4em] text-stone-400">Step 4</p>
+                <h1 className="text-4xl font-bold">Health preparation (required)</h1>
                 <p className="text-stone-500">
-                  Each guest completes a personal health questionnaire and a mandatory preparation call with the Vietnam Detox team. This is how we tailor the
-                  experience and make sure you feel confident before arrival.
+                  To support your well-being, each guest completes a short health & lifestyle questionnaire followed by a personal preparation call
+                  with the Vietnam Detox team. This ensures the retreat is tailored and safe for you.
                 </p>
               </header>
 
-              <div className="bg-stone-50 border border-stone-100 rounded-3xl p-6 space-y-3">
-                <p className="text-xs uppercase tracking-[0.3em] text-stone-400">What happens next</p>
-                <ul className="space-y-2 text-sm text-stone-600 list-disc pl-4">
-                  <li>Each guest receives their own health & lifestyle questionnaire.</li>
-                  <li>The Vietnam Detox team reviews every response personally.</li>
-                  <li>A mandatory 30-minute preparation call is scheduled after each questionnaire.</li>
-                  <li>Status after payment: Reserved – preparation pending.</li>
-                  <li>Status after calls: Booking confirmed.</li>
-                </ul>
-              </div>
-
-              <div className="space-y-4 border border-stone-100 rounded-3xl p-6">
-                <p className="text-sm font-semibold text-stone-700">Quick pre-check</p>
-                <p className="text-sm text-stone-500">If you answer “Yes” to any of these, our team will follow up personally.</p>
-                <div className="space-y-3">
-                  {questions.map((question) => (
-                    <label key={question} className="flex flex-col text-sm text-stone-600 gap-1">
-                      {question}
-                      <select className="border border-stone-200 rounded-2xl px-4 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-emerald-100">
-                        <option value="no">No</option>
-                        <option value="yes">Yes</option>
-                      </select>
-                    </label>
-                  ))}
-                </div>
-              </div>
-
-              <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                <button
-                  type="button"
-                  onClick={handlePrimary}
-                  className="inline-flex items-center justify-center bg-emerald-800 text-white px-6 py-3 rounded-full font-semibold hover:bg-emerald-900"
-                >
-                  Continue – Begin Health Preparation <Icons.ChevronRight />
-                </button>
-                <button type="button" onClick={() => goToStep('review')} className="text-sm font-semibold text-stone-500 hover:text-stone-700">
-                  Back to booking
-                </button>
-              </div>
-            </div>
-          );
-        };
-
-        const renderReviewStateStep = () => {
-          const timeline = [
-            {
-              label: 'Deposit received',
-              status: depositPaid ? 'done' : 'pending',
-              description: depositPaid ? 'Status: Reserved – preparation pending' : 'Awaiting payment',
-            },
-            {
-              label: 'Guest 1 health preparation',
-              status: screeningStatus.guest1 === 'complete' ? 'done' : 'pending',
-              description: screeningStatus.guest1 === 'complete' ? 'Questionnaire + call complete' : 'Awaiting questionnaire and call',
-            },
-          ];
-
-          if (selection.guests === 2) {
-            timeline.push({
-              label: 'Guest 2 health preparation',
-              status: screeningStatus.guest2 === 'complete' ? 'done' : 'pending',
-              description: screeningStatus.guest2 === 'complete' ? 'Questionnaire + call complete' : 'Awaiting questionnaire and call',
-            });
-          }
-
-          timeline.push({
-            label: 'Vietnam Detox team confirmation',
-            status: screeningsComplete ? 'done' : 'waiting',
-            description: screeningsComplete ? 'Status: Booking confirmed' : 'Begins after preparation calls',
-          });
-
-          const statusStyles = {
-            done: 'bg-emerald-600 text-white',
-            pending: 'bg-stone-100 text-stone-600',
-            waiting: 'bg-stone-100 text-stone-400',
-          };
-
-          const screeningGuests = [
-            {
-              label: 'Guest 1 health preparation',
-              status: screeningStatus.guest1,
-              guestNumber: 1,
-              name: `${guestDetails.guest1.firstName || 'Guest'} ${guestDetails.guest1.lastName || ''}`.trim() || 'Guest 1',
-            },
-            ...(selection.guests === 2
-              ? [
-                  {
-                    label: 'Guest 2 health preparation',
-                    status: screeningStatus.guest2,
-                    guestNumber: 2,
-                    name: `${guestDetails.guest2.firstName || 'Guest'} ${guestDetails.guest2.lastName || ''}`.trim() || 'Guest 2',
-                  },
-                ]
-              : []),
-          ];
-
-          return (
-            <div className="space-y-10 max-w-2xl">
-              <header className="space-y-3">
-                <p className="text-[12px] uppercase tracking-[0.4em] text-stone-400">Step 7</p>
-                <h1 className="text-4xl font-bold">Health preparation timeline</h1>
-                <p className="text-stone-500">Track questionnaires, preparation calls, and final confirmation.</p>
-              </header>
-
-              <div className="space-y-4">
-                {timeline.map((item) => (
-                  <div key={item.label} className="flex items-center gap-4">
-                    <div className={`w-12 h-12 rounded-full flex items-center justify-center ${statusStyles[item.status]}`}>
-                      <Icons.Check />
-                    </div>
-                    <div>
-                      <p className="font-semibold">{item.label}</p>
-                      <p className="text-sm text-stone-500">{item.description}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              <div className="bg-stone-50 border border-stone-100 rounded-3xl p-6 space-y-2">
-                <p className="text-sm text-stone-600">Status: Reserved – preparation pending.</p>
-                <p className="text-sm text-stone-600">We confirm once both questionnaires and preparation calls are complete.</p>
-              </div>
-
-              <div className="space-y-4">
-                {screeningGuests.map((guest) => {
-                  const encodedName = encodeURIComponent(guest.name || `Guest ${guest.guestNumber}`);
-                  const url = `/screening.html?guest=${guest.guestNumber}&booking=${encodeURIComponent(BOOKING_REFERENCE)}&name=${encodedName}`;
+              <div className="space-y-5">
+                {SAFETY_QUESTIONS.map((question) => {
+                  const currentValue = safetyAnswers[question.id];
                   return (
-                    <div key={guest.guestNumber} className="border border-stone-200 rounded-3xl p-5 space-y-3">
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <p className="text-xs uppercase tracking-[0.3em] text-stone-400">{guest.label}</p>
-                          <p className="text-sm text-stone-500">
-                            {guest.status === 'complete' ? 'Questionnaire + call complete' : 'Awaiting questionnaire and call'}
-                          </p>
-                        </div>
-                        <div className={`w-10 h-10 rounded-full flex items-center justify-center ${guest.status === 'complete' ? 'bg-emerald-100 text-emerald-700' : 'bg-stone-100 text-stone-400'}`}>
-                          <Icons.Check />
-                        </div>
+                    <div key={question.id} className="border border-stone-100 rounded-3xl p-6 space-y-4">
+                      <div className="space-y-1">
+                        <p className="text-sm font-semibold text-stone-800">{question.title}</p>
+                        <p className="text-sm text-stone-600">{question.description}</p>
                       </div>
-                      <div className="flex flex-col gap-2 sm:flex-row">
-                        <a
-                          href={url}
-                          className="inline-flex items-center justify-center bg-emerald-800 text-white px-4 py-2 rounded-full font-semibold text-sm hover:bg-emerald-900"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                        >
-                          Open health questionnaire
-                        </a>
-                        <button
-                          type="button"
-                          className="inline-flex items-center justify-center bg-white text-stone-600 border border-stone-200 px-4 py-2 rounded-full text-sm font-semibold hover:border-emerald-200"
-                          onClick={() => {
-                            const absoluteUrl = window.location.origin && window.location.origin !== 'null' ? `${window.location.origin}/${url}` : url;
-                            const clipboard = navigator?.clipboard?.writeText;
-                            if (typeof clipboard === 'function') {
-                              clipboard
-                                .call(navigator.clipboard, absoluteUrl)
-                                .then(() => alert('Link copied'))
-                                .catch(() => alert(`Copy this link:\n${absoluteUrl}`));
-                            } else {
-                              alert(`Copy this link:\n${absoluteUrl}`);
-                            }
-                          }}
-                        >
-                          Copy link
-                        </button>
+                      <div className="flex flex-wrap gap-3">
+                        {[
+                          { label: "Yes", value: "yes" },
+                          { label: "No", value: "no" },
+                        ].map((option) => {
+                          const active = currentValue === option.value;
+                          return (
+                            <button
+                              key={option.value}
+                              type="button"
+                              aria-pressed={active}
+                              onClick={() => updateSafetyAnswer(question.id, option.value)}
+                              className={`px-4 py-2 rounded-full font-semibold text-sm border ${
+                                active ? "bg-emerald-800 text-white border-emerald-800" : "border-stone-200 text-stone-600 hover:border-emerald-200"
+                              }`}
+                            >
+                              {option.label}
+                            </button>
+                          );
+                        })}
                       </div>
-                      <p className="text-xs text-stone-500">You can share this link if the questionnaire should be completed on another device or by your travel partner.</p>
                     </div>
                   );
                 })}
               </div>
 
-              <div className="border border-emerald-100 bg-emerald-50 rounded-3xl p-6 space-y-2 text-left">
-                <p className="text-sm font-semibold text-stone-800">Included personal health review call</p>
-                  <p className="text-sm text-stone-600">
-                    After submitting the health questionnaire, the Vietnam Detox team offers a complimentary 30-minute 1-on-1 call to review your answers, answer questions, and make sure the program is well suited for you. This call is included in your retreat and will be scheduled after the health preparation steps are submitted.
-                  </p>
+              {safetyHasConcern && (
+                <div className="bg-rose-50 border border-rose-100 rounded-3xl p-6 space-y-4">
+                  <p className="font-semibold text-rose-900">Thank you very much for your honest answer.</p>
+                  <div className="space-y-3 text-sm text-stone-700 leading-relaxed">
+                    <p>
+                      Based on established fasting safety guidelines, the condition you have indicated is considered a situation where fasting should
+                      only be undertaken, if at all, under close specialist supervision in a clinical setting.
+                    </p>
+                    <p>
+                      Our fasting retreats are designed for preventive and restorative purposes and cannot provide the level of continuous monitoring
+                      required in this case.
+                    </p>
+                    <p>
+                      Out of responsibility for your safety and well-being, we are therefore unfortunately unable to offer participation in this
+                      retreat at this time. If you wish, you are very welcome to contact Vietnam Detox so we can share information about alternative,
+                      gentler lifestyle and nutrition programs that may be more appropriate for you right now.
+                    </p>
+                  </div>
+                  <div className="flex flex-wrap gap-3">
+                    <a
+                      href="mailto:hello@vietnamdetox.com"
+                      className="inline-flex items-center justify-center px-4 py-2 rounded-full border border-stone-200 text-sm font-semibold text-stone-700 hover:border-emerald-200"
+                    >
+                      Contact Vietnam Detox
+                    </a>
+                    <button
+                      type="button"
+                      onClick={() => goToStep("config")}
+                      className="inline-flex items-center justify-center px-4 py-2 rounded-full border border-stone-200 text-sm font-semibold text-stone-700 hover:border-emerald-200"
+                    >
+                      Return to retreat overview
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              <div className="flex justify-between items-center">
+                <button type="button" onClick={() => goToStep("review")} className="inline-flex items-center text-stone-500 font-semibold">
+                  <Icons.ChevronLeft /> Back
+                </button>
+                {!safetyHasConcern && (
+                  <button
+                    type="button"
+                    disabled={!safetyAllAnswered}
+                    onClick={() => goToStep("payment")}
+                    className={`inline-flex items-center px-6 py-3 rounded-full font-semibold ${
+                      safetyAllAnswered ? "bg-emerald-800 text-white hover:bg-emerald-900" : "bg-stone-200 text-stone-500 cursor-not-allowed"
+                    }`}
+                  >
+                    Continue with booking <Icons.ChevronRight />
+                  </button>
+                )}
+              </div>
+            </div>
+          );
+          const renderPaymentStep = () => (
+            <div className="space-y-10">
+              <header className="space-y-3">
+                <p className="text-[12px] uppercase tracking-[0.4em] text-stone-400">Step 5</p>
+                <h1 className="text-4xl font-bold">Secure with a deposit</h1>
+                <p className="text-stone-500">30% is charged now. Status after payment: Reserved – preparation pending.</p>
+              </header>
+
+              <div className="bg-white border border-stone-100 rounded-3xl p-6 space-y-2">
+                <div className="flex justify-between">
+                  <span className="text-stone-500">Deposit due today</span>
+                  <span className="text-2xl font-semibold">{formatVND(pricing.deposit)}</span>
+                </div>
+                <div className="flex justify-between text-sm text-stone-500">
+                  <span>Remaining balance on arrival</span>
+                  <span className="font-semibold">{formatVND(pricing.remaining)}</span>
+                </div>
+              </div>
+
+              <div className="bg-stone-50 border border-stone-100 rounded-3xl p-6 space-y-3">
+                <h3 className="text-sm font-semibold text-stone-700 uppercase tracking-[0.3em]">Deposit & Health Review</h3>
+                <p className="text-sm text-stone-600">The 30% deposit secures your room and retreat place.</p>
+                <p className="text-sm text-stone-600">
+                  After payment, each guest receives a private health questionnaire and a mandatory personal preparation call.
+                </p>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <button
                   type="button"
-                  className="inline-flex items-center bg-emerald-800 text-white px-4 py-2 rounded-full text-sm font-semibold hover:bg-emerald-900"
-                  onClick={() => alert('Thank you. We will contact you to schedule your personal health review call.')}
+                  onClick={() => setPaymentMethod("vnpay")}
+                  className={`text-left border-2 rounded-2xl p-5 ${
+                    paymentMethod === "vnpay" ? "border-emerald-600 bg-emerald-50" : "border-stone-100 hover:border-stone-200"
+                  }`}
                 >
-                  Request my health review call
+                  <p className="text-xs uppercase tracking-[0.3em] text-stone-400">Local · Best for Vietnam residents</p>
+                  <h3 className="text-2xl font-bold">VNPay · VND</h3>
+                  <p className="text-sm text-stone-500">Pay in VND via domestic bank transfer.</p>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setPaymentMethod("stripe")}
+                  className={`text-left border-2 rounded-2xl p-5 ${
+                    paymentMethod === "stripe" ? "border-emerald-600 bg-emerald-50" : "border-stone-100 hover:border-stone-200"
+                  }`}
+                >
+                  <p className="text-xs uppercase tracking-[0.3em] text-stone-400">International</p>
+                  <h3 className="text-2xl font-bold">Stripe · USD</h3>
+                  <p className="text-sm text-stone-500">Card processing fee (3.6%) added.</p>
                 </button>
               </div>
 
               <div className="flex justify-between items-center">
-                <button type="button" onClick={() => goToStep('screening')} className="inline-flex items-center text-stone-500 font-semibold">
-                  <Icons.ChevronLeft /> Back to health preparation hub
+                <button type="button" onClick={() => goToStep("health_check")} className="inline-flex items-center text-stone-500 font-semibold">
+                  <Icons.ChevronLeft /> Back
                 </button>
                 <button
                   type="button"
-                  disabled={!screeningsComplete}
-                  onClick={() => goToStep('confirmed')}
-                  className={`inline-flex items-center px-6 py-3 rounded-full font-semibold ${
-                    screeningsComplete ? 'bg-emerald-800 text-white hover:bg-emerald-900' : 'bg-stone-200 text-stone-500 cursor-not-allowed'
-                  }`}
+                  onClick={handlePayment}
+                  className="inline-flex items-center bg-emerald-800 text-white px-6 py-3 rounded-full font-semibold hover:bg-emerald-900"
                 >
-                  Move to confirmation <Icons.ChevronRight />
+                  Pay deposit & secure booking <Icons.ChevronRight />
                 </button>
               </div>
             </div>
           );
-        };
 
-        const renderConfirmedStep = () => {
-          const guestEntries = [
-            { label: selection.guests === 1 ? 'Start health preparation' : 'Guest 1 – Start health preparation', guestNumber: 1 },
-            ...(selection.guests === 2 ? [{ label: 'Guest 2 – Start health preparation', guestNumber: 2 }] : []),
-          ];
+          const renderScreeningStep = () => {
+            const handlePrimary = () => {
+              if (!depositPaid) {
+                goToStep("payment");
+              } else {
+                goToStep("review_state");
+              }
+            };
 
-          return (
-            <div className="space-y-8 max-w-2xl text-center">
-              <header className="space-y-3">
-                <p className="text-[12px] uppercase tracking-[0.4em] text-stone-400">Step 8</p>
-                <h1 className="text-4xl font-bold">Booking Confirmed</h1>
-                <p className="text-stone-500">
-                  Thank you for your booking. Your place is secured. We’re looking forward to welcoming you to your Vietnam Detox retreat. Remaining balance of {formatVND(pricing.remaining)} is payable on arrival.
-                </p>
-              </header>
-              <div className="bg-white border border-stone-100 rounded-3xl p-6 space-y-2 text-left">
-                <div className="flex justify-between text-sm text-stone-500">
-                  <span>Retreat dates</span>
-                  <span className="font-semibold">{selection.date}</span>
-                </div>
-                <div className="flex justify-between text-sm text-stone-500">
-                  <span>Guests</span>
-                  <span className="font-semibold">{selection.guests}</span>
-                </div>
-                <div className="flex justify-between text-sm text-stone-500">
-                  <span>Room</span>
-                  <span className="font-semibold">
-                    {roomsForCurrentRetreat.find((r) => r.id === selection.roomType)?.name || roomsForCurrentRetreat[0]?.name || 'TBD'}
-                  </span>
-                </div>
-                <div className="flex justify-between text-sm text-stone-500">
-                  <span>Airport transfer</span>
-                  <span className="font-semibold">
-                    {TRANSPORT_OPTIONS.find((option) => option.id === selection.transfer)?.label || 'No airport transfer'}
-                  </span>
-                </div>
-                <div className="flex justify-between text-sm text-stone-500">
-                  <span>Deposit paid</span>
-                  <span className="font-semibold">{formatVND(pricing.deposit)}</span>
-                </div>
-              </div>
+            const questions = [
+              "Are you currently pregnant or breastfeeding?",
+              "Do you have Type 1 diabetes?",
+              "Do you have a diagnosed eating disorder?",
+              "Are you under active treatment that may affect fasting?",
+            ];
 
-              <div className="bg-stone-50 border border-stone-100 rounded-3xl p-6 text-left space-y-4">
-                <div>
-                  <p className="text-xs uppercase tracking-[0.3em] text-stone-400">Health Preparation</p>
-                  <p className="text-sm text-stone-600">
-                    Each guest completes their own questionnaire and personal preparation call. You can start now or later. The same links will also be sent by email.
-                  </p>
-                </div>
-                <div className="space-y-2">
-                  {guestEntries.map((guest) => (
-                    <a
-                      key={guest.guestNumber}
-                      href={`screening.html?guest=${guest.guestNumber}&booking=${encodeURIComponent(BOOKING_REFERENCE)}`}
-                      className="flex items-center justify-between border border-stone-200 rounded-2xl px-4 py-3 hover:border-emerald-300 transition"
-                    >
-                      <span className="font-semibold text-stone-700">{guest.label}</span>
-                      <span className="text-sm text-emerald-700 font-semibold">Start health preparation</span>
-                    </a>
-                  ))}
-                </div>
-
-                <div className="mt-4 border border-emerald-100 bg-emerald-50 rounded-2xl px-4 py-4 space-y-2 text-left">
-                  <p className="font-semibold text-stone-800">Included personal health review call</p>
-                  <p className="text-sm text-stone-600">
-                    After submitting the health questionnaire, the Vietnam Detox team offers a complimentary 30-minute 1-on-1 call to review your answers, answer questions, and make sure the program is well suited for you. This call is included in your retreat and will be scheduled after the health preparation steps are submitted.
-                  </p>
-                  <p className="text-xs text-stone-500">The call is optional unless the Vietnam Detox team recommends it based on your questionnaire.</p>
-                  <button
-                    type="button"
-                    className="inline-flex items-center bg-emerald-800 text-white px-4 py-2 rounded-full text-sm font-semibold hover:bg-emerald-900"
-                    onClick={() => alert('Thank you. We will contact you to schedule a personal health review call.')}
-                  >
-                    Request personal health review call
-                  </button>
-                </div>
-              </div>
-
-              <p className="text-sm text-stone-500">
-                Our concierge will reach out with itinerary planning, transfer coordination, and packing suggestions within 24 hours.
-              </p>
-              <button className="inline-flex items-center justify-center bg-stone-900 text-white px-6 py-3 rounded-full font-semibold hover:bg-black">
-                Download booking summary
-              </button>
-            </div>
-          );
-        };
-
-        const HeaderBar = () => (
-          <nav className="border-b border-stone-100 px-6 py-6 sticky top-0 bg-white/80 backdrop-blur-md z-40">
-            <div className="max-w-6xl mx-auto flex justify-between items-center">
-              <div className="flex items-center">
-                <img src="./vietnam-detox-logo.svg" alt="Vietnam Detox" className="h-8 w-auto" onError={handleImageError} />
-              </div>
-              <div className="hidden md:flex space-x-6 text-sm font-medium text-stone-400">
-                <span>The Method</span>
-                <span>Retreats</span>
-                <span className="text-stone-900">Book Now</span>
-              </div>
-            </div>
-          </nav>
-        );
-
-        const DemoController = () => (
-          <div className="fixed bottom-6 left-1/2 -translate-x-1/2 bg-white/90 backdrop-blur border border-stone-200 shadow-2xl rounded-2xl px-6 py-4 flex items-center space-x-4 z-50">
-            <div className="flex flex-col border-r border-stone-200 pr-4 mr-2">
-              <span className="text-[10px] font-black uppercase tracking-tighter text-emerald-700">Vietnam Detox</span>
-              <span className="text-xs font-bold text-stone-400">Demo Controller</span>
-            </div>
-            <div className="flex space-x-2">
-              {STEPS.map((step) => (
-                <button
-                  key={step}
-                  onClick={() => goToStep(step)}
-                  className={`px-3 py-1.5 text-[10px] font-semibold rounded-md ${
-                    controllerStep === step ? 'bg-emerald-100 text-emerald-700' : 'bg-stone-100 text-stone-500'
-                  }`}
-                >
-                  {step.replace('_', ' ').toUpperCase()}
-                </button>
-              ))}
-            </div>
-          </div>
-        );
-
-        const stepConfig = {
-          config: { content: renderConfigStep(), summaryContext: 'default' },
-          details: { content: renderGuestDetailsStep(), summaryContext: 'default' },
-          review: { content: renderReviewStep(), summaryContext: 'review' },
-          health_check: { content: renderHealthPreparationStep(), summaryContext: 'default' },
-          payment: { content: renderPaymentStep(), summaryContext: 'payment' },
-          screening: { content: renderScreeningStep(), summaryContext: 'default' },
-          review_state: { content: renderReviewStateStep(), summaryContext: 'default' },
-          confirmed: { content: renderConfirmedStep(), summaryContext: 'confirmed' },
-        };
-
-        const stepEntry = stepConfig[flowStep] || stepConfig.config;
-        const { content, summaryContext } = stepEntry;
-
-        return (
-          <div className="min-h-screen bg-white font-sans text-stone-900 selection:bg-emerald-100 pb-32">
-            <HeaderBar />
-
-            <main className="max-w-6xl mx-auto px-6 py-12 space-y-8">
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
-                <div className="lg:col-span-2 space-y-10">{content}</div>
-                <div className="hidden lg:block lg:col-span-1">
-                  <div className="sticky top-24">
-                    <PriceSummary context={summaryContext} pricing={pricing} paymentMethod={paymentMethod} stripeFee={stripeFee} paymentDueNow={paymentDueNow} />
-                  </div>
-                </div>
-              </div>
-              <div className="lg:hidden">
-                <PriceSummary context={summaryContext} pricing={pricing} paymentMethod={paymentMethod} stripeFee={stripeFee} paymentDueNow={paymentDueNow} />
-              </div>
-            </main>
-
-            <DemoController />
-
-            {galleryRoom && (
-              <div
-                className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center px-4"
-                onClick={(event) => {
-                  if (event.target === event.currentTarget) {
-                    closeGallery();
-                  }
-                }}
-              >
-                <div
-                  ref={modalRef}
-                  role="dialog"
-                  aria-modal="true"
-                  aria-label={`${galleryRoom.name} gallery`}
-                  className="relative max-w-3xl w-full bg-white rounded-3xl overflow-hidden shadow-2xl outline-none"
-                  onClick={(e) => e.stopPropagation()}
-                  tabIndex={-1}
-                >
-                  <button
-                    type="button"
-                    ref={closeButtonRef}
-                    aria-label="Close gallery"
-                    className="absolute top-4 right-4 text-stone-900 bg-white/70 hover:bg-white rounded-full w-10 h-10 flex items-center justify-center text-xl"
-                    onClick={closeGallery}
-                  >
-                    <span aria-hidden="true">&times;</span>
-                  </button>
-                  <div className="relative">
-                    <img src={galleryRoom.images[galleryIndex]} alt={galleryRoom.name} className="w-full h-[420px] object-cover" onError={handleImageError} />
-                    {galleryRoom.images.length > 1 && (
-                      <>
-                        <button
-                          type="button"
-                          className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white text-stone-900 rounded-full p-2"
-                          onClick={showPrevImage}
-                          aria-label="Previous image"
-                        >
-                          ‹
-                        </button>
-                        <button
-                          type="button"
-                          className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white text-stone-900 rounded-full p-2"
-                          onClick={showNextImage}
-                          aria-label="Next image"
-                        >
-                          ›
-                        </button>
-                      </>
-                    )}
-                  </div>
-                  <div className="p-6 space-y-1">
-                    <p className="text-xs uppercase tracking-[0.3em] text-stone-400">Gallery</p>
-                    <h3 className="text-2xl font-bold">{galleryRoom.name}</h3>
-                    <p className="text-sm text-stone-500">{galleryRoom.benefit}</p>
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
-        );
-      };
-
-      class AppErrorBoundary extends React.Component {
-        constructor(props) {
-          super(props);
-          this.state = { hasError: false };
-          this.handleReset = this.handleReset.bind(this);
-        }
-
-        static getDerivedStateFromError(error) {
-          return { hasError: true, error };
-        }
-
-        componentDidCatch(error, info) {
-          console.error('Booking UI error', error, info);
-        }
-
-        handleReset() {
-          this.setState({ hasError: false, error: null });
-          if (typeof this.props.onReset === 'function') {
-            this.props.onReset();
-          }
-        }
-
-        render() {
-          if (this.state.hasError) {
             return (
-              <div className="min-h-screen bg-white font-sans text-stone-900 selection:bg-emerald-100 flex items-center justify-center px-6">
-                <div className="max-w-md text-center space-y-4">
-                  <p className="text-[12px] uppercase tracking-[0.4em] text-stone-400">Booking status</p>
-                  <h1 className="text-3xl font-bold text-stone-900">We hit a snag</h1>
-                  <p className="text-stone-600">Your progress is safe. Continue when you’re ready.</p>
+              <div className="space-y-8 max-w-2xl">
+                <header className="space-y-3">
+                  <p className="text-[12px] uppercase tracking-[0.4em] text-stone-400">Step 6</p>
+                  <h1 className="text-4xl font-bold">Health preparation</h1>
+                  <p className="text-stone-500">You’re almost done.</p>
+                  <p className="text-stone-500">
+                    Each guest completes a personal health questionnaire and a mandatory preparation call with the Vietnam Detox team. This is how we
+                    tailor the experience and make sure you feel confident before arrival.
+                  </p>
+                </header>
+
+                <div className="bg-stone-50 border border-stone-100 rounded-3xl p-6 space-y-3">
+                  <p className="text-xs uppercase tracking-[0.3em] text-stone-400">What happens next</p>
+                  <ul className="space-y-2 text-sm text-stone-600 list-disc pl-4">
+                    <li>Each guest receives their own health & lifestyle questionnaire.</li>
+                    <li>The Vietnam Detox team reviews every response personally.</li>
+                    <li>A mandatory 30-minute preparation call is scheduled after each questionnaire.</li>
+                    <li>Status after payment: Reserved – preparation pending.</li>
+                    <li>Status after calls: Booking confirmed.</li>
+                  </ul>
+                </div>
+
+                <div className="space-y-4 border border-stone-100 rounded-3xl p-6">
+                  <p className="text-sm font-semibold text-stone-700">Quick pre-check</p>
+                  <p className="text-sm text-stone-500">If you answer “Yes” to any of these, our team will follow up personally.</p>
+                  <div className="space-y-3">
+                    {questions.map((question) => (
+                      <label key={question} className="flex flex-col text-sm text-stone-600 gap-1">
+                        {question}
+                        <select className="border border-stone-200 rounded-2xl px-4 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-emerald-100">
+                          <option value="no">No</option>
+                          <option value="yes">Yes</option>
+                        </select>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                   <button
                     type="button"
-                    onClick={this.handleReset}
+                    onClick={handlePrimary}
                     className="inline-flex items-center justify-center bg-emerald-800 text-white px-6 py-3 rounded-full font-semibold hover:bg-emerald-900"
                   >
-                    Return to booking
+                    Continue – Begin Health Preparation <Icons.ChevronRight />
+                  </button>
+                  <button type="button" onClick={() => goToStep("review")} className="text-sm font-semibold text-stone-500 hover:text-stone-700">
+                    Back to booking
                   </button>
                 </div>
               </div>
             );
-          }
-          return this.props.children;
-        }
-      }
+          };
 
-      const RootApp = () => {
-        const [resetKey, setResetKey] = useState(0);
-        const handleReset = () => setResetKey((key) => key + 1);
-        return (
-          <AppErrorBoundary onReset={handleReset}>
-            <App key={resetKey} />
-          </AppErrorBoundary>
-        );
+          const renderReviewStateStep = () => {
+            const timeline = [
+              {
+                label: "Deposit received",
+                status: depositPaid ? "done" : "pending",
+                description: depositPaid ? "Status: Reserved – preparation pending" : "Awaiting payment",
+              },
+              {
+                label: "Guest 1 health preparation",
+                status: screeningStatus.guest1 === "complete" ? "done" : "pending",
+                description: screeningStatus.guest1 === "complete" ? "Questionnaire + call complete" : "Awaiting questionnaire and call",
+              },
+            ];
+
+            if (selection.guests === 2) {
+              timeline.push({
+                label: "Guest 2 health preparation",
+                status: screeningStatus.guest2 === "complete" ? "done" : "pending",
+                description: screeningStatus.guest2 === "complete" ? "Questionnaire + call complete" : "Awaiting questionnaire and call",
+              });
+            }
+
+            timeline.push({
+              label: "Vietnam Detox team confirmation",
+              status: screeningsComplete ? "done" : "waiting",
+              description: screeningsComplete ? "Status: Booking confirmed" : "Begins after preparation calls",
+            });
+
+            const statusStyles = {
+              done: "bg-emerald-600 text-white",
+              pending: "bg-stone-100 text-stone-600",
+              waiting: "bg-stone-100 text-stone-400",
+            };
+
+            const screeningGuests = [
+              {
+                label: "Guest 1 health preparation",
+                status: screeningStatus.guest1,
+                guestNumber: 1,
+                name: `${guestDetails.guest1.firstName || "Guest"} ${guestDetails.guest1.lastName || ""}`.trim() || "Guest 1",
+              },
+              ...(selection.guests === 2
+                ? [
+                    {
+                      label: "Guest 2 health preparation",
+                      status: screeningStatus.guest2,
+                      guestNumber: 2,
+                      name: `${guestDetails.guest2.firstName || "Guest"} ${guestDetails.guest2.lastName || ""}`.trim() || "Guest 2",
+                    },
+                  ]
+                : []),
+            ];
+
+            return (
+              <div className="space-y-10 max-w-2xl">
+                <header className="space-y-3">
+                  <p className="text-[12px] uppercase tracking-[0.4em] text-stone-400">Step 7</p>
+                  <h1 className="text-4xl font-bold">Health preparation timeline</h1>
+                  <p className="text-stone-500">Track questionnaires, preparation calls, and final confirmation.</p>
+                </header>
+
+                <div className="space-y-4">
+                  {timeline.map((item) => (
+                    <div key={item.label} className="flex items-center gap-4">
+                      <div className={`w-12 h-12 rounded-full flex items-center justify-center ${statusStyles[item.status]}`}>
+                        <Icons.Check />
+                      </div>
+                      <div>
+                        <p className="font-semibold">{item.label}</p>
+                        <p className="text-sm text-stone-500">{item.description}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="bg-stone-50 border border-stone-100 rounded-3xl p-6 space-y-2">
+                  <p className="text-sm text-stone-600">Status: Reserved – preparation pending.</p>
+                  <p className="text-sm text-stone-600">We confirm once both questionnaires and preparation calls are complete.</p>
+                </div>
+
+                <div className="space-y-4">
+                  {screeningGuests.map((guest) => {
+                    const encodedName = encodeURIComponent(guest.name || `Guest ${guest.guestNumber}`);
+                    const url = `/screening.html?guest=${guest.guestNumber}&booking=${encodeURIComponent(BOOKING_REFERENCE)}&name=${encodedName}`;
+                    return (
+                      <div key={guest.guestNumber} className="border border-stone-200 rounded-3xl p-5 space-y-3">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <p className="text-xs uppercase tracking-[0.3em] text-stone-400">{guest.label}</p>
+                            <p className="text-sm text-stone-500">
+                              {guest.status === "complete" ? "Questionnaire + call complete" : "Awaiting questionnaire and call"}
+                            </p>
+                          </div>
+                          <div
+                            className={`w-10 h-10 rounded-full flex items-center justify-center ${guest.status === "complete" ? "bg-emerald-100 text-emerald-700" : "bg-stone-100 text-stone-400"}`}
+                          >
+                            <Icons.Check />
+                          </div>
+                        </div>
+                        <div className="flex flex-col gap-2 sm:flex-row">
+                          <a
+                            href={url}
+                            className="inline-flex items-center justify-center bg-emerald-800 text-white px-4 py-2 rounded-full font-semibold text-sm hover:bg-emerald-900"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            Open health questionnaire
+                          </a>
+                          <button
+                            type="button"
+                            className="inline-flex items-center justify-center bg-white text-stone-600 border border-stone-200 px-4 py-2 rounded-full text-sm font-semibold hover:border-emerald-200"
+                            onClick={() => {
+                              const absoluteUrl =
+                                window.location.origin && window.location.origin !== "null" ? `${window.location.origin}/${url}` : url;
+                              const clipboard = navigator?.clipboard?.writeText;
+                              if (typeof clipboard === "function") {
+                                clipboard
+                                  .call(navigator.clipboard, absoluteUrl)
+                                  .then(() => alert("Link copied"))
+                                  .catch(() => alert(`Copy this link:\n${absoluteUrl}`));
+                              } else {
+                                alert(`Copy this link:\n${absoluteUrl}`);
+                              }
+                            }}
+                          >
+                            Copy link
+                          </button>
+                        </div>
+                        <p className="text-xs text-stone-500">
+                          You can share this link if the questionnaire should be completed on another device or by your travel partner.
+                        </p>
+                      </div>
+                    );
+                  })}
+                </div>
+
+                <div className="border border-emerald-100 bg-emerald-50 rounded-3xl p-6 space-y-2 text-left">
+                  <p className="text-sm font-semibold text-stone-800">Included personal health review call</p>
+                  <p className="text-sm text-stone-600">
+                    After submitting the health questionnaire, the Vietnam Detox team offers a complimentary 30-minute 1-on-1 call to review your
+                    answers, answer questions, and make sure the program is well suited for you. This call is included in your retreat and will be
+                    scheduled after the health preparation steps are submitted.
+                  </p>
+                  <button
+                    type="button"
+                    className="inline-flex items-center bg-emerald-800 text-white px-4 py-2 rounded-full text-sm font-semibold hover:bg-emerald-900"
+                    onClick={() => alert("Thank you. We will contact you to schedule your personal health review call.")}
+                  >
+                    Request my health review call
+                  </button>
+                </div>
+
+                <div className="flex justify-between items-center">
+                  <button type="button" onClick={() => goToStep("screening")} className="inline-flex items-center text-stone-500 font-semibold">
+                    <Icons.ChevronLeft /> Back to health preparation hub
+                  </button>
+                  <button
+                    type="button"
+                    disabled={!screeningsComplete}
+                    onClick={() => goToStep("confirmed")}
+                    className={`inline-flex items-center px-6 py-3 rounded-full font-semibold ${
+                      screeningsComplete ? "bg-emerald-800 text-white hover:bg-emerald-900" : "bg-stone-200 text-stone-500 cursor-not-allowed"
+                    }`}
+                  >
+                    Move to confirmation <Icons.ChevronRight />
+                  </button>
+                </div>
+              </div>
+            );
+          };
+
+          const renderConfirmedStep = () => {
+            const guestEntries = [
+              { label: selection.guests === 1 ? "Start health preparation" : "Guest 1 – Start health preparation", guestNumber: 1 },
+              ...(selection.guests === 2 ? [{ label: "Guest 2 – Start health preparation", guestNumber: 2 }] : []),
+            ];
+
+            return (
+              <div className="space-y-8 max-w-2xl text-center">
+                <header className="space-y-3">
+                  <p className="text-[12px] uppercase tracking-[0.4em] text-stone-400">Step 8</p>
+                  <h1 className="text-4xl font-bold">Booking Confirmed</h1>
+                  <p className="text-stone-500">
+                    Thank you for your booking. Your place is secured. We’re looking forward to welcoming you to your Vietnam Detox retreat. Remaining
+                    balance of {formatVND(pricing.remaining)} is payable on arrival.
+                  </p>
+                </header>
+                <div className="bg-white border border-stone-100 rounded-3xl p-6 space-y-2 text-left">
+                  <div className="flex justify-between text-sm text-stone-500">
+                    <span>Retreat dates</span>
+                    <span className="font-semibold">{selection.date}</span>
+                  </div>
+                  <div className="flex justify-between text-sm text-stone-500">
+                    <span>Guests</span>
+                    <span className="font-semibold">{selection.guests}</span>
+                  </div>
+                  <div className="flex justify-between text-sm text-stone-500">
+                    <span>Room</span>
+                    <span className="font-semibold">
+                      {roomsForCurrentRetreat.find((r) => r.id === selection.roomType)?.name || roomsForCurrentRetreat[0]?.name || "TBD"}
+                    </span>
+                  </div>
+                  <div className="flex justify-between text-sm text-stone-500">
+                    <span>Airport transfer</span>
+                    <span className="font-semibold">
+                      {TRANSPORT_OPTIONS.find((option) => option.id === selection.transfer)?.label || "No airport transfer"}
+                    </span>
+                  </div>
+                  <div className="flex justify-between text-sm text-stone-500">
+                    <span>Deposit paid</span>
+                    <span className="font-semibold">{formatVND(pricing.deposit)}</span>
+                  </div>
+                </div>
+
+                <div className="bg-stone-50 border border-stone-100 rounded-3xl p-6 text-left space-y-4">
+                  <div>
+                    <p className="text-xs uppercase tracking-[0.3em] text-stone-400">Health Preparation</p>
+                    <p className="text-sm text-stone-600">
+                      Each guest completes their own questionnaire and personal preparation call. You can start now or later. The same links will also
+                      be sent by email.
+                    </p>
+                  </div>
+                  <div className="space-y-2">
+                    {guestEntries.map((guest) => (
+                      <a
+                        key={guest.guestNumber}
+                        href={`screening.html?guest=${guest.guestNumber}&booking=${encodeURIComponent(BOOKING_REFERENCE)}`}
+                        className="flex items-center justify-between border border-stone-200 rounded-2xl px-4 py-3 hover:border-emerald-300 transition"
+                      >
+                        <span className="font-semibold text-stone-700">{guest.label}</span>
+                        <span className="text-sm text-emerald-700 font-semibold">Start health preparation</span>
+                      </a>
+                    ))}
+                  </div>
+
+                  <div className="mt-4 border border-emerald-100 bg-emerald-50 rounded-2xl px-4 py-4 space-y-2 text-left">
+                    <p className="font-semibold text-stone-800">Included personal health review call</p>
+                    <p className="text-sm text-stone-600">
+                      After submitting the health questionnaire, the Vietnam Detox team offers a complimentary 30-minute 1-on-1 call to review your
+                      answers, answer questions, and make sure the program is well suited for you. This call is included in your retreat and will be
+                      scheduled after the health preparation steps are submitted.
+                    </p>
+                    <p className="text-xs text-stone-500">
+                      The call is optional unless the Vietnam Detox team recommends it based on your questionnaire.
+                    </p>
+                    <button
+                      type="button"
+                      className="inline-flex items-center bg-emerald-800 text-white px-4 py-2 rounded-full text-sm font-semibold hover:bg-emerald-900"
+                      onClick={() => alert("Thank you. We will contact you to schedule a personal health review call.")}
+                    >
+                      Request personal health review call
+                    </button>
+                  </div>
+                </div>
+
+                <p className="text-sm text-stone-500">
+                  Our concierge will reach out with itinerary planning, transfer coordination, and packing suggestions within 24 hours.
+                </p>
+                <button className="inline-flex items-center justify-center bg-stone-900 text-white px-6 py-3 rounded-full font-semibold hover:bg-black">
+                  Download booking summary
+                </button>
+              </div>
+            );
+          };
+
+          const HeaderBar = () => (
+            <nav className="border-b border-stone-100 px-6 py-6 sticky top-0 bg-white/80 backdrop-blur-md z-40">
+              <div className="max-w-6xl mx-auto flex justify-between items-center">
+                <div className="flex items-center">
+                  <img src="./vietnam-detox-logo.svg" alt="Vietnam Detox" className="h-8 w-auto" onError={handleImageError} />
+                </div>
+                <div className="hidden md:flex space-x-6 text-sm font-medium text-stone-400">
+                  <span>The Method</span>
+                  <span>Retreats</span>
+                  <span className="text-stone-900">Book Now</span>
+                </div>
+              </div>
+            </nav>
+          );
+
+          const DemoController = () => (
+            <div className="fixed bottom-6 left-1/2 -translate-x-1/2 bg-white/90 backdrop-blur border border-stone-200 shadow-2xl rounded-2xl px-6 py-4 flex items-center space-x-4 z-50">
+              <div className="flex flex-col border-r border-stone-200 pr-4 mr-2">
+                <span className="text-[10px] font-black uppercase tracking-tighter text-emerald-700">Vietnam Detox</span>
+                <span className="text-xs font-bold text-stone-400">Demo Controller</span>
+              </div>
+              <div className="flex space-x-2">
+                {STEPS.map((step) => (
+                  <button
+                    key={step}
+                    onClick={() => goToStep(step)}
+                    className={`px-3 py-1.5 text-[10px] font-semibold rounded-md ${
+                      controllerStep === step ? "bg-emerald-100 text-emerald-700" : "bg-stone-100 text-stone-500"
+                    }`}
+                  >
+                    {step.replace("_", " ").toUpperCase()}
+                  </button>
+                ))}
+              </div>
+            </div>
+          );
+
+          const stepConfig = {
+            config: { content: renderConfigStep(), summaryContext: "default" },
+            details: { content: renderGuestDetailsStep(), summaryContext: "default" },
+            review: { content: renderReviewStep(), summaryContext: "review" },
+            health_check: { content: renderHealthPreparationStep(), summaryContext: "default" },
+            payment: { content: renderPaymentStep(), summaryContext: "payment" },
+            screening: { content: renderScreeningStep(), summaryContext: "default" },
+            review_state: { content: renderReviewStateStep(), summaryContext: "default" },
+            confirmed: { content: renderConfirmedStep(), summaryContext: "confirmed" },
+          };
+
+          const stepEntry = stepConfig[flowStep] || stepConfig.config;
+          const { content, summaryContext } = stepEntry;
+
+          return (
+            <div className="min-h-screen bg-white font-sans text-stone-900 selection:bg-emerald-100 pb-32">
+              <HeaderBar />
+
+              <main className="max-w-6xl mx-auto px-6 py-12 space-y-8">
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
+                  <div className="lg:col-span-2 space-y-10">{content}</div>
+                  <div className="hidden lg:block lg:col-span-1">
+                    <div className="sticky top-24">
+                      <PriceSummary
+                        context={summaryContext}
+                        pricing={pricing}
+                        paymentMethod={paymentMethod}
+                        stripeFee={stripeFee}
+                        paymentDueNow={paymentDueNow}
+                      />
+                    </div>
+                  </div>
+                </div>
+                <div className="lg:hidden">
+                  <PriceSummary
+                    context={summaryContext}
+                    pricing={pricing}
+                    paymentMethod={paymentMethod}
+                    stripeFee={stripeFee}
+                    paymentDueNow={paymentDueNow}
+                  />
+                </div>
+              </main>
+
+              <DemoController />
+
+              {galleryRoom && (
+                <div
+                  className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center px-4"
+                  onClick={(event) => {
+                    if (event.target === event.currentTarget) {
+                      closeGallery();
+                    }
+                  }}
+                >
+                  <div
+                    ref={modalRef}
+                    role="dialog"
+                    aria-modal="true"
+                    aria-label={`${galleryRoom.name} gallery`}
+                    className="relative max-w-3xl w-full bg-white rounded-3xl overflow-hidden shadow-2xl outline-none"
+                    onClick={(e) => e.stopPropagation()}
+                    tabIndex={-1}
+                  >
+                    <button
+                      type="button"
+                      ref={closeButtonRef}
+                      aria-label="Close gallery"
+                      className="absolute top-4 right-4 text-stone-900 bg-white/70 hover:bg-white rounded-full w-10 h-10 flex items-center justify-center text-xl"
+                      onClick={closeGallery}
+                    >
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                    <div className="relative">
+                      <img
+                        src={galleryRoom.images[galleryIndex]}
+                        alt={galleryRoom.name}
+                        className="w-full h-[420px] object-cover"
+                        onError={handleImageError}
+                      />
+                      {galleryRoom.images.length > 1 && (
+                        <>
+                          <button
+                            type="button"
+                            className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white text-stone-900 rounded-full p-2"
+                            onClick={showPrevImage}
+                            aria-label="Previous image"
+                          >
+                            ‹
+                          </button>
+                          <button
+                            type="button"
+                            className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white text-stone-900 rounded-full p-2"
+                            onClick={showNextImage}
+                            aria-label="Next image"
+                          >
+                            ›
+                          </button>
+                        </>
+                      )}
+                    </div>
+                    <div className="p-6 space-y-1">
+                      <p className="text-xs uppercase tracking-[0.3em] text-stone-400">Gallery</p>
+                      <h3 className="text-2xl font-bold">{galleryRoom.name}</h3>
+                      <p className="text-sm text-stone-500">{galleryRoom.benefit}</p>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+          );
+        };
+
+        class AppErrorBoundary extends React.Component {
+          constructor(props) {
+            super(props);
+            this.state = { hasError: false };
+            this.handleReset = this.handleReset.bind(this);
+          }
+
+          static getDerivedStateFromError(error) {
+            return { hasError: true, error };
+          }
+
+          componentDidCatch(error, info) {
+            console.error("Booking UI error", error, info);
+          }
+
+          handleReset() {
+            this.setState({ hasError: false, error: null });
+            if (typeof this.props.onReset === "function") {
+              this.props.onReset();
+            }
+          }
+
+          render() {
+            if (this.state.hasError) {
+              return (
+                <div className="min-h-screen bg-white font-sans text-stone-900 selection:bg-emerald-100 flex items-center justify-center px-6">
+                  <div className="max-w-md text-center space-y-4">
+                    <p className="text-[12px] uppercase tracking-[0.4em] text-stone-400">Booking status</p>
+                    <h1 className="text-3xl font-bold text-stone-900">We hit a snag</h1>
+                    <p className="text-stone-600">Your progress is safe. Continue when you’re ready.</p>
+                    <button
+                      type="button"
+                      onClick={this.handleReset}
+                      className="inline-flex items-center justify-center bg-emerald-800 text-white px-6 py-3 rounded-full font-semibold hover:bg-emerald-900"
+                    >
+                      Return to booking
+                    </button>
+                  </div>
+                </div>
+              );
+            }
+            return this.props.children;
+          }
+        }
+
+        const RootApp = () => {
+          const [resetKey, setResetKey] = useState(0);
+          const handleReset = () => setResetKey((key) => key + 1);
+          return (
+            <AppErrorBoundary onReset={handleReset}>
+              <App key={resetKey} />
+            </AppErrorBoundary>
+          );
+        };
+
+        if (!bookingRoot) {
+          bookingRoot = ReactDOM.createRoot(rootNode);
+        }
+        bookingRoot.render(<RootApp />);
       };
 
-      if (!bookingRoot) {
-        bookingRoot = ReactDOM.createRoot(rootNode);
-      }
-      bookingRoot.render(<RootApp />);
-    };
-
-    const bootBookingApp = async () => {
-      try {
-        const retreatsLoaded = await fetchRetreats();
-        if (!retreatsLoaded) {
-          showInlineError('Unable to load retreat options. Please try again.', { retry: true });
-          return;
+      const bootBookingApp = async () => {
+        try {
+          const retreatsLoaded = await fetchRetreats();
+          if (!retreatsLoaded) {
+            showInlineError("Unable to load retreat options. Please try again.", { retry: true });
+            return;
+          }
+          startBookingApp();
+        } catch (error) {
+          console.error("Booking app failed during init", error);
+          showInlineError("We were unable to load the booking experience. Please try again.", { retry: true });
         }
-        startBookingApp();
-      } catch (error) {
-        console.error('Booking app failed during init', error);
-        showInlineError('We were unable to load the booking experience. Please try again.', { retry: true });
-      }
-    };
+      };
 
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', bootBookingApp);
-    } else {
-      bootBookingApp();
-    }
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", bootBookingApp);
+      } else {
+        bootBookingApp();
+      }
     </script>
   </body>
 </html>
