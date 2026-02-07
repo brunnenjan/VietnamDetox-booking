@@ -750,8 +750,31 @@
             const selectedRoom = roomsForCurrentRetreat.find((room) => room.id === selection.roomType) || roomsForCurrentRetreat[0] || null;
             const selectedTransport =
               transportOptionsForCurrentRetreat.find((option) => option.id === selection.transfer) || transportOptionsForCurrentRetreat[0] || null;
+            const purchaseFirstName = guestDetails.guest1.firstName?.trim() || "";
+            const purchaseLastName = guestDetails.guest1.lastName?.trim() || "";
+            const purchaseEmail = guestDetails.guest1.email?.trim() || "";
+            const purchasePhone = guestDetails.guest1.phone?.trim() || "";
+            const packageType = selectedRoom?.type || selectedRoom?.roomType || "";
+            const transportType = selectedTransport?.label ?? selectedTransport?.id ?? "";
             return {
               bookingReference: BOOKING_REFERENCE,
+              retreat_id: selection.retreatId,
+              retreat_name: selection.retreatName,
+              location: selection.retreatLocation,
+              total_persons: selection.guests,
+              purchase_first_name: purchaseFirstName,
+              purchase_last_name: purchaseLastName,
+              purchase_email: purchaseEmail,
+              purchase_phone: purchasePhone,
+              start_date: selectedDate?.start || "",
+              end_date: selectedDate?.end || "",
+              package_sku: selectedRoom?.sku || "",
+              package_type: packageType,
+              package_price: selectedRoom?.price || 0,
+              transportation_type: transportType,
+              transportation_fee: selectedTransport?.price || 0,
+              total: pricing.total,
+              join_with_a_friend: selection.guests === 2 ? "yes" : "",
               retreat: {
                 id: selection.retreatId,
                 name: selection.retreatName,
@@ -2030,6 +2053,8 @@
       };
 
       const bootBookingApp = async () => {
+        if (window.__bookingAppBooted) return;
+        window.__bookingAppBooted = true;
         try {
           const retreatsLoaded = await fetchRetreats();
           if (!retreatsLoaded) {
