@@ -99,23 +99,45 @@
       };
 
       let RETREATS = [];
-      let TRANSPORT_OPTIONS = [];
+      let TRANSPORT_BY_RETREAT = {};
       let ROOMS_BY_RETREAT = [];
 
       const fetchRetreats = async () => {
         try {
           const response = await fetch("/wp-json/retreats/v1/all");
           if (!response.ok) throw new Error(`HTTP ${response.status}`);
-          RETREATS = await response.json();
-
-          for (const retreat of RETREATS) {
-            console.log("packages:", retreat.packages);
-            console.log("transportations:", retreat.transportations);
-            TRANSPORT_OPTIONS = retreat.transportations;
-            ROOMS_BY_RETREAT[retreat.id] = retreat.packages || [];
+          const rawRetreats = await response.json();
+          if (!Array.isArray(rawRetreats) || rawRetreats.length === 0) {
+            throw new Error("Empty retreat response");
           }
 
-          return true;
+          const buildRoomBenefit = (pkg) => {
+            if (pkg.roomType) return pkg.roomType;
+            if (pkg.type) return pkg.type;
+            if (pkg.person) return pkg.person > 1 ? `Shared for ${pkg.person}` : "Solo retreat";
+            return "Retreat package";
+          };
+
+          RETREATS = rawRetreats.map((retreat) => {
+            const packages = Array.isArray(retreat.packages) ? retreat.packages : [];
+            const transportations = Array.isArray(retreat.transportations) ? retreat.transportations : [];
+            const normalizedPackages = packages.map((pkg, index) => {
+              const sku = pkg.sku || null;
+              return {
+                ...pkg,
+                id: sku ? `${sku}-${index}` : `pkg-${retreat.id}-${index}`,
+                sku,
+                images: Array.isArray(pkg.images) && pkg.images.length > 0 ? pkg.images : [FALLBACK_IMAGE],
+                benefit: buildRoomBenefit(pkg),
+              };
+            });
+
+            TRANSPORT_BY_RETREAT[retreat.id] = transportations;
+            ROOMS_BY_RETREAT[retreat.id] = normalizedPackages;
+            return retreat;
+          });
+
+          return RETREATS.length > 0;
         } catch (error) {
           console.error("Failed to fetch retreats:", error);
           return false;
@@ -139,6 +161,7 @@
         const STRIPE_FEE_RATE = 0.03;
         const STEPS = ["config", "details", "review", "health_check", "payment", "screening", "review_state", "confirmed"];
         const PRETTY_PATHS = false;
+        const BOOKING_API_ENDPOINT = "/wp-json/booking/v1/create";
         const PRICES = {
           superior: 33800000,
           garden: 38600000,
@@ -321,6 +344,7 @@
         };
 
         const getRoomsForRetreat = (retreatId) => ROOMS_BY_RETREAT[retreatId] || [];
+        const getTransportOptionsForRetreat = (retreatId) => TRANSPORT_BY_RETREAT[retreatId] || [];
 
         const getDialCodeForCountry = (countryName) => {
           if (!countryName) return null;
@@ -408,6 +432,7 @@
         const DEFAULT_DATE = DEFAULT_RETREAT.dates[0];
         const DEFAULT_ROOMS = getRoomsForRetreat(DEFAULT_RETREAT.id);
         const DEFAULT_ROOM_ID = DEFAULT_ROOMS[0]?.id || null;
+        const DEFAULT_TRANSPORT = getTransportOptionsForRetreat(DEFAULT_RETREAT.id)[0]?.id ?? null;
         const DEFAULT_PHONE_CODE = getDialCodeForCountry("Vietnam") || "+84";
 
         const App = () => {
@@ -421,7 +446,7 @@
             date: DEFAULT_DATE.label,
             guests: 1,
             roomType: DEFAULT_ROOM_ID,
-            transfer: TRANSPORT_OPTIONS[0].id,
+            transfer: DEFAULT_TRANSPORT,
           }));
           const [guestDetails, setGuestDetails] = useState({
             guest1: {
@@ -442,6 +467,8 @@
             guest2: { firstName: "", lastName: "", email: "", phone: "" },
           });
           const [paymentMethod, setPaymentMethod] = useState("vnpay");
+          const [paymentSubmitting, setPaymentSubmitting] = useState(false);
+          const [paymentError, setPaymentError] = useState("");
           const [galleryRoom, setGalleryRoom] = useState(null);
           const [galleryIndex, setGalleryIndex] = useState(0);
           const [depositPaid, setDepositPaid] = useState(false);
@@ -523,22 +550,42 @@
           }, []);
 
           const roomsForCurrentRetreat = useMemo(() => getRoomsForRetreat(selection.retreatId), [selection.retreatId]);
+          const filteredRoomsForCurrentRetreat = useMemo(() => {
+            if (!Array.isArray(roomsForCurrentRetreat) || roomsForCurrentRetreat.length === 0) return [];
+            const desired = selection.guests === 1 ? "single" : "shared";
+            return roomsForCurrentRetreat.filter((room) => {
+              const roomPerson = Number(room.person);
+              if (Number.isFinite(roomPerson) && roomPerson > 0) {
+                return roomPerson === selection.guests;
+              }
+              const typeHint = `${room.type || ""} ${room.name || ""}`.toLowerCase();
+              if (desired === "single") return typeHint.includes("single");
+              if (desired === "shared") return typeHint.includes("shared");
+              return true;
+            });
+          }, [roomsForCurrentRetreat, selection.guests]);
+          const transportOptionsForCurrentRetreat = useMemo(
+            () => getTransportOptionsForRetreat(selection.retreatId),
+            [selection.retreatId],
+          );
 
           const pricing = useMemo(() => {
-            const room = roomsForCurrentRetreat.find((r) => r.id === selection.roomType) || roomsForCurrentRetreat[0];
+            const roomOptions = filteredRoomsForCurrentRetreat.length ? filteredRoomsForCurrentRetreat : roomsForCurrentRetreat;
+            const room = roomOptions.find((r) => r.id === selection.roomType) || roomOptions[0];
             const roomPrice = room ? room.price : 0;
-            const transportOption = TRANSPORT_OPTIONS.find((option) => option.id === selection.transfer) || TRANSPORT_OPTIONS[0];
-            const subtotal = roomPrice * selection.guests;
+            const transportOption =
+              transportOptionsForCurrentRetreat.find((option) => option.id === selection.transfer) || transportOptionsForCurrentRetreat[0];
+            const subtotal = roomPrice;
             const selectedDate = dateOptions.find((d) => d.label === selection.date);
             const earlyBird = selectedDate?.isEarlyBirdActive ? Math.round(subtotal * 0.1) : 0;
             const friendBase = subtotal - earlyBird;
             const friend = selection.guests === 2 ? Math.round(friendBase * 0.05) : 0;
-            const transport = transportOption.price;
+            const transport = transportOption?.price || 0;
             const total = subtotal - earlyBird - friend + transport;
             const deposit = Math.round(total * 0.3);
             const remaining = total - deposit;
             return { subtotal, earlyBird, friend, transport, total, deposit, remaining };
-          }, [selection, dateOptions, roomsForCurrentRetreat]);
+          }, [selection, dateOptions, roomsForCurrentRetreat, filteredRoomsForCurrentRetreat, transportOptionsForCurrentRetreat]);
 
           const stripeFee = paymentMethod === "stripe" ? Math.round(pricing.deposit * STRIPE_FEE_RATE) : 0;
           const paymentDueNow = pricing.deposit + stripeFee;
@@ -548,6 +595,14 @@
           const safetyCleared = safetyAllAnswered && !safetyHasConcern;
 
           const updateSelection = (updates) => setSelection((prev) => ({ ...prev, ...updates }));
+
+          useEffect(() => {
+            if (filteredRoomsForCurrentRetreat.length === 0) return;
+            const hasSelected = filteredRoomsForCurrentRetreat.some((room) => room.id === selection.roomType);
+            if (!hasSelected) {
+              setSelection((prev) => ({ ...prev, roomType: filteredRoomsForCurrentRetreat[0].id }));
+            }
+          }, [filteredRoomsForCurrentRetreat, selection.roomType]);
 
           const updateGuest = (guestKey, field, value) => {
             setGuestDetails((prev) => ({
@@ -594,6 +649,7 @@
                 retreatImage: dateOption.image,
                 date: dateOption.label,
                 roomType: isSameRetreat ? prev.roomType : roomsForSelectedRetreat[0]?.id || null,
+                transfer: isSameRetreat ? prev.transfer : getTransportOptionsForRetreat(dateOption.retreatId)[0]?.id ?? null,
               };
             });
           };
@@ -689,15 +745,92 @@
             return g2Valid;
           };
 
-          const handlePayment = () => {
-            if (!depositPaid) {
-              setDepositPaid(true);
-              setScreeningStatus((prev) => ({
-                guest1: prev.guest1 === "complete" ? "complete" : "pending",
-                guest2: selection.guests === 2 ? (prev.guest2 === "complete" ? "complete" : "pending") : "not_required",
-              }));
+          const buildBookingPayload = () => {
+            const selectedDate = dateOptions.find((date) => date.label === selection.date);
+            const selectedRoom = roomsForCurrentRetreat.find((room) => room.id === selection.roomType) || roomsForCurrentRetreat[0] || null;
+            const selectedTransport =
+              transportOptionsForCurrentRetreat.find((option) => option.id === selection.transfer) || transportOptionsForCurrentRetreat[0] || null;
+            return {
+              bookingReference: BOOKING_REFERENCE,
+              retreat: {
+                id: selection.retreatId,
+                name: selection.retreatName,
+                location: selection.retreatLocation,
+                earlyBirdNote: selection.retreatEarlyBirdNote,
+                image: selection.retreatImage,
+              },
+              date: selectedDate
+                ? {
+                    label: selectedDate.label,
+                    start: selectedDate.start,
+                    end: selectedDate.end,
+                    earlyBirdDeadline: selectedDate.earlyBirdDeadline || null,
+                    limited: !!selectedDate.limited,
+                    isEarlyBirdActive: !!selectedDate.isEarlyBirdActive,
+                  }
+                : null,
+              guests: selection.guests,
+              room: selectedRoom
+                ? {
+                    id: selectedRoom.id,
+                    sku: selectedRoom.sku || null,
+                    name: selectedRoom.name,
+                    type: selectedRoom.type || null,
+                    person: selectedRoom.person || null,
+                    price: selectedRoom.price || 0,
+                    roomType: selectedRoom.roomType || null,
+                  }
+                : null,
+              transport: selectedTransport
+                ? { id: selectedTransport.id, label: selectedTransport.label, price: selectedTransport.price || 0 }
+                : null,
+              guestDetails,
+              pricing: {
+                subtotal: pricing.subtotal,
+                earlyBird: pricing.earlyBird,
+                friend: pricing.friend,
+                transport: pricing.transport,
+                total: pricing.total,
+                deposit: pricing.deposit,
+                remaining: pricing.remaining,
+                stripeFee,
+                paymentDueNow,
+              },
+              paymentMethod,
+              screeningStatus,
+              safetyAnswers,
+              submittedAt: new Date().toISOString(),
+            };
+          };
+
+          const handlePayment = async () => {
+            if (paymentSubmitting) return;
+            setPaymentError("");
+            setPaymentSubmitting(true);
+            try {
+              const payload = buildBookingPayload();
+              const response = await fetch(BOOKING_API_ENDPOINT, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload),
+              });
+              if (!response.ok) {
+                throw new Error(`HTTP ${response.status}`);
+              }
+              if (!depositPaid) {
+                setDepositPaid(true);
+                setScreeningStatus((prev) => ({
+                  guest1: prev.guest1 === "complete" ? "complete" : "pending",
+                  guest2: selection.guests === 2 ? (prev.guest2 === "complete" ? "complete" : "pending") : "not_required",
+                }));
+              }
+              goToStep("screening");
+            } catch (error) {
+              console.error("Failed to submit booking payload", error);
+              setPaymentError("We could not secure your booking right now. Please try again.");
+            } finally {
+              setPaymentSubmitting(false);
             }
-            goToStep("screening");
           };
 
           const renderConfigStep = () => (
@@ -872,10 +1005,10 @@
                 </div>
 
                 <div className="space-y-6">
-                  {roomsForCurrentRetreat.length === 0 && (
+                  {filteredRoomsForCurrentRetreat.length === 0 && (
                     <p className="text-sm text-stone-500">Accommodation options will appear here for this retreat.</p>
                   )}
-                  {roomsForCurrentRetreat.map((room) => {
+                  {filteredRoomsForCurrentRetreat.map((room) => {
                     const active = selection.roomType === room.id;
                     return (
                       <button
@@ -895,7 +1028,9 @@
                               <p className="text-xs uppercase tracking-[0.3em] text-stone-400">{room.benefit}</p>
                               <div className="flex items-center justify-between mt-2">
                                 <h3 className="text-2xl font-bold">{room.name}</h3>
-                                <p className="text-sm text-stone-500">Per guest {formatVND(room.price)}</p>
+                                <p className="text-sm text-stone-500">
+                                  {selection.guests === 2 ? formatVND(room.price) : `Per guest ${formatVND(room.price)}`}
+                                </p>
                               </div>
                             </div>
                             <div className="flex items-center justify-between pt-3 border-t border-stone-200">
@@ -926,9 +1061,9 @@
                 <select
                   className="w-full border border-stone-200 rounded-2xl p-4 bg-stone-50 focus:ring-2 focus:ring-emerald-100 outline-none"
                   value={selection.transfer}
-                  onChange={(e) => updateSelection({ transfer: e.target.value })}
+                  onChange={(e) => updateSelection({ transfer: Number(e.target.value) })}
                 >
-                  {TRANSPORT_OPTIONS.map((option) => (
+                  {transportOptionsForCurrentRetreat.map((option) => (
                     <option key={option.id} value={option.id}>
                       {option.label} {option.price > 0 ? `(+${formatVND(option.price)})` : ""}
                     </option>
@@ -1078,7 +1213,8 @@
           const renderReviewStep = () => {
             const dateInfo = dateOptions.find((d) => d.label === selection.date);
             const room = roomsForCurrentRetreat.find((r) => r.id === selection.roomType) || roomsForCurrentRetreat[0];
-            const transferOption = TRANSPORT_OPTIONS.find((option) => option.id === selection.transfer) || TRANSPORT_OPTIONS[0];
+            const transferOption =
+              transportOptionsForCurrentRetreat.find((option) => option.id === selection.transfer) || transportOptionsForCurrentRetreat[0];
             const guests = [
               { label: "Guest 1", data: guestDetails.guest1 },
               ...(selection.guests === 2 ? [{ label: "Guest 2", data: guestDetails.guest2 }] : []),
@@ -1122,7 +1258,7 @@
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="text-xs uppercase tracking-[0.3em] text-stone-400">Airport transfer</p>
-                      <p className="font-semibold">{transferOption.label}</p>
+                      <p className="font-semibold">{transferOption?.label || "No airport transfer"}</p>
                     </div>
                     <button className="text-sm text-emerald-700 font-semibold" onClick={() => goToStep("config")}>
                       Edit
@@ -1334,11 +1470,15 @@
                 <button
                   type="button"
                   onClick={handlePayment}
-                  className="inline-flex items-center bg-emerald-800 text-white px-6 py-3 rounded-full font-semibold hover:bg-emerald-900"
+                  disabled={paymentSubmitting}
+                  className={`inline-flex items-center px-6 py-3 rounded-full font-semibold ${
+                    paymentSubmitting ? "bg-stone-200 text-stone-500 cursor-not-allowed" : "bg-emerald-800 text-white hover:bg-emerald-900"
+                  }`}
                 >
-                  Pay deposit & secure booking <Icons.ChevronRight />
+                  {paymentSubmitting ? "Processing payment..." : "Pay deposit & secure booking"} <Icons.ChevronRight />
                 </button>
               </div>
+              {paymentError && <p className="text-sm text-rose-600">{paymentError}</p>}
             </div>
           );
 
@@ -1618,7 +1758,7 @@
                   <div className="flex justify-between text-sm text-stone-500">
                     <span>Airport transfer</span>
                     <span className="font-semibold">
-                      {TRANSPORT_OPTIONS.find((option) => option.id === selection.transfer)?.label || "No airport transfer"}
+                      {transportOptionsForCurrentRetreat.find((option) => option.id === selection.transfer)?.label || "No airport transfer"}
                     </span>
                   </div>
                   <div className="flex justify-between text-sm text-stone-500">
