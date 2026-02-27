@@ -19,7 +19,7 @@
         color: #1f1c19;
       }
       .page {
-        max-width: 760px;
+        max-width: 820px;
         margin: 0 auto;
         padding: 48px 20px 64px;
       }
@@ -31,24 +31,49 @@
       }
       h1 {
         margin: 0 0 8px;
-        font-size: 2.6rem;
+        font-size: 2.5rem;
+      }
+      h2 {
+        margin: 0 0 6px;
+        font-size: 1.25rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: #0b7c57;
       }
       p {
         line-height: 1.6;
         margin: 0 0 16px;
       }
-      section + section {
-        margin-top: 28px;
-        padding-top: 24px;
-        border-top: 1px solid #eee5da;
+      .form-section {
+        padding: 32px 0;
+        border-top: 1px solid #efe7da;
+      }
+      .form-section:first-of-type {
+        border-top: none;
+        padding-top: 0;
+      }
+      .section-heading {
+        margin-bottom: 18px;
+      }
+      .section-label {
+        text-transform: uppercase;
+        letter-spacing: 0.3em;
+        font-size: 0.75rem;
+        color: #a69b90;
+        margin-bottom: 6px;
+      }
+      .section-intro {
+        margin: 0;
+        color: #6f655c;
+        font-size: 0.95rem;
       }
       label {
         display: block;
         text-transform: uppercase;
         letter-spacing: 0.25em;
-        font-size: 0.75rem;
+        font-size: 0.72rem;
         color: #7a6f65;
-        margin-bottom: 6px;
+        margin-bottom: 8px;
       }
       input,
       textarea,
@@ -62,34 +87,124 @@
         box-sizing: border-box;
         background: #fbfaf7;
       }
+      input[readonly] {
+        background: #f3efe8;
+      }
       textarea {
-        min-height: 90px;
+        min-height: 100px;
         resize: vertical;
       }
       .field {
         margin-bottom: 18px;
       }
-      .options-row {
-        display: flex;
-        gap: 12px;
+      .grid-two-col {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 18px;
+      }
+      .radio-group {
+        display: inline-flex;
+        gap: 18px;
         flex-wrap: wrap;
       }
+      .radio-group label,
       .checkbox-label {
         display: inline-flex;
         align-items: center;
-        gap: 8px;
-        letter-spacing: normal;
+        gap: 6px;
         text-transform: none;
+        letter-spacing: normal;
         font-size: 0.95rem;
         color: #1f1c19;
       }
+      .radio-group input,
+      .checkbox-label input {
+        width: auto;
+        accent-color: #0b7c57;
+      }
+      .conditional-target {
+        display: none;
+        margin-top: 12px;
+      }
+      .detail-panel {
+        border-radius: 20px;
+        border: 1px solid #ebe1d5;
+        background: #f9f6f0;
+        padding: 18px;
+      }
+      .checkbox-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+        gap: 10px 18px;
+        margin-top: 8px;
+      }
+      .bmi-output {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        padding: 14px 18px;
+        border-radius: 18px;
+        background: #edf8f3;
+        min-height: 70px;
+      }
+      .bmi-value {
+        font-weight: 600;
+        font-size: 1.05rem;
+        color: #0b7c57;
+      }
+      .bmi-indicator {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+      .bmi-dot {
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        border: 2px solid #d5d0c9;
+        background: transparent;
+        transition: background 0.3s ease, border-color 0.3s ease;
+      }
+      .bmi-dot.green {
+        background: #45a574;
+        border-color: #45a574;
+      }
+      .bmi-dot.yellow {
+        background: #d9a441;
+        border-color: #d9a441;
+      }
+      .bmi-dot.red {
+        background: #d15b4b;
+        border-color: #d15b4b;
+      }
+      .bmi-label {
+        font-size: 0.85rem;
+        color: #5b5249;
+        max-width: 180px;
+      }
+      .subsection {
+        padding: 18px 0;
+        border-top: 1px dashed #e7ded2;
+      }
+      .subsection:first-of-type {
+        border-top: none;
+        padding-top: 0;
+      }
+      .subsection-title {
+        font-size: 0.85rem;
+        letter-spacing: 0.22em;
+        color: #b09b85;
+        text-transform: uppercase;
+        margin: 0 0 12px;
+      }
       .info-box {
-        background: #fff8ee;
-        border: 1px solid #f3e0c5;
+        background: #edf8f3;
+        border: 1px solid #cde8db;
         border-radius: 22px;
         padding: 16px 18px;
         font-size: 0.95rem;
         display: none;
+        color: #0b7c57;
       }
       button {
         border: none;
@@ -118,22 +233,63 @@
         font-weight: 600;
         display: none;
       }
-      .success-actions {
+      .summary-intro {
+        margin-bottom: 18px;
+      }
+      .summary {
+        border-top: 1px solid #dfeee6;
+        padding-top: 16px;
+      }
+      .summary-section {
+        padding: 14px 0;
+        border-top: 1px dashed #cfe3d9;
+      }
+      .summary-section:first-child {
+        border-top: none;
+      }
+      .summary-section h4 {
+        margin: 0 0 8px;
+        font-size: 0.95rem;
+        color: #0b7c57;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+      }
+      .summary-row {
+        display: flex;
+        justify-content: space-between;
+        gap: 18px;
+        padding: 6px 0;
+        border-bottom: 1px solid #f0f4f2;
+      }
+      .summary-row:last-child {
+        border-bottom: none;
+      }
+      .summary-question {
+        flex: 1 1 40%;
+        font-weight: 600;
+        color: #5a524a;
+      }
+      .summary-answer {
+        flex: 1 1 60%;
+        color: #2b2620;
+      }
+      .summary-actions {
         display: flex;
         gap: 12px;
         flex-wrap: wrap;
         margin-top: 12px;
       }
-      .success-actions a,
-      .success-actions button {
+      .summary-actions a,
+      .summary-actions button {
         flex: 1 1 220px;
         text-align: center;
         padding: 12px 16px;
         background: #fff;
         border: 1px solid #cde8db;
         color: #0b7c57;
+        text-decoration: none;
       }
-      .success-actions button {
+      .summary-actions button.primary {
         background: #0b7c57;
         color: #fff;
         border: none;
@@ -156,6 +312,12 @@
           padding: 24px;
           border-radius: 24px;
         }
+        .radio-group {
+          gap: 12px;
+        }
+        .summary-row {
+          flex-direction: column;
+        }
       }
     </style>
   </head>
@@ -171,245 +333,392 @@
         </p>
 
         <form id="screening-form">
-          <section>
-            <h2 style="margin-bottom: 16px">Basic information</h2>
-            <div class="field">
-              <label for="dob">Date of birth</label>
-              <input type="date" id="dob" required />
+          <section class="form-section">
+            <div class="section-heading">
+              <p class="section-label">Section A</p>
+              <h2>Basic Information</h2>
+              <p class="section-intro">Two quick columns keep personal details streamlined. Age and BMI calculate automatically.</p>
             </div>
-            <div class="field">
-              <label for="age">Age</label>
-              <input type="number" id="age" required min="18" />
-            </div>
-            <div class="field">
-              <label for="height">Height (cm)</label>
-              <input type="number" id="height" required min="100" />
-            </div>
-            <div class="field">
-              <label for="weight">Weight (kg)</label>
-              <input type="number" id="weight" required min="35" />
+            <div class="grid-two-col">
+              <div class="field">
+                <label for="first-name">First name</label>
+                <input type="text" id="first-name" required readonly />
+              </div>
+              <div class="field">
+                <label for="last-name">Last name</label>
+                <input type="text" id="last-name" required readonly />
+              </div>
+              <div class="field">
+                <label for="email">Email</label>
+                <input type="email" id="email" required readonly />
+              </div>
+              <div class="field">
+                <label for="phone">Phone</label>
+                <input type="tel" id="phone" required readonly />
+              </div>
+              <div class="field">
+                <label for="dob">Date of birth</label>
+                <input type="date" id="dob" required />
+              </div>
+              <div class="field">
+                <label for="age-display">Age</label>
+                <input type="text" id="age-display" readonly placeholder="Calculated automatically" />
+              </div>
+              <div class="field">
+                <label for="height">Height in cm</label>
+                <input type="number" id="height" required min="100" />
+              </div>
+              <div class="field">
+                <label for="weight">Weight in kg</label>
+                <input type="number" id="weight" required min="35" />
+              </div>
+              <div class="field">
+                <label for="bmi-display">Your BMI</label>
+                <div class="bmi-output">
+                  <div class="bmi-value" id="bmi-display">BMI: --</div>
+                  <div class="bmi-indicator">
+                    <span class="bmi-dot" id="bmi-dot"></span>
+                    <span class="bmi-label" id="bmi-label">Awaiting data</span>
+                  </div>
+                </div>
+                <input type="hidden" id="bmi" name="bmi" />
+              </div>
             </div>
           </section>
 
-          <section>
-            <h2 style="margin-bottom: 16px">Fasting experience & goals</h2>
-            <div class="field">
-              <label for="fasted-before">Have you fasted or detoxed before?</label>
-              <select id="fasted-before" required>
-                <option value="">Select</option>
-                <option value="no">No</option>
-                <option value="yes">Yes</option>
-              </select>
+          <section class="form-section">
+            <div class="section-heading">
+              <p class="section-label">Section B</p>
+              <h2>Fasting Experience</h2>
+              <p class="section-intro">Share any fasting history so our team understands your background.</p>
             </div>
-            <div id="fasting-details" style="display: none">
+            <div class="field yes-no" data-target="fasting-details">
+              <label>Do you already have fasting/detox experience?</label>
+              <div class="radio-group">
+                <label><input type="radio" name="fasted-before" value="yes" required /> Yes</label>
+                <label><input type="radio" name="fasted-before" value="no" required /> No</label>
+              </div>
+            </div>
+            <div id="fasting-details" class="detail-panel conditional-target">
               <div class="field">
                 <label for="fast-count">How many times?</label>
                 <input type="number" id="fast-count" min="1" />
               </div>
               <div class="field">
-                <label for="fast-longest">Longest fast (days)</label>
+                <label for="fast-longest">Maximum days fasted</label>
                 <input type="number" id="fast-longest" min="1" />
               </div>
               <div class="field">
                 <label for="fast-last">When was your last fast?</label>
-                <input type="text" id="fast-last" placeholder="e.g. March 2024" />
+                <input type="date" id="fast-last" />
+              </div>
+              <div class="field">
+                <label for="fast-method">How did you fast?</label>
+                <textarea id="fast-method" placeholder="Describe the fasting protocol"></textarea>
+              </div>
+              <div class="field">
+                <label for="fast-location">Where did you fast?</label>
+                <input type="text" id="fast-location" placeholder="Venue or city" />
+              </div>
+              <div class="field">
+                <label for="fast-country">Outside of Vietnam in (country)</label>
+                <input type="text" id="fast-country" placeholder="Country" />
+              </div>
+            </div>
+          </section>
+
+          <section class="form-section">
+            <div class="section-heading">
+              <p class="section-label">Section C</p>
+              <h2>Goals</h2>
+              <p class="section-intro">Select all health outcomes you are aiming for and tell us your focus for the retreat.</p>
+            </div>
+            <div class="field">
+              <label>Fasting goals (select all that apply)</label>
+              <div class="checkbox-grid">
+                <label class="checkbox-label"><input type="checkbox" value="Lose weight" /> Lose weight</label>
+                <label class="checkbox-label"><input type="checkbox" value="Reduce inflammation" /> Reduce inflammation</label>
+                <label class="checkbox-label"><input type="checkbox" value="Reduce pain" /> Reduce pain</label>
+                <label class="checkbox-label"><input type="checkbox" value="Change unhealthy habits" /> Change unhealthy habits</label>
+                <label class="checkbox-label"><input type="checkbox" value="Improve skin" /> Improve skin</label>
+                <label class="checkbox-label"><input type="checkbox" value="Reduce blood pressure" /> Reduce blood pressure</label>
+                <label class="checkbox-label"><input type="checkbox" value="Improve energy" /> Improve energy</label>
               </div>
             </div>
             <div class="field">
-              <label>What do you want to achieve with fasting?</label>
-              <div class="options-row">
-                <label class="checkbox-label"><input type="checkbox" value="Detox" /> Detox</label>
-                <label class="checkbox-label"><input type="checkbox" value="Reset habits" /> Reset habits</label>
-                <label class="checkbox-label"><input type="checkbox" value="Mental clarity" /> Mental clarity</label>
-                <label class="checkbox-label"><input type="checkbox" value="Weight balance" /> Weight balance</label>
-                <label class="checkbox-label"><input type="checkbox" value="Other" /> Other</label>
+              <label for="retreat-focus">What do you want to focus on during the retreat?</label>
+              <textarea id="retreat-focus" placeholder="Share the areas you would like support with"></textarea>
+            </div>
+          </section>
+
+          <section class="form-section">
+            <div class="section-heading">
+              <p class="section-label">Section D</p>
+              <h2>Health Screening</h2>
+              <p class="section-intro">Answer carefully. Where additional details are required, a short explanation field will appear.</p>
+            </div>
+
+            <div class="subsection">
+              <p class="subsection-title">General Health</p>
+              <div class="field yes-no" data-target="fitness-details" data-show-value="no">
+                <label>Do you consider yourself fit and healthy?</label>
+                <div class="radio-group">
+                  <label><input type="radio" name="fit-healthy" value="yes" required /> Yes</label>
+                  <label><input type="radio" name="fit-healthy" value="no" required /> No</label>
+                </div>
+                <textarea id="fitness-details" class="conditional-target" placeholder="If not, what restrictions do you have?"></textarea>
+              </div>
+              <div class="field yes-no" data-target="coffee-details">
+                <label>Do you drink coffee, black or green tea regularly?</label>
+                <div class="radio-group">
+                  <label><input type="radio" name="coffee" value="yes" required /> Yes</label>
+                  <label><input type="radio" name="coffee" value="no" required /> No</label>
+                </div>
+                <textarea id="coffee-details" class="conditional-target" placeholder="If yes, how much and how often?"></textarea>
+              </div>
+              <div class="field yes-no" data-target="smoke-details">
+                <label>Do you smoke or vape?</label>
+                <div class="radio-group">
+                  <label><input type="radio" name="smoke" value="yes" required /> Yes</label>
+                  <label><input type="radio" name="smoke" value="no" required /> No</label>
+                </div>
+                <textarea id="smoke-details" class="conditional-target" placeholder="If yes, how frequently?"></textarea>
+              </div>
+              <div class="field yes-no" data-target="headaches-details">
+                <label>Do you suffer from headaches or migraines?</label>
+                <div class="radio-group">
+                  <label><input type="radio" name="headaches" value="yes" required /> Yes</label>
+                  <label><input type="radio" name="headaches" value="no" required /> No</label>
+                </div>
+                <input type="text" id="headaches-details" class="conditional-target" placeholder="Describe frequency or diagnosis" />
+              </div>
+              <div class="field yes-no" data-target="back-injury-details">
+                <label>Do you have any back pain or injury now or in the past?</label>
+                <div class="radio-group">
+                  <label><input type="radio" name="back-injury" value="yes" required /> Yes</label>
+                  <label><input type="radio" name="back-injury" value="no" required /> No</label>
+                </div>
+                <input type="text" id="back-injury-details" class="conditional-target" placeholder="Provide brief details" />
               </div>
             </div>
-            <div class="field">
-              <label for="retreat-focus">What would you like to focus on during this retreat?</label>
-              <textarea id="retreat-focus" placeholder="Share what support you hope to receive"></textarea>
+
+            <div class="subsection">
+              <p class="subsection-title">Cardiovascular</p>
+              <div class="field yes-no" data-target="blood-pressure-details">
+                <label>Do you suffer from low or high blood pressure?</label>
+                <div class="radio-group">
+                  <label><input type="radio" name="blood-pressure-history" value="yes" required /> Yes</label>
+                  <label><input type="radio" name="blood-pressure-history" value="no" required /> No</label>
+                </div>
+                <input type="text" id="blood-pressure-details" class="conditional-target" placeholder="Blood pressure reading and date" />
+              </div>
+              <div class="field yes-no" data-target="organ-history-details" data-precheck>
+                <label>Do you have any heart, liver, or kidney disease now or in the past?</label>
+                <div class="radio-group">
+                  <label><input type="radio" name="organ-history" value="yes" required /> Yes</label>
+                  <label><input type="radio" name="organ-history" value="no" required /> No</label>
+                </div>
+                <textarea id="organ-history-details" class="conditional-target" placeholder="Diagnosis, treatment, and status"></textarea>
+              </div>
             </div>
+
+            <div class="subsection">
+              <p class="subsection-title">Metabolic</p>
+              <div class="field yes-no" data-target="weight-loss-history-details" data-precheck>
+                <label>Have you lost more than 5% of your body weight in the last six months without trying?</label>
+                <div class="radio-group">
+                  <label><input type="radio" name="weight-loss-history" value="yes" required /> Yes</label>
+                  <label><input type="radio" name="weight-loss-history" value="no" required /> No</label>
+                </div>
+                <textarea id="weight-loss-history-details" class="conditional-target" placeholder="How much weight and why it happened"></textarea>
+              </div>
+              <div class="field yes-no" data-target="diabetes-history-details" data-precheck>
+                <label>Are you being treated for type 1 or type 2 diabetes mellitus?</label>
+                <div class="radio-group">
+                  <label><input type="radio" name="diabetes-history" value="yes" required /> Yes</label>
+                  <label><input type="radio" name="diabetes-history" value="no" required /> No</label>
+                </div>
+                <input type="text" id="diabetes-history-details" class="conditional-target" placeholder="Blood sugar level and measurement date" />
+              </div>
+              <div class="field yes-no" data-target="thyroid-details">
+                <label>Do you have any thyroid disorder now or in the past?</label>
+                <div class="radio-group">
+                  <label><input type="radio" name="thyroid" value="yes" required /> Yes</label>
+                  <label><input type="radio" name="thyroid" value="no" required /> No</label>
+                </div>
+                <textarea id="thyroid-details" class="conditional-target" placeholder="Type, treatment, and status"></textarea>
+              </div>
+            </div>
+
+            <div class="subsection">
+              <p class="subsection-title">Digestive</p>
+              <div class="field yes-no" data-target="digestive-details">
+                <label>Do you have any digestive issues or diseases now or in the past?</label>
+                <div class="radio-group">
+                  <label><input type="radio" name="digestive" value="yes" required /> Yes</label>
+                  <label><input type="radio" name="digestive" value="no" required /> No</label>
+                </div>
+                <textarea id="digestive-details" class="conditional-target" placeholder="Diagnosis, treatment, and status"></textarea>
+              </div>
+              <div class="field yes-no" data-target="gi-symptoms-details">
+                <label>Are you prone to vomiting, diarrhea, or constipation?</label>
+                <div class="radio-group">
+                  <label><input type="radio" name="gi-symptoms" value="yes" required /> Yes</label>
+                  <label><input type="radio" name="gi-symptoms" value="no" required /> No</label>
+                </div>
+                <textarea id="gi-symptoms-details" class="conditional-target" placeholder="Share frequency and triggers"></textarea>
+              </div>
+            </div>
+
+            <div class="subsection">
+              <p class="subsection-title">Mental Health</p>
+              <div class="field yes-no" data-target="mental-health-details">
+                <label>Do you have any mental health condition now or in the past?</label>
+                <div class="radio-group">
+                  <label><input type="radio" name="mental-health" value="yes" required /> Yes</label>
+                  <label><input type="radio" name="mental-health" value="no" required /> No</label>
+                </div>
+                <textarea id="mental-health-details" class="conditional-target" placeholder="Type, treatment, and status"></textarea>
+              </div>
+              <div class="field yes-no" data-target="mental-health-risk-details" data-precheck>
+                <label>Severe mental health condition that needs specialist care?</label>
+                <div class="radio-group">
+                  <label><input type="radio" name="mental-health-risk" value="yes" required /> Yes</label>
+                  <label><input type="radio" name="mental-health-risk" value="no" required /> No</label>
+                </div>
+                <textarea id="mental-health-risk-details" class="conditional-target" placeholder="Please describe"></textarea>
+              </div>
+              <div class="field yes-no" data-target="eating-history-details" data-precheck>
+                <label>Do you have or have you ever had an eating disorder?</label>
+                <div class="radio-group">
+                  <label><input type="radio" name="eating-history" value="yes" required /> Yes</label>
+                  <label><input type="radio" name="eating-history" value="no" required /> No</label>
+                </div>
+                <textarea id="eating-history-details" class="conditional-target" placeholder="Type of disorder, treatment, and status"></textarea>
+              </div>
+            </div>
+
+            <div class="subsection">
+              <p class="subsection-title">Medication</p>
+              <div class="field yes-no" data-target="medication-details">
+                <label>Are you taking any prescription medication now or in the last four weeks?</label>
+                <div class="radio-group">
+                  <label><input type="radio" name="medication" value="yes" required /> Yes</label>
+                  <label><input type="radio" name="medication" value="no" required /> No</label>
+                </div>
+              </div>
+              <div id="medication-details" class="detail-panel conditional-target">
+                <div class="field">
+                  <label for="medication-text">What medication are you taking?</label>
+                  <input type="text" id="medication-text" data-require-when-visible placeholder="Name and dosage" />
+                </div>
+                <div class="field">
+                  <label for="medication-dosage">For how long have you taken it?</label>
+                  <input type="text" id="medication-dosage" data-require-when-visible placeholder="Include start date" />
+                </div>
+                <div class="field">
+                  <label for="medication-frequency">Why are you taking it?</label>
+                  <input type="text" id="medication-frequency" data-require-when-visible placeholder="Condition being treated" />
+                </div>
+                <div class="field">
+                  <label for="medication-upload">Your medication image (optional)</label>
+                  <input type="file" id="medication-upload" accept="image/*" />
+                </div>
+              </div>
+            </div>
+
+            <div class="subsection">
+              <p class="subsection-title">Surgery & Reproductive Health</p>
+              <div class="field yes-no" data-target="pregnant-details" data-precheck>
+                <label>Are you pregnant or breastfeeding?</label>
+                <div class="radio-group">
+                  <label><input type="radio" name="pregnant" value="yes" required /> Yes</label>
+                  <label><input type="radio" name="pregnant" value="no" required /> No</label>
+                </div>
+                <input type="text" id="pregnant-details" class="conditional-target" placeholder="How many weeks pregnant or breastfeeding duration?" />
+              </div>
+              <div class="field yes-no" data-target="recent-surgery-details">
+                <label>Have you had any surgery in the last six months?</label>
+                <div class="radio-group">
+                  <label><input type="radio" name="recent-surgery" value="yes" required /> Yes</label>
+                  <label><input type="radio" name="recent-surgery" value="no" required /> No</label>
+                </div>
+                <textarea id="recent-surgery-details" class="conditional-target" placeholder="What kind of surgery, when, and how did it go?"></textarea>
+              </div>
+            </div>
+
+            <div class="subsection">
+              <p class="subsection-title">Allergies</p>
+              <div class="field yes-no" data-target="allergies-details">
+                <label>Do you have or have you had a food allergy/intolerance?</label>
+                <div class="radio-group">
+                  <label><input type="radio" name="allergies" value="yes" required /> Yes</label>
+                  <label><input type="radio" name="allergies" value="no" required /> No</label>
+                </div>
+                <textarea id="allergies-details" class="conditional-target" placeholder="Which food and symptoms?"></textarea>
+              </div>
+            </div>
+
+            <div class="field">
+              <label for="other-notes">Do you have any other health concerns we have not asked you about in this form? If yes, please explain.</label>
+              <textarea id="other-notes" placeholder="Additional conditions, doctor's notes, or observations"></textarea>
+            </div>
+            <div id="precheck-message" class="info-box">Our medical team will personally review your answers before confirming participation.</div>
           </section>
 
-          <section>
-            <h2 style="margin-bottom: 16px">Lifestyle & medication</h2>
-            <div class="field">
-              <label for="coffee">Do you drink coffee or tea regularly?</label>
-              <select id="coffee" required>
-                <option value="">Select</option>
-                <option value="no">No</option>
-                <option value="yes">Yes</option>
-              </select>
+          <section class="form-section">
+            <div class="section-heading">
+              <p class="section-label">Section E</p>
+              <h2>Legal & Consent</h2>
+              <p class="section-intro">Please confirm the following statements before submitting your health questionnaire.</p>
             </div>
-            <div class="field">
-              <label for="smoke">Do you smoke or vape?</label>
-              <select id="smoke" required>
-                <option value="">Select</option>
-                <option value="no">No</option>
-                <option value="yes">Yes</option>
-              </select>
-            </div>
-            <div class="field">
-              <label for="medication">Are you currently taking prescription medication?</label>
-              <select id="medication" required>
-                <option value="">Select</option>
-                <option value="no">No</option>
-                <option value="yes">Yes</option>
-              </select>
-            </div>
-            <div class="field" id="medication-details" style="display: none">
-              <label for="medication-text">If yes, please list the medication(s)</label>
-              <input type="text" id="medication-text" />
-            </div>
-          </section>
-
-          <section>
-            <h2 style="margin-bottom: 16px">Safety pre-check</h2>
-            <div class="field">
-              <label for="pregnant">Are you pregnant or breastfeeding?</label>
-              <select class="precheck" id="pregnant" required>
-                <option value="">Select</option>
-                <option value="no">No</option>
-                <option value="yes">Yes</option>
-              </select>
-            </div>
-            <div class="field">
-              <label for="eating-disorder">Have you ever had an eating disorder?</label>
-              <select class="precheck" id="eating-disorder" required>
-                <option value="">Select</option>
-                <option value="no">No</option>
-                <option value="yes">Yes</option>
-              </select>
-            </div>
-            <div class="field">
-              <label for="diabetes">Are you being treated for diabetes?</label>
-              <select class="precheck" id="diabetes" required>
-                <option value="">Select</option>
-                <option value="no">No</option>
-                <option value="yes">Yes</option>
-              </select>
-            </div>
-            <div class="field">
-              <label for="organ-disease">Do you have heart, liver, or kidney disease?</label>
-              <select class="precheck" id="organ-disease" required>
-                <option value="">Select</option>
-                <option value="no">No</option>
-                <option value="yes">Yes</option>
-              </select>
-            </div>
-            <div class="field">
-              <label for="weight-loss">Have you lost more than 5% of your body weight unintentionally in the last 6 months?</label>
-              <select class="precheck" id="weight-loss" required>
-                <option value="">Select</option>
-                <option value="no">No</option>
-                <option value="yes">Yes</option>
-              </select>
-            </div>
-            <div id="precheck-message" class="info-box">
-              Thank you for your honesty. Our medical team will carefully review your answers and discuss the safest options with you personally.
-            </div>
-          </section>
-
-          <section>
-            <h2 style="margin-bottom: 16px">General health</h2>
-            <div class="field">
-              <label for="headaches">Headaches or migraines?</label>
-              <select data-details="headaches-details" required>
-                <option value="">Select</option>
-                <option value="no">No</option>
-                <option value="yes">Yes</option>
-              </select>
-              <input type="text" id="headaches-details" placeholder="If yes, please share details" style="display: none; margin-top: 10px" />
-            </div>
-            <div class="field">
-              <label for="blood-pressure">Blood pressure issues?</label>
-              <select data-details="blood-pressure-details" required>
-                <option value="">Select</option>
-                <option value="no">No</option>
-                <option value="yes">Yes</option>
-              </select>
-              <input type="text" id="blood-pressure-details" placeholder="If yes, please share details" style="display: none; margin-top: 10px" />
-            </div>
-            <div class="field">
-              <label for="digestive">Digestive issues?</label>
-              <select data-details="digestive-details" required>
-                <option value="">Select</option>
-                <option value="no">No</option>
-                <option value="yes">Yes</option>
-              </select>
-              <input type="text" id="digestive-details" placeholder="If yes, please share details" style="display: none; margin-top: 10px" />
-            </div>
-            <div class="field">
-              <label for="thyroid">Thyroid disorders?</label>
-              <select data-details="thyroid-details" required>
-                <option value="">Select</option>
-                <option value="no">No</option>
-                <option value="yes">Yes</option>
-              </select>
-              <input type="text" id="thyroid-details" placeholder="If yes, please share details" style="display: none; margin-top: 10px" />
-            </div>
-            <div class="field">
-              <label for="allergies">Food allergies or intolerances?</label>
-              <select data-details="allergies-details" required>
-                <option value="">Select</option>
-                <option value="no">No</option>
-                <option value="yes">Yes</option>
-              </select>
-              <input type="text" id="allergies-details" placeholder="If yes, please share details" style="display: none; margin-top: 10px" />
-            </div>
-            <div class="field">
-              <label for="mental-health">Mental health conditions (current or past)?</label>
-              <select data-details="mental-health-details" required>
-                <option value="">Select</option>
-                <option value="no">No</option>
-                <option value="yes">Yes</option>
-              </select>
-              <input type="text" id="mental-health-details" placeholder="If yes, please share details" style="display: none; margin-top: 10px" />
-            </div>
-          </section>
-
-          <section>
-            <h2 style="margin-bottom: 16px">Final notes</h2>
-            <div class="field">
-              <label for="other-notes">Any other health concerns we should know about?</label>
-              <textarea id="other-notes"></textarea>
-            </div>
-          </section>
-
-          <section>
-            <h2 style="margin-bottom: 16px">Consent</h2>
             <div class="field">
               <label class="checkbox-label">
-                <input type="checkbox" id="consent" required />
-                I confirm that the information provided is true and complete to the best of my knowledge.
+                <input type="checkbox" id="consent-truthful" required />
+                I confirm that all information provided is truthful and complete.
               </label>
             </div>
             <div class="field">
-              <label for="signature">Full name</label>
-              <input type="text" id="signature" required placeholder="Type your name" />
+              <label class="checkbox-label">
+                <input type="checkbox" id="consent-responsibility" required />
+                I understand that the fasting program is not a medical treatment and that participation is voluntary and at my own responsibility.
+              </label>
+            </div>
+            <div class="field">
+              <label class="checkbox-label">
+                <input type="checkbox" id="consent-data" required />
+                I agree that my personal and medical data may be stored and processed for the purpose of medical screening and retreat participation.
+              </label>
             </div>
           </section>
+
+          <input type="hidden" id="booking-stage" name="booking-stage" value="" />
+          <input type="hidden" id="submission-timestamp" name="submission-timestamp" value="" />
 
           <button type="submit">Submit medical screening</button>
         </form>
 
         <div id="success-state" class="success">
-          <p>Medical screening received</p>
-          <p style="font-weight: 400; color: #1f1c19">
-            Thank you. Our medical team will review your answers within 24–48 hours. A complimentary 30-minute personal medical review call with Vietnam Detox is included and will be scheduled after review.
-          </p>
-          <div class="success-actions">
-            <button type="button" id="close-button">Close</button>
+          <div class="summary-intro">
+            <h3 style="margin: 0 0 6px">Medical Screening Submitted Successfully</h3>
+            <p style="margin: 0; font-weight: 400; color: #1f1c19">
+              Your medical screening has been successfully submitted and is now under review by our medical team. We will contact you within 24–48 hours to schedule your
+              mandatory 1-on-1 medical review and preparation call. This call is required before your participation in the retreat can be confirmed.
+            </p>
+          </div>
+          <div id="summary-sections" class="summary"></div>
+          <div class="summary-actions">
+            <button type="button" id="edit-button">Edit my answers</button>
+            <button type="button" id="close-button" class="primary">Close</button>
             <a href="index.html?step=review_state">Back to booking overview</a>
           </div>
         </div>
 
         <div class="callout">
-          <p style="margin: 0 0 10px; font-weight: 600">Included personal medical review call</p>
+          <p style="margin: 0 0 10px; font-weight: 600">Medical Review & Preparation Call</p>
           <p style="margin: 0; font-size: 0.95rem">
-            After submitting the medical questionnaire, the Vietnam Detox medical team offers a complimentary 30-minute 1-on-1 call to review your answers, answer questions, and make sure the program is safe and well suited for you. This call is included in your retreat and will be scheduled after the medical screening is submitted.
+            After submitting your medical questionnaire, a mandatory 1-on-1 medical review and preparation call will be scheduled with our team. During this call we review your health information, clarify open questions, and ensure the fasting program is safe and well suited for you.
           </p>
-          <button type="button" onclick="alert('Thank you. We will contact you to schedule your personal medical review call.')">Request my medical review call</button>
         </div>
       </div>
     </div>
@@ -423,49 +732,327 @@
         const guestLine = document.getElementById('guest-line');
         guestLine.textContent = `Guest ${guest} – ${name} • Booking ${booking}`;
 
-        const fastedBefore = document.getElementById('fasted-before');
-        const fastingDetails = document.getElementById('fasting-details');
-        fastedBefore.addEventListener('change', () => {
-          fastingDetails.style.display = fastedBefore.value === 'yes' ? 'block' : 'none';
+        const getParamValue = (keys) => {
+          for (const key of keys) {
+            const value = params.get(key);
+            if (value) return value;
+          }
+          return '';
+        };
+
+        const fullName = name.trim();
+        const splitName = fullName.split(' ').filter(Boolean);
+        const derivedFirst = splitName[0] || `Guest ${guest}`;
+        const derivedLast = splitName.slice(1).join(' ') || 'Guest';
+        const bookingSlug = booking.toLowerCase().replace(/[^a-z0-9]/g, '') || 'vdx';
+
+        const fillReadOnly = (id, value) => {
+          const field = document.getElementById(id);
+          if (field) {
+            field.value = value;
+          }
+        };
+
+        fillReadOnly('first-name', getParamValue(['first', 'fname', 'first_name']) || derivedFirst);
+        fillReadOnly('last-name', getParamValue(['last', 'lname', 'last_name']) || derivedLast);
+        fillReadOnly('email', getParamValue(['email', 'mail']) || `${bookingSlug}@guest.vdx`);
+        fillReadOnly('phone', getParamValue(['phone', 'tel']) || `+000000${guest.padStart ? guest.padStart(3, '0') : guest}`);
+
+        document.querySelectorAll('[data-target]').forEach((group) => {
+          const targetId = group.dataset.target;
+          const showValue = group.dataset.showValue || 'yes';
+          const target = document.getElementById(targetId);
+          if (!target) return;
+          const inputs = group.querySelectorAll('input[type="radio"]');
+          const clearTarget = () => {
+            if (target.matches('input, textarea')) {
+              target.value = '';
+            } else {
+              target.querySelectorAll('input, textarea').forEach((el) => (el.value = ''));
+            }
+          };
+          const toggle = () => {
+            const checked = group.querySelector('input[type="radio"]:checked');
+            const shouldShow = checked && checked.value === showValue;
+            target.style.display = shouldShow ? 'block' : 'none';
+            if (!shouldShow) {
+              clearTarget();
+            }
+            target.querySelectorAll('[data-require-when-visible]').forEach((el) => {
+              el.required = shouldShow;
+              if (!shouldShow) el.value = '';
+            });
+          };
+          inputs.forEach((input) => input.addEventListener('change', toggle));
+          toggle();
         });
 
-        const medicationSelect = document.getElementById('medication');
-        const medicationDetails = document.getElementById('medication-details');
-        medicationSelect.addEventListener('change', () => {
-          medicationDetails.style.display = medicationSelect.value === 'yes' ? 'block' : 'none';
-        });
-
-        document.querySelectorAll('select[data-details]').forEach((select) => {
-          const target = document.getElementById(select.dataset.details);
-          select.addEventListener('change', () => {
-            target.style.display = select.value === 'yes' ? 'block' : 'none';
-          });
-        });
-
-        const precheckFields = Array.from(document.querySelectorAll('.precheck'));
+        const precheckGroups = Array.from(document.querySelectorAll('[data-precheck]'));
         const precheckMessage = document.getElementById('precheck-message');
-        precheckFields.forEach((field) =>
-          field.addEventListener('change', () => {
-            const show = precheckFields.some((select) => select.value === 'yes');
-            precheckMessage.style.display = show ? 'block' : 'none';
-          })
-        );
+        const updatePrecheck = () => {
+          const show = precheckGroups.some((group) => {
+            const checked = group.querySelector('input[type="radio"]:checked');
+            return checked && checked.value === 'yes';
+          });
+          precheckMessage.style.display = show ? 'block' : 'none';
+        };
+        precheckGroups.forEach((group) => {
+          group.querySelectorAll('input[type="radio"]').forEach((radio) => radio.addEventListener('change', updatePrecheck));
+        });
+
+        const heightInput = document.getElementById('height');
+        const weightInput = document.getElementById('weight');
+        const bmiHidden = document.getElementById('bmi');
+        const bmiDisplay = document.getElementById('bmi-display');
+        const bmiDot = document.getElementById('bmi-dot');
+        const bmiLabel = document.getElementById('bmi-label');
+        const setBmiIndicator = (bmi) => {
+          if (!bmiDot || !bmiLabel) return;
+          bmiDot.classList.remove('green', 'yellow', 'red');
+          if (!bmi) {
+            bmiLabel.textContent = 'Awaiting data';
+            return;
+          }
+          if (bmi >= 18.5 && bmi <= 24.9) {
+            bmiDot.classList.add('green');
+            bmiLabel.textContent = 'Normal Range';
+          } else if (bmi >= 25 && bmi <= 29.9) {
+            bmiDot.classList.add('yellow');
+            bmiLabel.textContent = 'Overweight – Medical Review Recommended';
+          } else if (bmi < 18.5) {
+            bmiDot.classList.add('red');
+            bmiLabel.textContent = 'Underweight – Medical Clearance Required';
+          } else if (bmi >= 30) {
+            bmiDot.classList.add('red');
+            bmiLabel.textContent = 'Obesity Range – Medical Review Required';
+          }
+        };
+
+        const updateBmi = () => {
+          const height = parseFloat(heightInput.value);
+          const weight = parseFloat(weightInput.value);
+          if (height > 0 && weight > 0) {
+            const bmi = weight / Math.pow(height / 100, 2);
+            const rounded = bmi.toFixed(2);
+            bmiHidden.value = rounded;
+            bmiDisplay.textContent = `BMI: ${rounded}`;
+            setBmiIndicator(parseFloat(rounded));
+          } else {
+            bmiHidden.value = '';
+            bmiDisplay.textContent = 'BMI: --';
+            setBmiIndicator(null);
+          }
+        };
+        heightInput.addEventListener('input', updateBmi);
+        weightInput.addEventListener('input', updateBmi);
+
+        const dobInput = document.getElementById('dob');
+        const ageDisplay = document.getElementById('age-display');
+        const updateAge = () => {
+          if (!dobInput.value) {
+            ageDisplay.value = '';
+            return;
+          }
+          const today = new Date();
+          const birthDate = new Date(dobInput.value);
+          if (Number.isNaN(birthDate.getTime())) {
+            ageDisplay.value = '';
+            return;
+          }
+          let age = today.getFullYear() - birthDate.getFullYear();
+          const monthDiff = today.getMonth() - birthDate.getMonth();
+          if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+            age--;
+          }
+          ageDisplay.value = age > 0 ? age : '';
+        };
+        dobInput.addEventListener('change', updateAge);
 
         const form = document.getElementById('screening-form');
         const successState = document.getElementById('success-state');
+        const summaryContainer = document.getElementById('summary-sections');
+        const editButton = document.getElementById('edit-button');
+        const bookingStageInput = document.getElementById('booking-stage');
+        const timestampInput = document.getElementById('submission-timestamp');
+
+        const getValue = (id) => {
+          const field = document.getElementById(id);
+          return field ? field.value.trim() : '';
+        };
+
+        const getRadioValue = (name) => {
+          const checked = document.querySelector(`input[name="${name}"]:checked`);
+          return checked ? checked.value : '';
+        };
+
+        const formatYesNo = (name, detailId, detailCondition = 'yes') => {
+          const value = getRadioValue(name);
+          if (!value) return 'Not answered';
+          const label = value === 'yes' ? 'Yes' : 'No';
+          if (detailId) {
+            const detail = getValue(detailId);
+            if (value === detailCondition && detail) {
+              return `${label} – ${detail}`;
+            }
+          }
+          return label;
+        };
+
+        const formatGoals = () => {
+          const selections = Array.from(document.querySelectorAll('.checkbox-grid input[type="checkbox"]:checked')).map((checkbox) => checkbox.value);
+          return selections.length ? selections.join(', ') : 'Not specified';
+        };
+
+        const formatTimestamp = (iso) => {
+          if (!iso) return 'Pending';
+          const date = new Date(iso);
+          return Number.isNaN(date.getTime()) ? iso : date.toLocaleString();
+        };
+
+        const createRow = (question, answer) => ({ question, answer: answer || 'Not provided' });
+
+        const renderSummary = () => {
+          if (!summaryContainer) return;
+          summaryContainer.innerHTML = '';
+          const timestampValue = timestampInput ? timestampInput.value : '';
+          const basicSection = [
+            createRow('First Name', getValue('first-name')),
+            createRow('Last Name', getValue('last-name')),
+            createRow('Email', getValue('email')),
+            createRow('Phone', getValue('phone')),
+            createRow('Date of Birth', getValue('dob')),
+            createRow('Age', getValue('age-display')),
+            createRow('Height (cm)', getValue('height')),
+            createRow('Weight (kg)', getValue('weight')),
+            createRow('BMI', bmiHidden.value || 'Not calculated'),
+            createRow('Submission Timestamp', formatTimestamp(timestampValue)),
+            createRow('Booking Stage', bookingStageInput?.value || 'Pending Medical Review'),
+          ];
+
+          const fastingRows = [
+            createRow('Fasting / Detox Experience', formatYesNo('fasted-before')),
+          ];
+          const fastDetails = [
+            { label: 'Number of times', value: getValue('fast-count') },
+            { label: 'Maximum days fasted', value: getValue('fast-longest') },
+            { label: 'Last fasting date', value: getValue('fast-last') },
+            { label: 'How did you fast?', value: getValue('fast-method') },
+            { label: 'Where did you fast?', value: getValue('fast-location') },
+            { label: 'Outside Vietnam (country)', value: getValue('fast-country') },
+          ];
+          fastDetails.forEach((item) => {
+            if (item.value) fastingRows.push(createRow(item.label, item.value));
+          });
+
+          const medicationRadio = getRadioValue('medication');
+          const medicationAnswer = medicationRadio ? (medicationRadio === 'yes' ? 'Yes' : 'No') : 'Not answered';
+          const medicationDetails = ['medication-text', 'medication-dosage', 'medication-frequency']
+            .map((id) => getValue(id))
+            .filter(Boolean)
+            .join(' • ');
+
+          const healthQuestions = [
+            { question: 'Fit and healthy', name: 'fit-healthy', detail: 'fitness-details', detailCondition: 'no' },
+            { question: 'Coffee or tea regularly', name: 'coffee', detail: 'coffee-details' },
+            { question: 'Smoke or vape', name: 'smoke', detail: 'smoke-details' },
+            { question: 'Headaches or migraines', name: 'headaches', detail: 'headaches-details' },
+            { question: 'Back pain or injury', name: 'back-injury', detail: 'back-injury-details' },
+            { question: 'Blood pressure issues', name: 'blood-pressure-history', detail: 'blood-pressure-details' },
+            { question: 'Heart, liver, or kidney disease', name: 'organ-history', detail: 'organ-history-details' },
+            { question: 'Weight loss >5% recently', name: 'weight-loss-history', detail: 'weight-loss-history-details' },
+            { question: 'Diabetes treatment', name: 'diabetes-history', detail: 'diabetes-history-details' },
+            { question: 'Thyroid disorder', name: 'thyroid', detail: 'thyroid-details' },
+            { question: 'Digestive issues', name: 'digestive', detail: 'digestive-details' },
+            { question: 'Vomiting / diarrhea / constipation', name: 'gi-symptoms', detail: 'gi-symptoms-details' },
+            { question: 'Mental health condition', name: 'mental-health', detail: 'mental-health-details' },
+            { question: 'Severe mental health condition', name: 'mental-health-risk', detail: 'mental-health-risk-details' },
+            { question: 'Eating disorder history', name: 'eating-history', detail: 'eating-history-details' },
+            { question: 'Pregnant or breastfeeding', name: 'pregnant', detail: 'pregnant-details' },
+            { question: 'Surgery in last six months', name: 'recent-surgery', detail: 'recent-surgery-details' },
+            { question: 'Food allergy or intolerance', name: 'allergies', detail: 'allergies-details' },
+          ];
+
+          const healthRows = healthQuestions.map((item) => createRow(item.question, formatYesNo(item.name, item.detail, item.detailCondition || 'yes')));
+          healthRows.push(createRow('Prescription medication (last 4 weeks)', medicationAnswer + (medicationRadio === 'yes' && medicationDetails ? ` – ${medicationDetails}` : '')));
+          healthRows.push(createRow('Other health concerns', getValue('other-notes') || 'None reported'));
+
+          const summarySections = [
+            { title: 'Basic Information', rows: basicSection },
+            { title: 'Fasting Experience', rows: fastingRows },
+            {
+              title: 'Goals',
+              rows: [
+                createRow('Fasting goals', formatGoals()),
+                createRow('Retreat focus', getValue('retreat-focus') || 'Not specified'),
+              ],
+            },
+            { title: 'Health Screening', rows: healthRows },
+            {
+              title: 'Legal Confirmation',
+              rows: [
+                createRow('Truthful information confirmation', document.getElementById('consent-truthful')?.checked ? 'Agreed' : 'Not confirmed'),
+                createRow('Program responsibility acknowledgement', document.getElementById('consent-responsibility')?.checked ? 'Agreed' : 'Not confirmed'),
+                createRow('Data processing consent', document.getElementById('consent-data')?.checked ? 'Agreed' : 'Not confirmed'),
+              ],
+            },
+          ];
+
+          summarySections.forEach((section) => {
+            const sectionEl = document.createElement('div');
+            sectionEl.className = 'summary-section';
+            const titleEl = document.createElement('h4');
+            titleEl.textContent = section.title;
+            sectionEl.appendChild(titleEl);
+            section.rows.forEach((row) => {
+              const rowEl = document.createElement('div');
+              rowEl.className = 'summary-row';
+              const questionEl = document.createElement('div');
+              questionEl.className = 'summary-question';
+              questionEl.textContent = row.question;
+              const answerEl = document.createElement('div');
+              answerEl.className = 'summary-answer';
+              answerEl.textContent = row.answer || 'Not provided';
+              rowEl.appendChild(questionEl);
+              rowEl.appendChild(answerEl);
+              sectionEl.appendChild(rowEl);
+            });
+            summaryContainer.appendChild(sectionEl);
+          });
+        };
+
         form.addEventListener('submit', (event) => {
           event.preventDefault();
+          const timestamp = new Date().toISOString();
+          if (timestampInput) timestampInput.value = timestamp;
+          if (bookingStageInput) bookingStageInput.value = 'Pending Medical Review';
+          renderSummary();
           form.style.display = 'none';
           successState.style.display = 'block';
+          window.scrollTo({ top: 0, behavior: 'smooth' });
         });
 
-        document.getElementById('close-button').addEventListener('click', () => {
-          if (window.history.length > 1) {
-            window.history.back();
-          } else {
-            window.close();
-          }
-        });
+        if (editButton) {
+          editButton.addEventListener('click', () => {
+            successState.style.display = 'none';
+            form.style.display = 'block';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          });
+        }
+
+        const closeButton = document.getElementById('close-button');
+        if (closeButton) {
+          closeButton.addEventListener('click', () => {
+            if (window.history.length > 1) {
+              window.history.back();
+            } else {
+              window.close();
+            }
+          });
+        }
+
+        updatePrecheck();
+        updateBmi();
+        updateAge();
       })();
     </script>
   </body>
