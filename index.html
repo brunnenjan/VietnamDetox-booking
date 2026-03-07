@@ -106,6 +106,7 @@
           superior: 33800000,
           garden: 38600000,
         };
+        const CUSTOM_RETREAT_ID = 'private-retreat';
         const TRANSFER_PRICES = {
           han: 2800000,
           hph: 2100000,
@@ -195,6 +196,26 @@
             { label: '16 Dec – 20 Dec 2026', start: '2026-12-16', end: '2026-12-20', limited: false, earlyBirdDeadline: '2026-11-16' },
           ],
         },
+        {
+          id: CUSTOM_RETREAT_ID,
+          name: 'Private Fasting Retreats',
+          location: 'Bespoke sanctuaries across Vietnam',
+          image: './public/rooms/Nipa-Pool-Villa-11-Bedroom-2-Namia-River-Retreat-SLH.webp',
+          description:
+            'Design a completely private fasting programme for up to four guests, or curate a private group immersion for eight or more. Ideal for couples, close friends, or anyone who values privacy with full medical guidance.',
+          earlyBirdNote: 'Flexible scheduling · Pricing provided upon scope',
+          isCustom: true,
+          dates: [
+            {
+              label: 'Flexible scheduling – share preferred dates',
+              start: '2026-01-01',
+              end: '2026-12-31',
+              limited: false,
+              earlyBirdDeadline: null,
+              isCustomDate: true,
+            },
+          ],
+        },
       ];
 
       const DATES = RETREATS.flatMap((retreat) =>
@@ -267,6 +288,7 @@
             images: ['./public/rooms/buong-room.webp'],
           },
         ],
+        [CUSTOM_RETREAT_ID]: [],
       };
 
       const TRANSPORT_OPTIONS = [
@@ -347,6 +369,27 @@
       };
 
       const PriceSummary = ({ context = 'default', pricing, paymentMethod, stripeFee, paymentDueNow }) => {
+        if (pricing.isCustom) {
+          return (
+            <div className="bg-white border border-stone-100 rounded-3xl p-6 shadow-sm space-y-4">
+              <div>
+                <p className="text-xs uppercase tracking-[0.3em] text-stone-400 font-semibold">Investment summary</p>
+                <p className="text-sm text-stone-500">Private retreats are priced individually.</p>
+              </div>
+              <div className="space-y-2 text-sm">
+                <div className="flex justify-between">
+                  <span className="text-stone-500">Retreat total</span>
+                  <span className="text-2xl font-bold">—</span>
+                </div>
+                <p className="text-sm text-stone-600">
+                  Pricing is provided upon scope. After we understand your preferred dates, desired venue, and group size we prepare a detailed proposal with
+                  investment options and payment schedule.
+                </p>
+              </div>
+            </div>
+          );
+        }
+
         const showEarlyBird = pricing.earlyBird > 0;
         const showFriend = pricing.friend > 0;
         const showDepositLine = context === 'review' || context === 'payment';
@@ -375,10 +418,10 @@
                   <span>-{formatVND(pricing.friend)}</span>
                 </div>
               )}
-            <div className="flex justify-between text-stone-500">
-              <span>Airport transfer</span>
-              <span>{formatVND(pricing.transport)}</span>
-            </div>
+              <div className="flex justify-between text-stone-500">
+                <span>Airport transfer</span>
+                <span>{formatVND(pricing.transport)}</span>
+              </div>
             </div>
             <div className="flex justify-between pt-2 border-t border-stone-100">
               <span className="text-stone-500">Retreat total</span>
@@ -404,7 +447,7 @@
               <div className="pt-2 border-t border-stone-100 space-y-2">
                 {paymentMethod === 'stripe' && stripeFee > 0 && (
                   <div className="flex justify-between text-amber-700">
-                  <span>Card processing fee (3.6%)</span>
+                    <span>Card processing fee (3.6%)</span>
                     <span>{formatVND(stripeFee)}</span>
                   </div>
                 )}
@@ -476,6 +519,8 @@
         const routeStep = route?.step;
         const flowStep = STEPS.includes(routeStep) ? routeStep : 'config';
         const controllerStep = flowStep;
+        const activeRetreat = useMemo(() => RETREATS.find((retreat) => retreat.id === selection.retreatId) || DEFAULT_RETREAT, [selection.retreatId]);
+        const isCustomRetreat = Boolean(activeRetreat?.isCustom);
 
         const syncRoute = (nextRoute, replace = false) => {
           const safeStep = STEPS.includes(nextRoute.step) ? nextRoute.step : 'config';
@@ -541,6 +586,18 @@
         const roomsForCurrentRetreat = useMemo(() => getRoomsForRetreat(selection.retreatId), [selection.retreatId]);
 
         const pricing = useMemo(() => {
+          if (isCustomRetreat) {
+            return {
+              subtotal: 0,
+              earlyBird: 0,
+              friend: 0,
+              transport: 0,
+              total: 0,
+              deposit: 0,
+              remaining: 0,
+              isCustom: true,
+            };
+          }
           const room = roomsForCurrentRetreat.find((r) => r.id === selection.roomType) || roomsForCurrentRetreat[0];
           const roomPrice = room ? room.price : 0;
           const transportOption = TRANSPORT_OPTIONS.find((option) => option.id === selection.transfer) || TRANSPORT_OPTIONS[0];
@@ -553,11 +610,11 @@
           const total = subtotal - earlyBird - friend + transport;
           const deposit = Math.round(total * 0.3);
           const remaining = total - deposit;
-          return { subtotal, earlyBird, friend, transport, total, deposit, remaining };
-        }, [selection, dateOptions, roomsForCurrentRetreat]);
+          return { subtotal, earlyBird, friend, transport, total, deposit, remaining, isCustom: false };
+        }, [selection, dateOptions, roomsForCurrentRetreat, isCustomRetreat]);
 
-        const stripeFee = paymentMethod === 'stripe' ? Math.round(pricing.deposit * STRIPE_FEE_RATE) : 0;
-        const paymentDueNow = pricing.deposit + stripeFee;
+        const stripeFee = pricing.isCustom ? 0 : paymentMethod === 'stripe' ? Math.round(pricing.deposit * STRIPE_FEE_RATE) : 0;
+        const paymentDueNow = pricing.isCustom ? 0 : pricing.deposit + stripeFee;
         const screeningsComplete = screeningStatus.guest1 === 'complete' && (selection.guests === 1 || screeningStatus.guest2 === 'complete');
         const safetyAllAnswered = Object.values(safetyAnswers).every((value) => value === 'yes' || value === 'no');
         const safetyHasConcern = Object.values(safetyAnswers).some((value) => value === 'yes');
@@ -876,6 +933,12 @@
                   );
                 })}
               </div>
+              {isCustomRetreat && (
+                <p className="text-sm text-stone-500">
+                  Private retreats can host up to four guests in a single party. Planning for private groups of eight or more? Mention it in the next step and our
+                  concierge will curate a dedicated programme.
+                </p>
+              )}
             </section>
 
             <section className="space-y-4">
@@ -887,67 +950,84 @@
                 </p>
               </div>
 
-              <div className="space-y-6">
-                {roomsForCurrentRetreat.length === 0 && <p className="text-sm text-stone-500">Accommodation options will appear here for this retreat.</p>}
-                {roomsForCurrentRetreat.map((room) => {
-                  const active = selection.roomType === room.id;
-                  return (
-                    <button
-                      key={room.id}
-                      type="button"
-                      onClick={() => updateSelection({ roomType: room.id })}
-                      className={`w-full text-left border-2 rounded-3xl overflow-hidden transition ${
-                        active ? 'border-emerald-600 shadow-lg shadow-emerald-100/40' : 'border-stone-100 hover:border-stone-200'
-                      }`}
-                    >
-                      <div className="grid grid-cols-1 md:grid-cols-3">
-                        <div className="md:col-span-1 h-48 overflow-hidden">
-                        <img src={room.images[0]} alt={room.name} className="w-full h-full object-cover" onError={handleImageError} />
-                        </div>
-                        <div className="md:col-span-2 p-6 space-y-4">
-                          <div>
-                            <p className="text-xs uppercase tracking-[0.3em] text-stone-400">{room.benefit}</p>
-                            <div className="flex items-center justify-between mt-2">
-                              <h3 className="text-2xl font-bold">{room.name}</h3>
-                              <p className="text-sm text-stone-500">Per guest {formatVND(room.price)}</p>
+              {isCustomRetreat ? (
+                <div className="space-y-4 bg-white border border-stone-100 rounded-3xl p-6">
+                  <p className="text-sm text-stone-600">
+                    Residences are curated individually. We partner with secluded villas, heritage estates, and river or mountain hideaways across Vietnam to
+                    match your privacy preferences, group size, and fasting intentions.
+                  </p>
+                  <p className="text-sm text-stone-600">Share your ideal setting in the notes and our concierge will prepare a shortlist just for you.</p>
+                </div>
+              ) : (
+                <div className="space-y-6">
+                  {roomsForCurrentRetreat.length === 0 && <p className="text-sm text-stone-500">Accommodation options will appear here for this retreat.</p>}
+                  {roomsForCurrentRetreat.map((room) => {
+                    const active = selection.roomType === room.id;
+                    return (
+                      <button
+                        key={room.id}
+                        type="button"
+                        onClick={() => updateSelection({ roomType: room.id })}
+                        className={`w-full text-left border-2 rounded-3xl overflow-hidden transition ${
+                          active ? 'border-emerald-600 shadow-lg shadow-emerald-100/40' : 'border-stone-100 hover:border-stone-200'
+                        }`}
+                      >
+                        <div className="grid grid-cols-1 md:grid-cols-3">
+                          <div className="md:col-span-1 h-48 overflow-hidden">
+                            <img src={room.images[0]} alt={room.name} className="w-full h-full object-cover" onError={handleImageError} />
+                          </div>
+                          <div className="md:col-span-2 p-6 space-y-4">
+                            <div>
+                              <p className="text-xs uppercase tracking-[0.3em] text-stone-400">{room.benefit}</p>
+                              <div className="flex items-center justify-between mt-2">
+                                <h3 className="text-2xl font-bold">{room.name}</h3>
+                                <p className="text-sm text-stone-500">Per guest {formatVND(room.price)}</p>
+                              </div>
+                            </div>
+                            <div className="flex items-center justify-between pt-3 border-t border-stone-200">
+                              <span className={`text-sm font-semibold ${active ? 'text-emerald-700' : 'text-stone-500'}`}>
+                                {active ? 'Selected' : 'Tap to select'}
+                              </span>
+                              <button
+                                type="button"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  openGallery(room);
+                                }}
+                                className="text-sm font-semibold text-emerald-700 hover:text-emerald-800"
+                              >
+                                View photos
+                              </button>
                             </div>
                           </div>
-                          <div className="flex items-center justify-between pt-3 border-t border-stone-200">
-                            <span className={`text-sm font-semibold ${active ? 'text-emerald-700' : 'text-stone-500'}`}>
-                              {active ? 'Selected' : 'Tap to select'}
-                            </span>
-                            <button
-                              type="button"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                openGallery(room);
-                              }}
-                              className="text-sm font-semibold text-emerald-700 hover:text-emerald-800"
-                            >
-                              View photos
-                            </button>
-                          </div>
                         </div>
-                      </div>
-                    </button>
-                  );
-                })}
-              </div>
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
             </section>
 
             <section className="space-y-4">
               <p className="text-xs uppercase tracking-[0.3em] text-stone-400 font-semibold">Airport transfer (optional)</p>
-              <select
-                className="w-full border border-stone-200 rounded-2xl p-4 bg-stone-50 focus:ring-2 focus:ring-emerald-100 outline-none"
-                value={selection.transfer}
-                onChange={(e) => updateSelection({ transfer: e.target.value })}
-              >
-                {TRANSPORT_OPTIONS.map((option) => (
-                  <option key={option.id} value={option.id}>
-                    {option.label} {option.price > 0 ? `(+${formatVND(option.price)})` : ''}
-                  </option>
-                ))}
-              </select>
+              {isCustomRetreat ? (
+                <div className="bg-stone-50 border border-stone-100 rounded-3xl p-5 text-sm text-stone-600">
+                  Airport transfers, chauffeurs, or private drivers are coordinated as part of your bespoke itinerary. Share your arrival airport during the
+                  consultation and we will include it in the proposal.
+                </div>
+              ) : (
+                <select
+                  className="w-full border border-stone-200 rounded-2xl p-4 bg-stone-50 focus:ring-2 focus:ring-emerald-100 outline-none"
+                  value={selection.transfer}
+                  onChange={(e) => updateSelection({ transfer: e.target.value })}
+                >
+                  {TRANSPORT_OPTIONS.map((option) => (
+                    <option key={option.id} value={option.id}>
+                      {option.label} {option.price > 0 ? `(+${formatVND(option.price)})` : ''}
+                    </option>
+                  ))}
+                </select>
+              )}
             </section>
 
             <div className="flex justify-end">
@@ -1097,12 +1177,17 @@
             ...(selection.guests === 2 ? [{ label: 'Guest 2', data: guestDetails.guest2 }] : []),
           ];
 
+          const reviewIntro = isCustomRetreat
+            ? 'Confirm the essentials before we craft your private fasting retreat proposal.'
+            : 'Confirm dates, residence, guests, and transfers before the deposit step.';
+          const roomName = isCustomRetreat ? 'Curated residences • TBD' : room?.name;
+          const transferLabel = isCustomRetreat ? 'Arranged as part of your private itinerary' : transferOption.label;
           return (
             <div className="space-y-10">
               <header className="space-y-3">
                 <p className="text-[12px] uppercase tracking-[0.4em] text-stone-400">Step 3</p>
                 <h1 className="text-4xl font-bold">Review</h1>
-                <p className="text-stone-500">Confirm dates, residence, guests, and transfers before the deposit step.</p>
+                <p className="text-stone-500">{reviewIntro}</p>
               </header>
 
               <div className="space-y-6">
@@ -1126,7 +1211,7 @@
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-xs uppercase tracking-[0.3em] text-stone-400">Accommodation</p>
-                    <p className="font-semibold">{room?.name}</p>
+                    <p className="font-semibold">{roomName}</p>
                   </div>
                   <button className="text-sm text-emerald-700 font-semibold" onClick={() => goToStep('config')}>
                     Edit
@@ -1135,7 +1220,7 @@
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-xs uppercase tracking-[0.3em] text-stone-400">Airport transfer</p>
-                    <p className="font-semibold">{transferOption.label}</p>
+                    <p className="font-semibold">{transferLabel}</p>
                   </div>
                   <button className="text-sm text-emerald-700 font-semibold" onClick={() => goToStep('config')}>
                     Edit
@@ -1163,13 +1248,24 @@
                 </div>
               </div>
 
-              <div className="bg-stone-50 border border-stone-100 rounded-3xl p-6 space-y-2">
-                <h3 className="text-sm font-semibold text-stone-700 uppercase tracking-[0.3em]">Deposit & health review</h3>
-                <ul className="space-y-1 text-sm text-stone-600 list-disc pl-4">
-                  <li>A 30% deposit secures your booking.</li>
-                  <li>After your deposit, each guest receives their own health questionnaire and we schedule a personal preparation call.</li>
-                </ul>
-              </div>
+              {isCustomRetreat ? (
+                <div className="bg-stone-50 border border-stone-100 rounded-3xl p-6 space-y-2">
+                  <h3 className="text-sm font-semibold text-stone-700 uppercase tracking-[0.3em]">Scope & medical review</h3>
+                  <ul className="space-y-1 text-sm text-stone-600 list-disc pl-4">
+                    <li>We arrange a concierge consultation to map dates, venue style, and guest preferences.</li>
+                    <li>Pricing and payment plan are provided once your scope is confirmed.</li>
+                    <li>Every guest still completes the medical questionnaire and preparation call before approval.</li>
+                  </ul>
+                </div>
+              ) : (
+                <div className="bg-stone-50 border border-stone-100 rounded-3xl p-6 space-y-2">
+                  <h3 className="text-sm font-semibold text-stone-700 uppercase tracking-[0.3em]">Deposit & health review</h3>
+                  <ul className="space-y-1 text-sm text-stone-600 list-disc pl-4">
+                    <li>A 30% deposit secures your booking.</li>
+                    <li>After your deposit, each guest receives their own health questionnaire and we schedule a personal preparation call.</li>
+                  </ul>
+                </div>
+              )}
 
               <div className="flex justify-between items-center">
                 <button
@@ -1292,74 +1388,124 @@
             </div>
           </div>
         );
-        const renderPaymentStep = () => (
-          <div className="space-y-10">
-            <header className="space-y-3">
-              <p className="text-[12px] uppercase tracking-[0.4em] text-stone-400">Step 5</p>
-              <h1 className="text-4xl font-bold">Secure with a deposit</h1>
-              <p className="text-stone-500">30% is charged now. Status after payment: Reserved – preparation pending.</p>
-            </header>
+        const renderPaymentStep = () => {
+          if (isCustomRetreat) {
+            return (
+              <div className="space-y-10">
+                <header className="space-y-3">
+                  <p className="text-[12px] uppercase tracking-[0.4em] text-stone-400">Step 5</p>
+                  <h1 className="text-4xl font-bold">Private retreat briefing</h1>
+                  <p className="text-stone-500">
+                    No deposit is collected at this stage. We prepare a tailored proposal with pricing once we understand your preferred scope.
+                  </p>
+                </header>
 
-            <div className="bg-white border border-stone-100 rounded-3xl p-6 space-y-2">
-              <div className="flex justify-between">
-                <span className="text-stone-500">Deposit due today</span>
-                <span className="text-2xl font-semibold">{formatVND(pricing.deposit)}</span>
+                <div className="bg-white border border-stone-100 rounded-3xl p-6 space-y-3 text-left">
+                  <p className="font-semibold text-stone-800">Pricing provided upon scope</p>
+                  <p className="text-sm text-stone-600">
+                    Share your dream location, desired fasting focus, and party size (private up to four guests or private group 8+). Our concierge will curate
+                    venue options, programming, and a bespoke investment outline.
+                  </p>
+                </div>
+
+                <div className="bg-stone-50 border border-stone-100 rounded-3xl p-6 space-y-3">
+                  <h3 className="text-sm font-semibold text-stone-700 uppercase tracking-[0.3em]">What happens next</h3>
+                  <ul className="list-disc pl-4 space-y-1 text-sm text-stone-600">
+                    <li>We schedule a planning call to align on goals, privacy needs, and timing.</li>
+                    <li>You receive a proposal with pricing, venues, and payment schedule.</li>
+                    <li>Medical questionnaires and preparation calls follow once the scope is approved.</li>
+                  </ul>
+                </div>
+
+                <div className="flex justify-between items-center">
+                  <button
+                    type="button"
+                    onClick={() => goToStep('health_check')}
+                    className="inline-flex items-center text-stone-500 font-semibold"
+                  >
+                    <Icons.ChevronLeft /> Back
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handlePayment}
+                    className="inline-flex items-center bg-emerald-800 text-white px-6 py-3 rounded-full font-semibold hover:bg-emerald-900"
+                  >
+                    Continue to health preparation <Icons.ChevronRight />
+                  </button>
+                </div>
               </div>
-              <div className="flex justify-between text-sm text-stone-500">
-                <span>Remaining balance on arrival</span>
-                <span className="font-semibold">{formatVND(pricing.remaining)}</span>
+            );
+          }
+
+          return (
+            <div className="space-y-10">
+              <header className="space-y-3">
+                <p className="text-[12px] uppercase tracking-[0.4em] text-stone-400">Step 5</p>
+                <h1 className="text-4xl font-bold">Secure with a deposit</h1>
+                <p className="text-stone-500">30% is charged now. Status after payment: Reserved – preparation pending.</p>
+              </header>
+
+              <div className="bg-white border border-stone-100 rounded-3xl p-6 space-y-2">
+                <div className="flex justify-between">
+                  <span className="text-stone-500">Deposit due today</span>
+                  <span className="text-2xl font-semibold">{formatVND(pricing.deposit)}</span>
+                </div>
+                <div className="flex justify-between text-sm text-stone-500">
+                  <span>Remaining balance on arrival</span>
+                  <span className="font-semibold">{formatVND(pricing.remaining)}</span>
+                </div>
+              </div>
+
+              <div className="bg-stone-50 border border-stone-100 rounded-3xl p-6 space-y-3">
+                <h3 className="text-sm font-semibold text-stone-700 uppercase tracking-[0.3em]">Deposit & Health Review</h3>
+                <p className="text-sm text-stone-600">The 30% deposit secures your room and retreat place.</p>
+                <p className="text-sm text-stone-600">After payment, each guest receives a private health questionnaire and a mandatory personal preparation call.</p>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <button
+                  type="button"
+                  onClick={() => setPaymentMethod('vnpay')}
+                  className={`text-left border-2 rounded-2xl p-5 ${
+                    paymentMethod === 'vnpay' ? 'border-emerald-600 bg-emerald-50' : 'border-stone-100 hover:border-stone-200'
+                  }`}
+                >
+                  <p className="text-xs uppercase tracking-[0.3em] text-stone-400">Local · Best for Vietnam residents</p>
+                  <h3 className="text-2xl font-bold">VNPay · VND</h3>
+                  <p className="text-sm text-stone-500">Pay in VND via domestic bank transfer.</p>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setPaymentMethod('stripe')}
+                  className={`text-left border-2 rounded-2xl p-5 ${
+                    paymentMethod === 'stripe' ? 'border-emerald-600 bg-emerald-50' : 'border-stone-100 hover:border-stone-200'
+                  }`}
+                >
+                  <p className="text-xs uppercase tracking-[0.3em] text-stone-400">International</p>
+                  <h3 className="text-2xl font-bold">Stripe · USD</h3>
+                  <p className="text-sm text-stone-500">Card processing fee (3.6%) added.</p>
+                </button>
+              </div>
+
+              <div className="flex justify-between items-center">
+                <button
+                  type="button"
+                  onClick={() => goToStep('health_check')}
+                  className="inline-flex items-center text-stone-500 font-semibold"
+                >
+                  <Icons.ChevronLeft /> Back
+                </button>
+                <button
+                  type="button"
+                  onClick={handlePayment}
+                  className="inline-flex items-center bg-emerald-800 text-white px-6 py-3 rounded-full font-semibold hover:bg-emerald-900"
+                >
+                  Pay deposit & secure booking <Icons.ChevronRight />
+                </button>
               </div>
             </div>
-
-            <div className="bg-stone-50 border border-stone-100 rounded-3xl p-6 space-y-3">
-              <h3 className="text-sm font-semibold text-stone-700 uppercase tracking-[0.3em]">Deposit & Health Review</h3>
-              <p className="text-sm text-stone-600">The 30% deposit secures your room and retreat place.</p>
-              <p className="text-sm text-stone-600">After payment, each guest receives a private health questionnaire and a mandatory personal preparation call.</p>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <button
-                type="button"
-                onClick={() => setPaymentMethod('vnpay')}
-                className={`text-left border-2 rounded-2xl p-5 ${
-                  paymentMethod === 'vnpay' ? 'border-emerald-600 bg-emerald-50' : 'border-stone-100 hover:border-stone-200'
-                }`}
-              >
-                <p className="text-xs uppercase tracking-[0.3em] text-stone-400">Local · Best for Vietnam residents</p>
-                <h3 className="text-2xl font-bold">VNPay · VND</h3>
-                <p className="text-sm text-stone-500">Pay in VND via domestic bank transfer.</p>
-              </button>
-              <button
-                type="button"
-                onClick={() => setPaymentMethod('stripe')}
-                className={`text-left border-2 rounded-2xl p-5 ${
-                  paymentMethod === 'stripe' ? 'border-emerald-600 bg-emerald-50' : 'border-stone-100 hover:border-stone-200'
-                }`}
-              >
-                <p className="text-xs uppercase tracking-[0.3em] text-stone-400">International</p>
-                <h3 className="text-2xl font-bold">Stripe · USD</h3>
-                <p className="text-sm text-stone-500">Card processing fee (3.6%) added.</p>
-              </button>
-            </div>
-
-            <div className="flex justify-between items-center">
-              <button
-                type="button"
-                onClick={() => goToStep('health_check')}
-                className="inline-flex items-center text-stone-500 font-semibold"
-              >
-                <Icons.ChevronLeft /> Back
-              </button>
-              <button
-                type="button"
-                onClick={handlePayment}
-                className="inline-flex items-center bg-emerald-800 text-white px-6 py-3 rounded-full font-semibold hover:bg-emerald-900"
-              >
-                Pay deposit & secure booking <Icons.ChevronRight />
-              </button>
-            </div>
-          </div>
-        );
+          );
+        };
 
         const renderScreeningStep = () => {
           const handlePrimary = () => {
@@ -1395,7 +1541,7 @@
                   <li>Each guest receives their own health & lifestyle questionnaire.</li>
                   <li>The Vietnam Detox team reviews every response personally.</li>
                   <li>A mandatory 30-minute preparation call is scheduled after each questionnaire.</li>
-                  <li>Status after payment: Reserved – preparation pending.</li>
+                  <li>{isCustomRetreat ? 'Status after submission: Pending medical review & tailored proposal.' : 'Status after payment: Reserved – preparation pending.'}</li>
                   <li>Status after calls: Booking confirmed.</li>
                 </ul>
               </div>
@@ -1435,9 +1581,15 @@
         const renderReviewStateStep = () => {
           const timeline = [
             {
-              label: 'Deposit received',
+              label: isCustomRetreat ? 'Private retreat planning' : 'Deposit received',
               status: depositPaid ? 'done' : 'pending',
-              description: depositPaid ? 'Status: Reserved – preparation pending' : 'Awaiting payment',
+              description: isCustomRetreat
+                ? depositPaid
+                  ? 'Status: Awaiting medical review & tailored proposal'
+                  : 'Share your retreat scope to continue'
+                : depositPaid
+                  ? 'Status: Reserved – preparation pending'
+                  : 'Awaiting payment',
             },
             {
               label: 'Guest 1 health preparation',
@@ -1508,7 +1660,9 @@
               </div>
 
               <div className="bg-stone-50 border border-stone-100 rounded-3xl p-6 space-y-2">
-                <p className="text-sm text-stone-600">Status: Reserved – preparation pending.</p>
+                <p className="text-sm text-stone-600">
+                  {isCustomRetreat ? 'Status: Pending medical review & tailored proposal.' : 'Status: Reserved – preparation pending.'}
+                </p>
                 <p className="text-sm text-stone-600">We confirm once both questionnaires and preparation calls are complete.</p>
               </div>
 
@@ -1564,17 +1718,11 @@
               </div>
 
               <div className="border border-emerald-100 bg-emerald-50 rounded-3xl p-6 space-y-2 text-left">
-                <p className="text-sm font-semibold text-stone-800">Included personal health review call</p>
-                  <p className="text-sm text-stone-600">
-                    After submitting the health questionnaire, the Vietnam Detox team offers a complimentary 30-minute 1-on-1 call to review your answers, answer questions, and make sure the program is well suited for you. This call is included in your retreat and will be scheduled after the health preparation steps are submitted.
-                  </p>
-                <button
-                  type="button"
-                  className="inline-flex items-center bg-emerald-800 text-white px-4 py-2 rounded-full text-sm font-semibold hover:bg-emerald-900"
-                  onClick={() => alert('Thank you. We will contact you to schedule your personal health review call.')}
-                >
-                  Request my health review call
-                </button>
+                <p className="text-sm font-semibold text-stone-800">Medical review & preparation call</p>
+                <p className="text-sm text-stone-600">
+                  Every questionnaire is followed by a mandatory 1-on-1 call with our medical team to review your answers, clarify open questions, and ensure the
+                  fasting protocol is safe and well matched to you. Our team will contact you to schedule the call within 24–48 hours.
+                </p>
               </div>
 
               <div className="flex justify-between items-center">
@@ -1601,15 +1749,23 @@
             { label: selection.guests === 1 ? 'Start health preparation' : 'Guest 1 – Start health preparation', guestNumber: 1 },
             ...(selection.guests === 2 ? [{ label: 'Guest 2 – Start health preparation', guestNumber: 2 }] : []),
           ];
+          const confirmedIntro = isCustomRetreat
+            ? 'Thank you for your private retreat request. Our concierge and medical team will now prepare a tailored proposal and schedule your preparation calls.'
+            : `Thank you for your booking. Your place is secured. We’re looking forward to welcoming you to your Vietnam Detox retreat. Remaining balance of ${formatVND(
+                pricing.remaining
+              )} is payable on arrival.`;
+          const confirmedRoom =
+            roomsForCurrentRetreat.find((r) => r.id === selection.roomType)?.name || roomsForCurrentRetreat[0]?.name || 'Curated residences • TBD';
+          const confirmedTransfer = isCustomRetreat
+            ? 'To be coordinated with concierge'
+            : TRANSPORT_OPTIONS.find((option) => option.id === selection.transfer)?.label || 'No airport transfer';
 
           return (
             <div className="space-y-8 max-w-2xl text-center">
               <header className="space-y-3">
                 <p className="text-[12px] uppercase tracking-[0.4em] text-stone-400">Step 8</p>
                 <h1 className="text-4xl font-bold">Booking Confirmed</h1>
-                <p className="text-stone-500">
-                  Thank you for your booking. Your place is secured. We’re looking forward to welcoming you to your Vietnam Detox retreat. Remaining balance of {formatVND(pricing.remaining)} is payable on arrival.
-                </p>
+                <p className="text-stone-500">{confirmedIntro}</p>
               </header>
               <div className="bg-white border border-stone-100 rounded-3xl p-6 space-y-2 text-left">
                 <div className="flex justify-between text-sm text-stone-500">
@@ -1622,20 +1778,24 @@
                 </div>
                 <div className="flex justify-between text-sm text-stone-500">
                   <span>Room</span>
-                  <span className="font-semibold">
-                    {roomsForCurrentRetreat.find((r) => r.id === selection.roomType)?.name || roomsForCurrentRetreat[0]?.name || 'TBD'}
-                  </span>
+                  <span className="font-semibold">{confirmedRoom}</span>
                 </div>
                 <div className="flex justify-between text-sm text-stone-500">
                   <span>Airport transfer</span>
-                  <span className="font-semibold">
-                    {TRANSPORT_OPTIONS.find((option) => option.id === selection.transfer)?.label || 'No airport transfer'}
-                  </span>
+                  <span className="font-semibold">{confirmedTransfer}</span>
                 </div>
-                <div className="flex justify-between text-sm text-stone-500">
-                  <span>Deposit paid</span>
-                  <span className="font-semibold">{formatVND(pricing.deposit)}</span>
-                </div>
+                {!isCustomRetreat && (
+                  <div className="flex justify-between text-sm text-stone-500">
+                    <span>Deposit paid</span>
+                    <span className="font-semibold">{formatVND(pricing.deposit)}</span>
+                  </div>
+                )}
+                {isCustomRetreat && (
+                  <div className="flex justify-between text-sm text-stone-500">
+                    <span>Investment</span>
+                    <span className="font-semibold">Pricing provided upon scope</span>
+                  </div>
+                )}
               </div>
 
               <div className="bg-stone-50 border border-stone-100 rounded-3xl p-6 text-left space-y-4">
@@ -1659,18 +1819,11 @@
                 </div>
 
                 <div className="mt-4 border border-emerald-100 bg-emerald-50 rounded-2xl px-4 py-4 space-y-2 text-left">
-                  <p className="font-semibold text-stone-800">Included personal health review call</p>
+                  <p className="font-semibold text-stone-800">Medical review & preparation call</p>
                   <p className="text-sm text-stone-600">
-                    After submitting the health questionnaire, the Vietnam Detox team offers a complimentary 30-minute 1-on-1 call to review your answers, answer questions, and make sure the program is well suited for you. This call is included in your retreat and will be scheduled after the health preparation steps are submitted.
+                    After each questionnaire our medical team schedules a mandatory 1-on-1 call to review your answers, clarify open questions, and ensure the
+                    fasting programme is safe and well matched to you.
                   </p>
-                  <p className="text-xs text-stone-500">The call is optional unless the Vietnam Detox team recommends it based on your questionnaire.</p>
-                  <button
-                    type="button"
-                    className="inline-flex items-center bg-emerald-800 text-white px-4 py-2 rounded-full text-sm font-semibold hover:bg-emerald-900"
-                    onClick={() => alert('Thank you. We will contact you to schedule a personal health review call.')}
-                  >
-                    Request personal health review call
-                  </button>
                 </div>
               </div>
 
