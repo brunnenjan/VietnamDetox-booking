@@ -479,6 +479,7 @@
           const [paymentMethod, setPaymentMethod] = useState("vnpay");
           const [paymentSubmitting, setPaymentSubmitting] = useState(false);
           const [paymentError, setPaymentError] = useState("");
+          const [paymentSuccess, setPaymentSuccess] = useState(false);
           const [galleryRoom, setGalleryRoom] = useState(null);
           const [galleryIndex, setGalleryIndex] = useState(0);
           const [depositPaid, setDepositPaid] = useState(false);
@@ -575,10 +576,7 @@
               return true;
             });
           }, [roomsForCurrentRetreat, selection.guests]);
-          const transportOptionsForCurrentRetreat = useMemo(
-            () => getTransportOptionsForRetreat(selection.retreatId),
-            [selection.retreatId],
-          );
+          const transportOptionsForCurrentRetreat = useMemo(() => getTransportOptionsForRetreat(selection.retreatId), [selection.retreatId]);
 
           const pricing = useMemo(() => {
             const roomOptions = filteredRoomsForCurrentRetreat.length ? filteredRoomsForCurrentRetreat : roomsForCurrentRetreat;
@@ -660,7 +658,7 @@
                 retreatImage: dateOption.image,
                 date: dateOption.label,
                 roomType: isSameRetreat ? prev.roomType : roomsForSelectedRetreat[0]?.id || null,
-                transfer: isSameRetreat ? prev.transfer : getTransportOptionsForRetreat(dateOption.retreatId)[0]?.id ?? null,
+                transfer: isSameRetreat ? prev.transfer : (getTransportOptionsForRetreat(dateOption.retreatId)[0]?.id ?? null),
               };
             });
           };
@@ -815,9 +813,7 @@
                     roomType: selectedRoom.roomType || null,
                   }
                 : null,
-              transport: selectedTransport
-                ? { id: selectedTransport.id, label: selectedTransport.label, price: selectedTransport.price || 0 }
-                : null,
+              transport: selectedTransport ? { id: selectedTransport.id, label: selectedTransport.label, price: selectedTransport.price || 0 } : null,
               guestDetails,
               pricing: {
                 subtotal: pricing.subtotal,
@@ -856,6 +852,7 @@
                 bookingId: responseBody?.booking_id ?? null,
                 customerIds: Array.isArray(responseBody?.customer_ids) ? responseBody.customer_ids : [],
               });
+              setPaymentSuccess(true);
               if (!depositPaid) {
                 setDepositPaid(true);
                 setScreeningStatus((prev) => ({
@@ -863,7 +860,7 @@
                   guest2: selection.guests === 2 ? (prev.guest2 === "complete" ? "complete" : "pending") : "not_required",
                 }));
               }
-              goToStep("screening");
+              setTimeout(() => goToStep("screening"), 2000);
             } catch (error) {
               console.error("Failed to submit booking payload", error);
               setPaymentError("We could not secure your booking right now. Please try again.");
@@ -1518,6 +1515,7 @@
                 </button>
               </div>
               {paymentError && <p className="text-sm text-rose-600">{paymentError}</p>}
+              {paymentSuccess && <p className="text-sm text-emerald-600">Booking secured successfully! Proceeding to next step...</p>}
             </div>
           );
 
@@ -1678,8 +1676,7 @@
                     const fallbackUrl = `/screening.html?guest=${guest.guestNumber}&booking=${encodeURIComponent(
                       BOOKING_REFERENCE,
                     )}&name=${encodedName}`;
-                    const url =
-                      buildHealthCheckUrl(bookingMeta.bookingId, bookingMeta.customerIds[guest.guestNumber - 1]) || fallbackUrl;
+                    const url = buildHealthCheckUrl(bookingMeta.bookingId, bookingMeta.customerIds[guest.guestNumber - 1]) || fallbackUrl;
                     return (
                       <div key={guest.guestNumber} className="border border-stone-200 rounded-3xl p-5 space-y-3">
                         <div className="flex items-center justify-between">
@@ -1825,8 +1822,7 @@
                   <div className="space-y-2">
                     {guestEntries.map((guest) => {
                       const fallbackUrl = `screening.html?guest=${guest.guestNumber}&booking=${encodeURIComponent(BOOKING_REFERENCE)}`;
-                      const url =
-                        buildHealthCheckUrl(bookingMeta.bookingId, bookingMeta.customerIds[guest.guestNumber - 1]) || fallbackUrl;
+                      const url = buildHealthCheckUrl(bookingMeta.bookingId, bookingMeta.customerIds[guest.guestNumber - 1]) || fallbackUrl;
                       return (
                         <a
                           key={guest.guestNumber}
