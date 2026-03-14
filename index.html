@@ -1516,13 +1516,13 @@
               </div>
               {paymentError && <p className="text-sm text-rose-600">{paymentError}</p>}
               {paymentSuccess && (
-                <div className="fixed bottom-28 left-1/2 -translate-x-1/2 md:bottom-6 md:left-auto md:right-6 md:translate-x-0 bg-emerald-800 text-white p-4 rounded-2xl shadow-xl z-50 flex items-center gap-3 w-80 max-w-[calc(100vw-3rem)]">
-                  <div className="bg-emerald-700/50 p-2 rounded-full">
+                <div className="fixed bottom-24 md:bottom-32 right-4 left-4 md:right-10 md:left-auto bg-emerald-600 text-white p-6 rounded-2xl shadow-2xl shadow-emerald-900/50 z-50 flex items-center gap-4 w-auto md:w-96 ring-4 ring-emerald-400 ring-opacity-50 transform transition-all duration-300 animate-bounce">
+                  <div className="bg-white/20 p-3 rounded-full shadow-inner">
                     <Icons.Check />
                   </div>
                   <div>
-                    <p className="font-bold text-sm">Booking secured!</p>
-                    <p className="text-xs text-emerald-100">Proceeding to next step...</p>
+                    <p className="font-extrabold text-lg tracking-wide">Booking secured!</p>
+                    <p className="text-sm text-emerald-50 font-medium mt-0.5">Proceeding to next step...</p>
                   </div>
                 </div>
               )}
@@ -1891,27 +1891,56 @@
             </nav>
           );
 
-          const DemoController = () => (
-            <div className="fixed bottom-6 left-1/2 -translate-x-1/2 bg-white/90 backdrop-blur border border-stone-200 shadow-2xl rounded-2xl px-6 py-4 flex items-center space-x-4 z-50">
-              <div className="flex flex-col border-r border-stone-200 pr-4 mr-2">
-                <span className="text-[10px] font-black uppercase tracking-tighter text-emerald-700">Vietnam Detox</span>
-                <span className="text-xs font-bold text-stone-400">Demo Controller</span>
+          const DemoController = () => {
+            const scrollContainerRef = useRef(null);
+
+            useEffect(() => {
+              if (scrollContainerRef.current) {
+                const activeBtn = scrollContainerRef.current.querySelector('[data-active="true"]');
+                if (activeBtn) {
+                  const containerWidth = scrollContainerRef.current.clientWidth;
+                  const scrollLeft = scrollContainerRef.current.scrollLeft;
+                  const btnLeft = activeBtn.getBoundingClientRect().left;
+                  const containerLeft = scrollContainerRef.current.getBoundingClientRect().left;
+                  // Calculate position relative to container
+                  const relativeLeft = btnLeft - containerLeft + scrollLeft;
+                  
+                  // Center the active button
+                  scrollContainerRef.current.scrollTo({
+                    left: relativeLeft - containerWidth / 2 + activeBtn.clientWidth / 2,
+                    behavior: 'smooth'
+                  });
+                }
+              }
+            }, [controllerStep]);
+
+            return (
+              <div 
+                className="fixed bottom-0 md:bottom-6 left-0 right-0 md:left-1/2 md:right-auto md:-translate-x-1/2 bg-white/95 backdrop-blur border-t md:border border-stone-200 shadow-2xl md:rounded-2xl flex items-center z-50 w-full md:w-max max-w-full overflow-hidden"
+              >
+                <div className="flex flex-col border-r border-stone-200 px-4 md:pl-6 md:pr-4 py-3 md:py-4 flex-shrink-0 bg-white/95 backdrop-blur z-20">
+                  <span className="text-[10px] font-black uppercase tracking-tighter text-emerald-700">Vietnam Detox</span>
+                </div>
+                <div 
+                  ref={scrollContainerRef}
+                  className="flex flex-nowrap items-center space-x-2 overflow-x-auto hide-scrollbar px-4 py-3 md:py-4 pr-6"
+                >
+                  {STEPS.map((step) => (
+                    <button
+                      key={step}
+                      data-active={controllerStep === step}
+                      onClick={() => goToStep(step)}
+                      className={`px-3 py-1.5 text-[10px] font-semibold rounded-md whitespace-nowrap flex-shrink-0 transition-colors ${
+                        controllerStep === step ? "bg-emerald-100 text-emerald-700 ring-1 ring-emerald-500/30" : "bg-stone-100 text-stone-500 hover:bg-stone-200"
+                      }`}
+                    >
+                      {step.replace("_", " ").toUpperCase()}
+                    </button>
+                  ))}
+                </div>
               </div>
-              <div className="flex space-x-2">
-                {STEPS.map((step) => (
-                  <button
-                    key={step}
-                    onClick={() => goToStep(step)}
-                    className={`px-3 py-1.5 text-[10px] font-semibold rounded-md ${
-                      controllerStep === step ? "bg-emerald-100 text-emerald-700" : "bg-stone-100 text-stone-500"
-                    }`}
-                  >
-                    {step.replace("_", " ").toUpperCase()}
-                  </button>
-                ))}
-              </div>
-            </div>
-          );
+            );
+          };
 
           const stepConfig = {
             config: { content: renderConfigStep(), summaryContext: "default" },
