@@ -215,13 +215,18 @@
         cursor: pointer;
         font-family: inherit;
       }
-      button[type='submit'] {
+      button.submit-button {
         background: #0b7c57;
         color: #fff;
         width: 100%;
         margin-top: 12px;
       }
-      button[type='submit']:hover {
+      button.submit-button:disabled {
+        background: #d7d0c7;
+        color: #9c9186;
+        cursor: not-allowed;
+      }
+      button.submit-button:not(:disabled):hover {
         background: #096348;
       }
       .success {
@@ -391,6 +396,7 @@
               <p class="section-label">Section B</p>
               <h2>Fasting Experience</h2>
               <p class="section-intro">Share any fasting history so our team understands your background.</p>
+              <p class="helper-note">Approximations are welcome—tell us what you remember and what made those experiences meaningful (or challenging).</p>
             </div>
             <div class="field yes-no" data-target="fasting-details">
               <label>Do you already have fasting/detox experience?</label>
@@ -433,6 +439,13 @@
               <h2>Goals</h2>
               <p class="section-intro">Select all health outcomes you are aiming for and tell us your focus for the retreat.</p>
             </div>
+            <div class="approach-card">
+              <p style="margin: 0 0 8px; font-weight: 600; color: #3a352f">Shape the support you’d love</p>
+              <p style="margin: 0; color: #6f655c">
+                Share intentions, rituals, or boundaries that matter to you. Our medical and hospitality team reads every note carefully so we can tailor the
+                experience with care.
+              </p>
+            </div>
             <div class="field">
               <label>Fasting goals (select all that apply)</label>
               <div class="checkbox-grid">
@@ -457,9 +470,18 @@
               <h2>Health Screening</h2>
               <p class="section-intro">Answer carefully. Where additional details are required, a short explanation field will appear.</p>
             </div>
+            <div class="approach-card">
+              <p style="margin: 0 0 8px; font-weight: 600; color: #3a352f">How we use these answers</p>
+              <ul style="margin: 0; padding-left: 18px; color: #6f655c; line-height: 1.5">
+                <li>We tailor fasting pace, supervision, and nutrition support.</li>
+                <li>Only Vietnam Detox medical staff review your information.</li>
+                <li>Every “Yes” simply prompts a short follow-up detail—no need for long essays.</li>
+              </ul>
+            </div>
 
             <div class="subsection">
               <p class="subsection-title">General Health</p>
+              <p class="helper-note">Give us a snapshot of how your body feels on an average week so we can personalise your fasting rhythm.</p>
               <div class="field yes-no" data-target="fitness-details" data-show-value="no">
                 <label>Do you consider yourself fit and healthy?</label>
                 <div class="radio-group">
@@ -504,6 +526,7 @@
 
             <div class="subsection">
               <p class="subsection-title">Cardiovascular</p>
+              <p class="helper-note">Include anything your doctor has mentioned recently—even if it feels minor. It helps us understand circulation and movement needs.</p>
               <div class="field yes-no" data-target="blood-pressure-details">
                 <label>Do you suffer from low or high blood pressure?</label>
                 <div class="radio-group">
@@ -524,6 +547,7 @@
 
             <div class="subsection">
               <p class="subsection-title">Metabolic</p>
+              <p class="helper-note">Share recent shifts in weight, blood sugar, or hormones so we can set a gentle pace that supports your metabolism.</p>
               <div class="field yes-no" data-target="weight-loss-history-details" data-precheck>
                 <label>Have you lost more than 5% of your body weight in the last six months without trying?</label>
                 <div class="radio-group">
@@ -552,6 +576,7 @@
 
             <div class="subsection">
               <p class="subsection-title">Digestive</p>
+              <p class="helper-note">Your stomach’s “personality” teaches us how to guide broths, teas, and mindful breaks during fasting days.</p>
               <div class="field yes-no" data-target="digestive-details">
                 <label>Do you have any digestive issues or diseases now or in the past?</label>
                 <div class="radio-group">
@@ -572,6 +597,7 @@
 
             <div class="subsection">
               <p class="subsection-title">Mental Health</p>
+              <p class="helper-note">It’s normal for mind and emotions to ebb and flow. Sharing candidly lets our care team pair you with the right support circles.</p>
               <div class="field yes-no" data-target="mental-health-details">
                 <label>Do you have any mental health condition now or in the past?</label>
                 <div class="radio-group">
@@ -600,6 +626,7 @@
 
             <div class="subsection">
               <p class="subsection-title">Medication</p>
+              <p class="helper-note">List prescriptions or therapies from the last four weeks so our medical team can plan safe adjustments.</p>
               <div class="field yes-no" data-target="medication-details">
                 <label>Are you taking any prescription medication now or in the last four weeks?</label>
                 <div class="radio-group">
@@ -629,6 +656,7 @@
 
             <div class="subsection">
               <p class="subsection-title">Surgery & Reproductive Health</p>
+              <p class="helper-note">Recent procedures or pregnancy timelines influence fasting readiness—better to share too much than too little.</p>
               <div class="field yes-no" data-target="pregnant-details" data-precheck>
                 <label>Are you pregnant or breastfeeding?</label>
                 <div class="radio-group">
@@ -649,6 +677,7 @@
 
             <div class="subsection">
               <p class="subsection-title">Allergies</p>
+              <p class="helper-note">Highlight any foods or ingredients that have caused reactions so our kitchen and detox team can plan accordingly.</p>
               <div class="field yes-no" data-target="allergies-details">
                 <label>Do you have or have you had a food allergy/intolerance?</label>
                 <div class="radio-group">
@@ -695,7 +724,7 @@
           <input type="hidden" id="booking-stage" name="booking-stage" value="" />
           <input type="hidden" id="submission-timestamp" name="submission-timestamp" value="" />
 
-          <button type="submit">Submit medical screening</button>
+          <button type="submit" class="submit-button" disabled>Submit medical screening</button>
         </form>
 
         <div id="success-state" class="success">
@@ -874,6 +903,7 @@
         const editButton = document.getElementById('edit-button');
         const bookingStageInput = document.getElementById('booking-stage');
         const timestampInput = document.getElementById('submission-timestamp');
+        const submitButton = document.querySelector('.submit-button');
 
         const getValue = (id) => {
           const field = document.getElementById(id);
@@ -1020,6 +1050,14 @@
           });
         };
 
+        const updateSubmitButtonState = () => {
+          if (!submitButton) return;
+          submitButton.disabled = !form.checkValidity();
+        };
+
+        form.addEventListener('input', updateSubmitButtonState);
+        form.addEventListener('change', updateSubmitButtonState);
+
         form.addEventListener('submit', (event) => {
           event.preventDefault();
           const timestamp = new Date().toISOString();
@@ -1036,6 +1074,7 @@
             successState.style.display = 'none';
             form.style.display = 'block';
             window.scrollTo({ top: 0, behavior: 'smooth' });
+            updateSubmitButtonState();
           });
         }
 
@@ -1053,7 +1092,20 @@
         updatePrecheck();
         updateBmi();
         updateAge();
+        updateSubmitButtonState();
       })();
     </script>
   </body>
 </html>
+      .approach-card {
+        background: #f5f1eb;
+        border: 1px solid #ebe1d5;
+        border-radius: 18px;
+        padding: 18px;
+        margin-bottom: 18px;
+      }
+      .helper-note {
+        font-size: 0.9rem;
+        color: #6f655c;
+        margin: 0 0 14px;
+      }
