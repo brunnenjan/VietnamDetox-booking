@@ -891,7 +891,7 @@
                     const preferredDate =
                       retreatDates.find((date) => selection.retreatId === retreat.id && date.label === selection.date) || retreatDates[0];
                     return (
-                      <div key={retreat.id} className="space-y-3 border border-stone-100 rounded-3xl bg-white p-4 md:p-6">
+                      <div key={retreat.id} className={`space-y-3 border rounded-3xl p-4 md:p-6 transition-all duration-300 ${isActiveRetreat ? "border-2 border-emerald-600 bg-emerald-50 shadow-md" : "border-stone-100 bg-white shadow-sm"}`}>
                         <div
                           className="flex flex-col md:flex-row md:items-center gap-4 cursor-pointer"
                           role="button"
@@ -947,7 +947,7 @@
                                 <Icons.ChevronLeft />
                               </button>
                             )}
-                            <div className="flex gap-2 overflow-x-auto hide-scrollbar pb-1 flex-1" onWheel={(event) => event.stopPropagation()}>
+                            <div className="flex gap-2 overflow-x-auto hide-scrollbar py-2 px-2 flex-1" onWheel={(event) => event.stopPropagation()}>
                               {retreatDates.map((dateOption) => {
                                 const activeDate = selection.date === dateOption.label;
                                 const showEarlyBird = dateOption.isEarlyBirdActive;
@@ -961,20 +961,20 @@
                                       event.stopPropagation();
                                       handleRetreatSelection(dateOption);
                                     }}
-                                    className={`flex-shrink-0 px-3 py-2 text-xs md:text-sm rounded-full border ${
-                                      activeDate ? "border-emerald-600 bg-white shadow-sm" : "border-stone-200 hover:border-emerald-200"
+                                    className={`flex-shrink-0 px-3 py-2 text-xs md:text-sm rounded-full border transition-all duration-200 ${
+                                      activeDate ? "bg-emerald-800 text-white border-emerald-800 scale-[1.05] shadow-md" : "border-stone-200 text-stone-600 hover:border-emerald-200 bg-white"
                                     }`}
                                   >
-                                    <span className="font-semibold text-stone-900 whitespace-nowrap">{dateOption.label}</span>
+                                    <span className={`font-semibold whitespace-nowrap ${activeDate ? "text-white" : "text-stone-900"}`}>{dateOption.label}</span>
                                     {(showEarlyBird || showLimited) && (
-                                      <div className="flex flex-wrap gap-1 mt-1">
+                                      <div className="flex flex-wrap gap-1 mt-1 justify-center">
                                         {showEarlyBird && (
-                                          <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-emerald-700">
+                                          <span className={`text-[10px] font-semibold uppercase tracking-[0.2em] ${activeDate ? "text-emerald-100" : "text-emerald-700"}`}>
                                             Early Bird –10%
                                           </span>
                                         )}
                                         {showLimited && (
-                                          <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-amber-700">
+                                          <span className={`text-[10px] font-semibold uppercase tracking-[0.2em] ${activeDate ? "text-amber-200" : "text-amber-700"}`}>
                                             Limited spots available
                                           </span>
                                         )}
@@ -1015,8 +1015,8 @@
                         key={count}
                         type="button"
                         onClick={() => updateSelection({ guests: count })}
-                        className={`flex-1 border-2 rounded-2xl p-4 flex items-center justify-between ${
-                          active ? "border-emerald-600 bg-emerald-50" : "border-stone-100 hover:border-stone-200"
+                        className={`flex-1 border-2 rounded-2xl p-4 flex items-center justify-between transition-all duration-200 ${
+                          active ? "border-2 border-emerald-600 bg-emerald-50 ring-4 ring-emerald-600/10 shadow-lg" : "border-stone-100 hover:border-stone-200"
                         }`}
                       >
                         <div className="text-left">
@@ -1051,8 +1051,8 @@
                         key={room.id}
                         type="button"
                         onClick={() => updateSelection({ roomType: room.id })}
-                        className={`w-full text-left border-2 rounded-3xl overflow-hidden transition ${
-                          active ? "border-emerald-600 shadow-lg shadow-emerald-100/40" : "border-stone-100 hover:border-stone-200"
+                        className={`w-full text-left border-2 rounded-3xl overflow-hidden transition-all duration-300 ${
+                          active ? "border-2 border-emerald-600 bg-emerald-50/50 shadow-lg shadow-emerald-100/40" : "border-stone-100 hover:border-stone-200"
                         }`}
                       >
                         <div className="grid grid-cols-1 md:grid-cols-3">
@@ -1162,18 +1162,17 @@
                       <label className="text-[11px] uppercase tracking-[0.2em] text-stone-500">Phone number (optional)</label>
                       <div className="flex flex-col sm:flex-row gap-3">
                         <div className="sm:w-32">
-                          <input
-                            type="text"
-                            list="dial-codes"
+                          <select
                             className="w-full border border-stone-200 rounded-2xl p-4 bg-stone-50 focus:ring-2 focus:ring-emerald-100 outline-none"
                             value={primary.phoneCountryCode}
                             onChange={(e) => handlePrimaryPhoneCodeChange(e.target.value)}
-                          />
-                          <datalist id="dial-codes">
+                          >
                             {[...PHONE_CODE_OPTIONS].sort().map((code) => (
-                              <option key={code} value={code} />
+                              <option key={code} value={code}>
+                                {code}
+                              </option>
                             ))}
-                          </datalist>
+                          </select>
                         </div>
                         <input
                           type="tel"
@@ -1478,8 +1477,8 @@
                 <button
                   type="button"
                   onClick={() => setPaymentMethod("vnpay")}
-                  className={`text-left border-2 rounded-2xl p-5 ${
-                    paymentMethod === "vnpay" ? "border-emerald-600 bg-emerald-50" : "border-stone-100 hover:border-stone-200"
+                  className={`text-left border-2 rounded-2xl p-5 transition-all duration-200 ${
+                    paymentMethod === "vnpay" ? "border-2 border-emerald-600 bg-emerald-50 ring-4 ring-emerald-600/10 shadow-lg" : "border-stone-100 hover:border-stone-200"
                   }`}
                 >
                   <p className="text-xs uppercase tracking-[0.3em] text-stone-400">Local · Best for Vietnam residents</p>
@@ -1489,8 +1488,8 @@
                 <button
                   type="button"
                   onClick={() => setPaymentMethod("stripe")}
-                  className={`text-left border-2 rounded-2xl p-5 ${
-                    paymentMethod === "stripe" ? "border-emerald-600 bg-emerald-50" : "border-stone-100 hover:border-stone-200"
+                  className={`text-left border-2 rounded-2xl p-5 transition-all duration-200 ${
+                    paymentMethod === "stripe" ? "border-2 border-emerald-600 bg-emerald-50 ring-4 ring-emerald-600/10 shadow-lg" : "border-stone-100 hover:border-stone-200"
                   }`}
                 >
                   <p className="text-xs uppercase tracking-[0.3em] text-stone-400">International</p>
@@ -1516,7 +1515,7 @@
               </div>
               {paymentError && <p className="text-sm text-rose-600">{paymentError}</p>}
               {paymentSuccess && (
-                <div className="fixed bottom-24 md:bottom-32 right-4 left-4 md:right-10 md:left-auto bg-emerald-600 text-white p-6 rounded-2xl shadow-2xl shadow-emerald-900/50 z-50 flex items-center gap-4 w-auto md:w-96 ring-4 ring-emerald-400 ring-opacity-50 transform transition-all duration-300 animate-bounce">
+                <div className="fixed bottom-24 md:bottom-32 right-4 left-4 md:right-10 md:left-auto bg-emerald-800 text-white p-6 rounded-2xl shadow-2xl shadow-emerald-900/50 z-50 flex items-center gap-4 w-auto md:w-96 ring-4 ring-emerald-800 ring-opacity-50 transform transition-all duration-300">
                   <div className="bg-white/20 p-3 rounded-full shadow-inner">
                     <Icons.Check />
                   </div>
