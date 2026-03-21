@@ -144,6 +144,449 @@
         }
       };
 
+      const TRANSLATIONS = {
+        en: {
+          step: "Step",
+          plan_journey: "Plan your journey",
+          plan_description: "Select the start date, number of guests, and residence. Every price line item updates before we request personal details.",
+          upcoming_retreats: "Upcoming retreats",
+          retreats_description: "Choose the experience and date that resonates most with your well-being goals.",
+          available_dates: "Available dates",
+          early_bird_label: "Early Bird –10%",
+          limited_spots: "Limited spots available",
+          guests: "Guests",
+          one_guest: "One guest",
+          two_guests: "Two guests",
+          save_together: "Save 5% together",
+          private_journey: "Fully private journey",
+          accommodation: "Accommodation",
+          health_prep_first: "Health preparation first",
+          health_prep_description: "Every guest completes their own health & lifestyle questionnaire during booking and enjoys a personal preparation call with the Vietnam Detox team after payment.",
+          no_accommodation: "Accommodation options will appear here for this retreat.",
+          per_guest: "Per guest",
+          selected: "Selected",
+          tap_to_select: "Tap to select",
+          view_photos: "View photos",
+          airport_transfer: "Airport transfer (optional)",
+          continue_to_details: "Continue to details",
+          continue: "Continue",
+          details: "Details",
+          details_description: "Used for booking confirmation and invoicing only. These contacts also receive each guest’s health questionnaire and preparation call details.",
+          primary_guest: "Primary guest",
+          primary_description: "This information appears on your booking confirmation and invoice.",
+          first_name: "First name",
+          last_name: "Last name",
+          email_address: "Email address",
+          phone_number: "Phone number",
+          phone_helper: "Optional. Helpful in case we need to reach you shortly before arrival.",
+          invoice_helper: "We use this information only to issue your booking confirmation and invoice if required.",
+          street_house: "Street & house number",
+          city: "City",
+          postal_code: "Postal code",
+          country_residence: "Country of residence",
+          need_company_invoice: "I need an invoice issued to a company",
+          company_name: "Company name",
+          tax_id: "VAT / Tax ID (optional)",
+          second_guest: "Second guest",
+          second_description: "Used to send their questionnaire and schedule their personal preparation call.",
+          back: "Back",
+          review: "Review",
+          review_description: "Confirm dates, residence, guests, and transfers before the deposit step.",
+          retreat: "Retreat",
+          retreat_dates: "Retreat dates",
+          edit: "Edit",
+          no_transfer: "No airport transfer",
+          deposit_health_review: "Deposit & health review",
+          deposit_secures: "A 30% deposit secures your booking.",
+          health_info: "After your deposit, each guest receives their own health questionnaire and we schedule a personal preparation call.",
+          health_prep: "Health preparation",
+          health_prep_desc: "To support your well-being, every guest completes a short questionnaire followed by a personal preparation call with our team. This ensures the retreat is tailored and safe for you.",
+          medical_confidentiality: "Medical Confidentiality",
+          medical_confidentiality_desc: "Your health information is treated with strict medical confidentiality and is only accessible by our senior medical team.",
+          after_deposit: "After deposit",
+          questionnaire: "Questionnaire",
+          questionnaire_desc: "Each guest receives their own health & lifestyle questionnaire to complete at their own pace.",
+          before_arrival: "Before arrival",
+          prep_call: "Preparation Call",
+          prep_call_desc: "A mandatory 30-minute private call to review your answers and answer any questions you may have.",
+          refund_policy: "100% refund of your deposit if participating is not recommended after the health review.",
+          continue_to_payment: "Continue to payment",
+          payment: "Payment",
+          payment_desc: "Secure your booking with a 30% deposit.",
+          payment_method: "Payment method",
+          zero_extra_fees: "Zero extra fees",
+          card_processing_fee: "Card processing fee (3.6%)",
+          stripe_desc: "Secure card payment in USD. A 3.6% processing fee is automatically added to the total.",
+          bank_transfer_desc: "Pay in VND via local bank transfer. No extra processing fees.",
+          processing_payment: "Processing payment...",
+          confirm_bank_transfer: "Confirm bank transfer",
+          pay_securely_msg: "Pay {{amount}} securely",
+          booking_secured: "Booking secured!",
+          proceeding_next: "Proceeding to next step...",
+          almost_done: "You’re almost done.",
+          health_prep_screening_desc: "Each guest completes a personal health questionnaire and a mandatory preparation call with the Vietnam Detox team. This is how we tailor the experience and make sure you feel confident before arrival.",
+          what_happens_next: "What happens next",
+          timeline_item_1: "Each guest receives their own health & lifestyle questionnaire.",
+          timeline_item_2: "The Vietnam Detox team reviews every response personally.",
+          timeline_item_3: "A mandatory 30-minute preparation call is scheduled after each questionnaire.",
+          timeline_item_4: "Status after payment: Reserved – preparation pending.",
+          timeline_item_5: "Status after calls: Booking confirmed.",
+          quick_precheck: "Quick pre-check",
+          quick_precheck_desc: "If you answer “Yes” to any of these, our team will follow up personally.",
+          safety_question_1: "Are you currently pregnant or breastfeeding?",
+          safety_question_2: "Do you have Type 1 diabetes?",
+          safety_question_3: "Do you have a diagnosed eating disorder?",
+          safety_question_4: "Are you under active treatment that may affect fasting?",
+          yes: "Yes",
+          no: "No",
+          continue_begin_health_prep: "Continue – Begin Health Preparation",
+          back_to_booking: "Back to booking",
+          prep_timeline: "Health preparation timeline",
+          prep_timeline_desc: "Track questionnaires, preparation calls, and final confirmation.",
+          deposit_received: "Deposit received",
+          status_reserved_pending: "Status: Reserved – preparation pending",
+          awaiting_payment: "Awaiting payment",
+          guest_1_health_prep: "Guest 1 health preparation",
+          guest_2_health_prep: "Guest 2 health preparation",
+          prep_complete: "Questionnaire + call complete",
+          awaiting_prep: "Awaiting questionnaire and call",
+          team_confirmation: "Vietnam Detox team confirmation",
+          status_confirmed: "Status: Booking confirmed",
+          begins_after_calls: "Begins after preparation calls",
+          guest: "Guest",
+          confirmation_note: "We confirm once both questionnaires and preparation calls are complete.",
+          questionnaire_call_complete: "Questionnaire + call complete",
+          awaiting_questionnaire_call: "Awaiting questionnaire and call",
+          open_health_questionnaire: "Open health questionnaire",
+          link_copied: "Link copied",
+          copy_this_link: "Copy this link",
+          copy_link: "Copy link",
+          share_link_description: "You can share this link if the questionnaire should be completed on another device or by your travel partner.",
+          included_personal_health_review_call: "Included personal health review call",
+          included_personal_health_review_call_desc: "After submitting the health questionnaire, the Vietnam Detox team offers a complimentary 30-minute 1-on-1 call to review your answers, answer questions, and make sure the program is well suited for you. This call is included in your retreat and will be scheduled after the health preparation steps are submitted.",
+          request_health_review_call_alert: "Thank you. We will contact you to schedule your personal health review call.",
+          request_my_health_review_call: "Request my health review call",
+          back_to_health_preparation_hub: "Back to health preparation hub",
+          move_to_confirmation: "Move to confirmation",
+          booking_confirmed: "Booking confirmed",
+          booking_confirmed_desc: "Your journey to health is now officially scheduled. We look forward to welcoming you at the retreat.",
+          booking_ref: "Booking Reference",
+          return_home: "Return to home page",
+          investment_summary: "Investment summary",
+          real_time_update: "Line items update in real-time.",
+          subtotal: "Subtotal",
+          early_bird_discount: "Early Bird –10%",
+          friend_discount: "Friend discount –5%",
+          retreat_total: "Retreat total",
+          deposit_label: "Deposit",
+          remaining_balance: "Remaining balance",
+          card_fee: "Card processing fee",
+          due_today: "Due today",
+          deposit_received_msg: "Deposit received.",
+          refund_note: "100% refund if participation is declined after the health review.",
+          something_went_wrong: "Something went wrong",
+          error_desc: "We encountered an error while processing your booking. Please refresh the page.",
+          refresh_page: "Refresh page",
+          language: "Language",
+          demo_mode: "Demo mode",
+          booking_progress: "Booking progress"
+        },
+        vn: {
+          step: "Bước",
+          plan_journey: "Lên kế hoạch hành trình",
+          plan_description: "Chọn ngày bắt đầu, số khách và chỗ ở. Mọi chi phí sẽ được cập nhật trước khi bạn điền thông tin cá nhân.",
+          upcoming_retreats: "Các khóa thanh lọc sắp tới",
+          retreats_description: "Chọn trải nghiệm và ngày phù hợp nhất với mục tiêu sức khỏe của bạn.",
+          available_dates: "Ngày còn trống",
+          early_bird_label: "Ưu đãi đặt sớm –10%",
+          limited_spots: "Số lượng chỗ có hạn",
+          guests: "Khách",
+          one_guest: "Một khách",
+          two_guests: "Hai khách",
+          save_together: "Tiết kiệm 5% khi đi cùng nhau",
+          private_journey: "Hành trình riêng tư",
+          accommodation: "Chỗ ở",
+          health_prep_first: "Chuẩn bị sức khỏe trước",
+          health_prep_description: "Mỗi khách sẽ hoàn thành bảng hỏi sức khỏe & lối sống trong khi đặt chỗ và có cuộc gọi chuẩn bị cá nhân với Vietnam Detox sau khi thanh toán.",
+          no_accommodation: "Các lựa chọn chỗ ở sẽ xuất hiện ở đây cho khóa này.",
+          per_guest: "Mỗi khách",
+          selected: "Đã chọn",
+          tap_to_select: "Nhấn để chọn",
+          view_photos: "Xem ảnh",
+          airport_transfer: "Đưa đón sân bay (tùy chọn)",
+          continue_to_details: "Tiếp tục đến thông tin",
+          continue: "Tiếp tục",
+          details: "Thông tin chi tiết",
+          details_description: "Chỉ sử dụng để xác nhận đặt chỗ và xuất hóa đơn. Các liên hệ này cũng sẽ nhận được bảng hỏi sức khỏe và thông tin cuộc gọi chuẩn bị.",
+          primary_guest: "Khách chính",
+          primary_description: "Thông tin này sẽ xuất hiện trên xác nhận đặt chỗ và hóa đơn.",
+          first_name: "Tên",
+          last_name: "Họ",
+          email_address: "Địa chỉ email",
+          phone_number: "Số điện thoại",
+          phone_helper: "Tùy chọn. Giúp chúng tôi liên hệ với bạn trước khi đến.",
+          invoice_helper: "Chúng tôi chỉ sử dụng thông tin này để xuất xác nhận đặt chỗ và hóa đơn nếu cần.",
+          street_house: "Số nhà & tên đường",
+          city: "Thành phố",
+          postal_code: "Mã bưu điện",
+          country_residence: "Quốc gia cư trú",
+          need_company_invoice: "Tôi cần xuất hóa đơn cho công ty",
+          company_name: "Tên công ty",
+          tax_id: "Mã số thuế (tùy chọn)",
+          second_guest: "Khách thứ hai",
+          second_description: "Dùng để gửi bảng hỏi và sắp xếp cuộc gọi chuẩn bị sức khỏe.",
+          back: "Quay lại",
+          review: "Xem lại",
+          review_description: "Xác nhận ngày, nơi ở, khách và đưa đón trước khi đặt cọc.",
+          retreat: "Khóa thanh lọc",
+          retreat_dates: "Ngày thực hiện",
+          edit: "Sửa",
+          no_transfer: "Không có đưa đón sân bay",
+          deposit_health_review: "Đặt cọc & Kiểm tra sức khỏe",
+          deposit_secures: "Đặt cọc 30% để giữ chỗ.",
+          health_info: "Sau khi đặt cọc, mỗi khách sẽ nhận được bảng hỏi sức khỏe và lịch hẹn cuộc gọi chuẩn bị.",
+          health_prep: "Chuẩn bị sức khỏe",
+          health_prep_desc: "Để hỗ trợ sức khỏe của bạn, mỗi khách hoàn thành một bảng hỏi ngắn kèm cuộc gọi chuẩn bị với đội ngũ của chúng tôi. Điều này đảm bảo khóa thanh lọc an toàn cho bạn.",
+          medical_confidentiality: "Bảo mật y tế",
+          medical_confidentiality_desc: "Thông tin sức khỏe của bạn được bảo mật tuyệt đối và chỉ đội ngũ y tế cấp cao của chúng tôi mới có quyền truy cập.",
+          after_deposit: "Sau khi đặt cọc",
+          questionnaire: "Bảng hỏi sức khỏe",
+          questionnaire_desc: "Mỗi khách nhận được bảng hỏi sức khỏe & lối sống riêng để hoàn thành theo thời gian của mình.",
+          before_arrival: "Trước khi đến",
+          prep_call: "Cuộc gọi chuẩn bị",
+          prep_call_desc: "Cuộc gọi riêng tư 30 phút bắt buộc để xem xét các câu trả lời và giải đáp thắc mắc của bạn.",
+          refund_policy: "Hoàn tiền 100% tiền cọc nếu bạn không được khuyên tham gia sau khi kiểm tra sức khỏe.",
+          continue_to_payment: "Tiếp tục thanh toán",
+          payment: "Thanh toán",
+          payment_desc: "Đảm bảo chỗ của bạn với 30% tiền đặt cọc.",
+          payment_method: "Phương thức thanh toán",
+          zero_extra_fees: "Không phát sinh phí",
+          card_processing_fee: "Phí xử lý thẻ (3.6%)",
+          stripe_desc: "Thanh toán bằng thẻ qua Stripe (USD). Phí 3.6% sẽ được tự động cộng vào tổng tiền.",
+          bank_transfer_desc: "Thanh toán bằng VND qua chuyển khoản ngân hàng nội địa. Không mất phí xử lý.",
+          processing_payment: "Đang xử lý thanh toán...",
+          confirm_bank_transfer: "Xác nhận chuyển khoản",
+          pay_securely_msg: "Thanh toán {{amount}} an toàn",
+          booking_secured: "Đã giữ chỗ thành công!",
+          proceeding_next: "Đang chuyển sang bước tiếp theo...",
+          almost_done: "Bạn sắp hoàn tất.",
+          health_prep_screening_desc: "Mỗi khách hoàn thành bảng hỏi sức khỏe cá nhân và cuộc gọi chuẩn bị bắt buộc với đội ngũ Vietnam Detox. Đây là cách chúng tôi điều chỉnh trải nghiệm cho bạn.",
+          what_happens_next: "Điều gì xảy ra tiếp theo",
+          timeline_item_1: "Mỗi khách nhận bảng hỏi sức khỏe & lối sống riêng.",
+          timeline_item_2: "Đội ngũ Vietnam Detox xem xét từng câu trả lời.",
+          timeline_item_3: "Lịch hẹn cuộc gọi chuẩn bị 30 phút sau khi gửi bảng hỏi.",
+          timeline_item_4: "Trạng thái sau thanh toán: Đã giữ chỗ – đang chờ chuẩn bị.",
+          timeline_item_5: "Trạng thái sau cuộc gọi: Đã xác nhận đặt chỗ.",
+          quick_precheck: "Kiểm tra nhanh",
+          quick_precheck_desc: "Nếu bạn trả lời “Có” cho bất kỳ câu nào, đội ngũ của chúng tôi sẽ liên hệ riêng.",
+          safety_question_1: "Bạn hiện đang mang thai hoặc cho con bú?",
+          safety_question_2: "Bạn có bệnh tiểu đường loại 1?",
+          safety_question_3: "Bạn có rối loạn ăn uống được chẩn đoán?",
+          safety_question_4: "Bạn đang điều trị bệnh có thể ảnh hưởng đến việc nhịn ăn?",
+          yes: "Có",
+          no: "Không",
+          continue_begin_health_prep: "Tiếp tục – Bắt đầu chuẩn bị sức khỏe",
+          back_to_booking: "Quay lại đặt chỗ",
+          prep_timeline: "Tiến trình chuẩn bị sức khỏe",
+          prep_timeline_desc: "Theo dõi bảng hỏi, cuộc gọi chuẩn bị và xác nhận cuối cùng.",
+          deposit_received: "Đã nhận tiền cọc",
+          status_reserved_pending: "Trạng thái: Đã giữ chỗ – đang chờ chuẩn bị",
+          awaiting_payment: "Đang chờ thanh toán",
+          guest_1_health_prep: "Chuẩn bị sức khỏe Khách 1",
+          guest_2_health_prep: "Chuẩn bị sức khỏe Khách 2",
+          prep_complete: "Bảng hỏi + Cuộc gọi hoàn tất",
+          awaiting_prep: "Đang chờ bảng hỏi và cuộc gọi",
+          team_confirmation: "Xác nhận từ đội ngũ Vietnam Detox",
+          status_confirmed: "Trạng thái: Đã xác nhận đặt chỗ",
+          begins_after_calls: "Bắt đầu sau các cuộc gọi chuẩn bị",
+          guest: "Khách",
+          confirmation_note: "Chúng tôi xác nhận sau khi cả bảng hỏi và cuộc gọi chuẩn bị hoàn tất.",
+          questionnaire_call_complete: "Bảng hỏi + Cuộc gọi hoàn tất",
+          awaiting_questionnaire_call: "Đang chờ bảng hỏi và cuộc gọi",
+          open_health_questionnaire: "Mở bảng hỏi sức khỏe",
+          link_copied: "Đã sao chép liên kết",
+          copy_this_link: "Sao chép liên kết này",
+          copy_link: "Sao chép liên kết",
+          share_link_description: "Bạn có thể chia sẻ liên kết này nếu khách đồng hành cần hoàn thành trên thiết bị khác.",
+          included_personal_health_review_call: "Bao gồm cuộc gọi tư vấn sức khỏe",
+          included_personal_health_review_call_desc: "Sau khi gửi bảng hỏi sức khỏe, Vietnam Detox tặng bạn một cuộc gọi 1-1 miễn phí 30 phút để xem xét các câu trả lời. Cuộc gọi này đã bao gồm trong khóa học.",
+          request_health_review_call_alert: "Cảm ơn bạn. Chúng tôi sẽ liên hệ sớm nhất.",
+          request_my_health_review_call: "Yêu cầu cuộc gọi tư vấn sức khỏe",
+          back_to_health_preparation_hub: "Quay lại trung tâm chuẩn bị",
+          move_to_confirmation: "Chuyển sang xác nhận",
+          booking_confirmed: "Đã xác nhận đặt chỗ",
+          booking_confirmed_desc: "Hành trình sức khỏe của bạn đã được lịch chính thức. Chúng tôi rất mong được đón tiếp bạn.",
+          booking_ref: "Mã đặt chỗ",
+          return_home: "Quay lại trang chủ",
+          investment_summary: "Thông tin thanh toán",
+          real_time_update: "Các mục chi phí cập nhật theo thời gian thực.",
+          subtotal: "Tạm tính",
+          early_bird_discount: "Ưu đãi đặt sớm –10%",
+          friend_discount: "Giảm giá khách đi cùng –5%",
+          retreat_total: "Tổng cộng khóa thanh lọc",
+          deposit_label: "Đặt cọc",
+          remaining_balance: "Số dư còn lại",
+          card_fee: "Phí xử lý thẻ",
+          due_today: "Thanh toán hôm nay",
+          deposit_received_msg: "Đã nhận tiền cọc.",
+          refund_note: "Hoàn tiền 100% nếu bạn không được khuyên tham gia sau khi kiểm tra sức khỏe.",
+          something_went_wrong: "Đã xảy ra lỗi",
+          error_desc: "Đã xảy ra lỗi khi xử lý đặt chỗ của bạn. Vui lòng tải lại trang.",
+          refresh_page: "Tải lại trang",
+          language: "Ngôn ngữ",
+          demo_mode: "Chế độ Demo",
+          booking_progress: "Tiến trình đặt chỗ"
+        },
+        de: {
+          step: "Schritt",
+          plan_journey: "Planen Sie Ihre Reise",
+          plan_description: "Wählen Sie Startdatum, Gästeanzahl und Unterkunft. Die Preise aktualisieren sich in Echtzeit bei jeder Auswahl.",
+          upcoming_retreats: "Kommende Retreats",
+          retreats_description: "Wählen Sie das Erlebnis, das am besten zu Ihren Wellness-Zielen passt.",
+          available_dates: "Verfügbare Termine",
+          early_bird_label: "Frühbucher –10%",
+          limited_spots: "Begrenzte Plätze",
+          guests: "Gäste",
+          one_guest: "Ein Gast",
+          two_guests: "Zwei Gäste",
+          save_together: "5% sparen bei zwei Personen",
+          private_journey: "Exklusive Reise",
+          accommodation: "Unterkunft",
+          health_prep_first: "Gesundheitsvorbereitung",
+          health_prep_description: "Jeder Gast füllt einen Fragebogen aus und führt nach der Zahlung ein persönliches Gespräch mit dem Vietnam Detox Team.",
+          no_accommodation: "Unterkunftsoptionen werden hier angezeigt.",
+          per_guest: "Pro Gast",
+          selected: "Ausgewählt",
+          tap_to_select: "Auswählen",
+          view_photos: "Fotos ansehen",
+          airport_transfer: "Flughafentransfer (optional)",
+          continue_to_details: "Weiter zu den Details",
+          continue: "Weiter",
+          details: "Details",
+          details_description: "Wird für Buchungsbestätigung und Rechnung verwendet. Kontakte erhalten Gesundheitsfragebogen und Gesprächsdetails.",
+          primary_guest: "Hauptgast",
+          primary_description: "Diese Informationen erscheinen auf Ihrer Buchungsbestätigung.",
+          first_name: "Vorname",
+          last_name: "Nachname",
+          email_address: "E-Mail-Adresse",
+          phone_number: "Telefonnummer",
+          phone_helper: "Optional. Hilfreich für kurzfristige Erreichbarkeit.",
+          invoice_helper: "Nur für Buchungsbestätigung und Rechnung verwendet.",
+          street_house: "Straße & Hausnummer",
+          city: "Stadt",
+          postal_code: "Postleitzahl",
+          country_residence: "Land",
+          need_company_invoice: "Ich benötige eine Firmenrechnung",
+          company_name: "Firmenname",
+          tax_id: "Steuernummer (optional)",
+          second_guest: "Zweiter Gast",
+          second_description: "Für Fragebogen und Vorbereitungsgespräch.",
+          back: "Zurück",
+          review: "Überprüfung",
+          review_description: "Bestätigen Sie alle Details vor der Anzahlung.",
+          retreat: "Retreat",
+          retreat_dates: "Termine",
+          edit: "Bearbeiten",
+          no_transfer: "Kein Transfer",
+          deposit_health_review: "Anzahlung & Gesundheit",
+          deposit_secures: "30% Anzahlung sichert Ihre Buchung.",
+          health_info: "Nach Anzahlung erhält jeder Gast einen Fragebogen und ein persönliches Gespräch wird geplant.",
+          health_prep: "Gesundheitsvorbereitung",
+          health_prep_desc: "Um Sie bestmöglich zu unterstützen, füllt jeder Gast einen Fragebogen aus, gefolgt von einem Gespräch mit unserem Team.",
+          medical_confidentiality: "Medizinische Vertraulichkeit",
+          medical_confidentiality_desc: "Ihre Daten werden streng vertraulich behandelt und sind nur für unser medizinisches Team zugänglich.",
+          after_deposit: "Nach Anzahlung",
+          questionnaire: "Fragebogen",
+          questionnaire_desc: "Jeder Gast erhält einen Gesundheits- & Lebensstil-Fragebogen.",
+          before_arrival: "Vor der Anreise",
+          prep_call: "Vorbereitungsgespräch",
+          prep_call_desc: "Ein obligatorisches 30-minütiges Gespräch zur Klärung aller Fragen.",
+          refund_policy: "100% Rückerstattung der Anzahlung, falls die Teilnahme gesundheitlich nicht empfohlen wird.",
+          continue_to_payment: "Weiter zur Zahlung",
+          payment: "Zahlung",
+          payment_desc: "Sichern Sie Ihre Buchung mit 30% Anzahlung.",
+          payment_method: "Zahlungsmethode",
+          zero_extra_fees: "Keine Extragebühren",
+          card_processing_fee: "Kartengebühr (3,6%)",
+          stripe_desc: "Sichere Kartenzahlung in USD. 3,6% Gebühr werden automatisch hinzugefügt.",
+          bank_transfer_desc: "Zahlung in VND per Banküberweisung. Keine Extragebühren.",
+          processing_payment: "Verarbeitung...",
+          confirm_bank_transfer: "Überweisung bestätigen",
+          pay_securely_msg: "{{amount}} sicher bezahlen",
+          booking_secured: "Buchung gesichert!",
+          proceeding_next: "Weiter zum nächsten Schritt...",
+          almost_done: "Fast geschafft.",
+          health_prep_screening_desc: "Jeder Gast füllt einen Fragebogen aus und führt ein Gespräch mit uns. So bereiten wir alles optimal vor.",
+          what_happens_next: "Was als Nächstes passiert",
+          timeline_item_1: "Fragebogen zu Gesundheit & Lebensstil für jeden Gast.",
+          timeline_item_2: "Persönliche Prüfung durch das Vietnam Detox Team.",
+          timeline_item_3: "Vorbereitungsgespräch nach dem Fragebogen.",
+          timeline_item_4: "Status nach Zahlung: Reserviert – Vorbereitung läuft.",
+          timeline_item_5: "Status nach Gesprächen: Buchung bestätigt.",
+          quick_precheck: "Vorabcheck",
+          quick_precheck_desc: "Bei Antworten mit „Ja“ meldet sich unser Team persönlich.",
+          safety_question_1: "Sind Sie aktuell schwanger oder stillend?",
+          safety_question_2: "Haben Sie Typ-1-Diabetes?",
+          safety_question_3: "Haben Sie eine diagnostizierte Essstörung?",
+          safety_question_4: "Sind Sie in Behandlung, die das Fasten beeinflusst?",
+          yes: "Ja",
+          no: "Nein",
+          continue_begin_health_prep: "Weiter – Vorbereitung beginnen",
+          back_to_booking: "Zurück zur Buchung",
+          prep_timeline: "Zeitplan der Vorbereitung",
+          prep_timeline_desc: "Status von Fragebögen, Gesprächen und Bestätigung.",
+          deposit_received: "Anzahlung erhalten",
+          status_reserved_pending: "Status: Reserviert – Vorbereitung läuft",
+          awaiting_payment: "Warten auf Zahlung",
+          guest_1_health_prep: "Vorbereitung Gast 1",
+          guest_2_health_prep: "Vorbereitung Gast 2",
+          prep_complete: "Fragebogen + Gespräch erledigt",
+          awaiting_prep: "Warten auf Fragebogen/Gespräch",
+          team_confirmation: "Bestätigung durch Vietnam Detox Team",
+          status_confirmed: "Status: Buchung bestätigt",
+          begins_after_calls: "Nach den Gesprächen",
+          guest: "Gast",
+          confirmation_note: "Bestätigung erfolgt nach Abschluss aller Vorbereitungen.",
+          questionnaire_call_complete: "Fragebogen + Gespräch erledigt",
+          awaiting_questionnaire_call: "Warten auf Fragebogen/Gespräch",
+          open_health_questionnaire: "Fragebogen öffnen",
+          link_copied: "Kopiert",
+          copy_this_link: "Link kopieren",
+          copy_link: "Link kopieren",
+          share_link_description: "Link für Mitreisende zum Ausfüllen auf anderen Geräten.",
+          included_personal_health_review_call: "Inklusive Gesundheitsgespräch",
+          included_personal_health_review_call_desc: "Ein kostenloses 30-minütiges Gespräch zur Abstimmung des Programms ist inbegriffen.",
+          request_health_review_call_alert: "Vielen Dank. Wir melden uns in Kürze.",
+          request_my_health_review_call: "Gesundheitsgespräch anfordern",
+          back_to_health_preparation_hub: "Zurück zur Vorbereitung",
+          move_to_confirmation: "Weiter zur Bestätigung",
+          booking_confirmed: "Buchung bestätigt",
+          booking_confirmed_desc: "Ihre Reise ist offiziell geplant. Wir freuen uns auf Sie!",
+          booking_ref: "Buchungscode",
+          return_home: "Zurück zur Startseite",
+          investment_summary: "Zusammenfassung",
+          real_time_update: "Preise aktualisieren sich live.",
+          subtotal: "Zwischensumme",
+          early_bird_discount: "Frühbucher –10%",
+          friend_discount: "Freundes-Rabatt –5%",
+          retreat_total: "Gesamtbetrag",
+          deposit_label: "Anzahlung",
+          remaining_balance: "Restbetrag",
+          card_fee: "Kartengebühr",
+          due_today: "Heute fällig",
+          deposit_received_msg: "Anzahlung erhalten.",
+          refund_note: "100% Rückerstattung bei Ablehnung nach Gesundheitsprüfung.",
+          something_went_wrong: "Fehler aufgetreten",
+          error_desc: "Ein Fehler ist aufgetreten. Bitte Seite neu laden.",
+          refresh_page: "Seite neu laden",
+          language: "Sprache",
+          demo_mode: "Demo-Modus",
+          booking_progress: "Buchungsfortschritt"
+        }
+      };
+
+
+
       const startBookingApp = () => {
         if (!window.React || !window.ReactDOM) {
           showInlineError("Required files did not load. Please check your connection and try again.", { retry: true });
@@ -171,13 +614,86 @@
           hph: 2100000,
         };
 
-        const formatVND = (value) => new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(Math.round(value));
-        const formatUSD = (value) => `~ $${Math.round(value / CURRENCY_RATE).toLocaleString("en-US")} USD`;
+        const formatVND = (value, l = null) => {
+          const localeLang = l || parseRouteFromLocation().lang || "en";
+          const locale = localeLang === "vn" ? "vi-VN" : localeLang === "de" ? "de-DE" : "en-US";
+          return new Intl.NumberFormat(locale, { 
+            style: "currency", 
+            currency: "VND",
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 0
+          }).format(Math.round(value));
+        };
+        const formatUSD = (value, l = null) => {
+          const localeLang = l || parseRouteFromLocation().lang || "en";
+          const locale = localeLang === "de" ? "de-DE" : "en-US";
+          const formatted = Math.round(value / CURRENCY_RATE).toLocaleString(locale);
+          return `~ $${formatted} USD`;
+        };
+
+
+
 
         const BOOKING_REFERENCE = "VDX-DEMO-001";
         const HEALTHCHECK_BASE_URL = "https://vietnamdetox.com/healthcheck-2/";
 
         const Icons = {
+          Building: () => (
+            <svg
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <rect x="4" y="2" width="16" height="20" rx="2" ry="2" />
+              <path d="M9 22v-4h6v4" />
+              <path d="M8 6h.01" />
+              <path d="M16 6h.01" />
+              <path d="M12 6h.01" />
+              <path d="M12 10h.01" />
+              <path d="M12 14h.01" />
+              <path d="M16 10h.01" />
+              <path d="M16 14h.01" />
+              <path d="M8 10h.01" />
+              <path d="M8 14h.01" />
+            </svg>
+          ),
+          CreditCard: () => (
+            <svg
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <rect x="1" y="4" width="22" height="16" rx="2" ry="2" />
+              <line x1="1" y1="10" x2="23" y2="10" />
+            </svg>
+          ),
+
+          ShieldCheck: () => (
+            <svg
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10" />
+              <path d="m9 12 2 2 4-4" />
+            </svg>
+          ),
+
           ChevronRight: () => (
             <svg
               width="20"
@@ -334,15 +850,26 @@
           if (!STEPS.includes(stepParam)) {
             stepParam = "config";
           }
-          return { step: stepParam };
+          let langParam = params.get("language") || params.get("lang") || "en";
+          if (!["en", "vn", "de"].includes(langParam)) {
+            langParam = "en";
+          }
+          return { step: stepParam, lang: langParam };
         };
+
 
         const buildRouteUrl = (routeState) => {
           const params = new URLSearchParams();
           const nextStep = STEPS.includes(routeState.step) ? routeState.step : "config";
           params.set("step", nextStep);
-          return `index.html?${params.toString()}`;
+          if (routeState.lang && routeState.lang !== "en") {
+            params.set("language", routeState.lang);
+          }
+          return `${window.location.pathname}?${params.toString()}`;
         };
+
+
+
 
         const getRoomsForRetreat = (retreatId) => ROOMS_BY_RETREAT[retreatId] || [];
         const getTransportOptionsForRetreat = (retreatId) => TRANSPORT_BY_RETREAT[retreatId] || [];
@@ -353,81 +880,86 @@
           return COUNTRY_DIAL_CODES[normalized] || null;
         };
 
-        const PriceSummary = ({ context = "default", pricing, paymentMethod, stripeFee, paymentDueNow }) => {
-          const showEarlyBird = pricing.earlyBird > 0;
-          const showFriend = pricing.friend > 0;
-          const showDepositLine = context === "review" || context === "payment";
-          const showReviewNote = context === "review";
-          const depositLabel = context === "payment" ? "Deposit due now (30%)" : "Deposit (30%)";
-          return (
-            <div className="bg-white border border-stone-100 rounded-3xl p-6 shadow-sm space-y-4">
-              <div>
-                <p className="text-xs uppercase tracking-[0.3em] text-stone-400 font-semibold">Investment summary</p>
-                <p className="text-sm text-stone-500">Line items update in real-time.</p>
-              </div>
-              <div className="space-y-2 text-sm">
-                <div className="flex justify-between">
-                  <span className="text-stone-500">Subtotal</span>
-                  <span className="font-semibold">{formatVND(pricing.subtotal)}</span>
+          const PriceSummary = ({ context = "default", pricing, paymentMethod, stripeFee, paymentDueNow, lang }) => {
+            const t = (key) => TRANSLATIONS[lang]?.[key] || TRANSLATIONS.en[key] || key;
+
+
+            const showEarlyBird = pricing.earlyBird > 0;
+            const showFriend = pricing.friend > 0;
+            const showDepositLine = context === "review" || context === "payment";
+            const showReviewNote = context === "review";
+            const depositLabel = context === "payment" ? t("deposit_due_label") : t("deposit_label");
+            return (
+              <div className="bg-white border border-stone-100 rounded-3xl p-6 shadow-sm space-y-4">
+                <div>
+                  <p className="text-xs uppercase tracking-[0.3em] text-stone-400 font-semibold">{t("investment_summary")}</p>
+                  <p className="text-sm text-stone-500">{t("real_time_update")}</p>
                 </div>
-                {showEarlyBird && (
-                  <div className="flex justify-between text-emerald-700">
-                    <span>Early Bird –10%</span>
-                    <span>-{formatVND(pricing.earlyBird)}</span>
-                  </div>
-                )}
-                {showFriend && (
-                  <div className="flex justify-between text-emerald-700">
-                    <span>Friend discount –5%</span>
-                    <span>-{formatVND(pricing.friend)}</span>
-                  </div>
-                )}
-                <div className="flex justify-between text-stone-500">
-                  <span>Airport transfer</span>
-                  <span>{formatVND(pricing.transport)}</span>
-                </div>
-              </div>
-              <div className="flex justify-between pt-2 border-t border-stone-100">
-                <span className="text-stone-500">Retreat total</span>
-                <span className="text-2xl font-bold">{formatVND(pricing.total)}</span>
-              </div>
-              {showDepositLine && (
-                <>
+                <div className="space-y-2 text-sm">
                   <div className="flex justify-between">
-                    <span className="text-stone-500">{depositLabel}</span>
-                    <span className="font-semibold">{formatVND(pricing.deposit)}</span>
+                    <span className="text-stone-500">{t("subtotal")}</span>
+                    <span className="font-semibold">{formatVND(pricing.subtotal, lang)}</span>
+
                   </div>
-                  <div className="flex justify-between text-sm text-stone-500">
-                    <span>Remaining balance</span>
-                    <span className="font-semibold">{formatVND(pricing.remaining)}</span>
-                  </div>
-                </>
-              )}
-              <p className="text-sm text-stone-500">{formatUSD(pricing.total)}</p>
-              {showReviewNote && (
-                <p className="text-sm text-stone-600">
-                  A 30% deposit is collected during payment. 100% refund if participation is declined after the health review.
-                </p>
-              )}
-              {context === "payment" && (
-                <div className="pt-2 border-t border-stone-100 space-y-2">
-                  {paymentMethod === "stripe" && stripeFee > 0 && (
-                    <div className="flex justify-between text-amber-700">
-                      <span>Card processing fee (3.6%)</span>
-                      <span>{formatVND(stripeFee)}</span>
+                  {showEarlyBird && (
+                    <div className="flex justify-between text-emerald-700">
+                      <span>{t("early_bird_discount")}</span>
+                      <span>-{formatVND(pricing.earlyBird, lang)}</span>
                     </div>
                   )}
-                  <div className="flex justify-between">
-                    <span className="text-stone-500">Due today</span>
-                    <span className="text-xl font-bold">{formatVND(paymentDueNow)}</span>
+                  {showFriend && (
+                    <div className="flex justify-between text-emerald-700">
+                      <span>{t("friend_discount")}</span>
+                      <span>-{formatVND(pricing.friend, lang)}</span>
+                    </div>
+                  )}
+                  <div className="flex justify-between text-stone-500">
+                    <span>{t("airport_transfer").replace(" (optional)", "")}</span>
+                    <span>{formatVND(pricing.transport, lang)}</span>
                   </div>
-                  <p className="text-sm text-stone-500">{formatUSD(paymentDueNow)}</p>
                 </div>
-              )}
-              {context === "confirmed" && <p className="text-sm text-emerald-700">Deposit received. Balance collected on arrival.</p>}
-            </div>
-          );
-        };
+                <div className="flex justify-between pt-2 border-t border-stone-100">
+                  <span className="text-stone-500">{t("retreat_total")}</span>
+                  <span className="text-2xl font-bold">{formatVND(pricing.total, lang)}</span>
+                </div>
+                {showDepositLine && (
+                  <>
+                    <div className="flex justify-between">
+                      <span className="text-stone-500">{depositLabel}</span>
+                      <span className="font-semibold">{formatVND(pricing.deposit, lang)}</span>
+                    </div>
+                    <div className="flex justify-between text-sm text-stone-500">
+                      <span>{t("remaining_balance")}</span>
+                      <span className="font-semibold">{formatVND(pricing.remaining, lang)}</span>
+                    </div>
+                  </>
+                )}
+                <p className="text-sm text-stone-500">{formatUSD(pricing.total, lang)}</p>
+                {showReviewNote && (
+                  <p className="text-sm text-stone-600">
+                    {t("refund_note")}
+                  </p>
+                )}
+                {context === "payment" && (
+                  <div className="pt-2 border-t border-stone-100 space-y-2">
+                    {paymentMethod === "stripe" && stripeFee > 0 && (
+                      <div className="flex justify-between text-amber-700">
+                        <span>{t("card_fee")}</span>
+                        <span>{formatVND(stripeFee, lang)}</span>
+                      </div>
+                    )}
+                    <div className="flex justify-between">
+                      <span className="text-stone-500">{t("due_today")}</span>
+                      <span className="text-xl font-bold">{formatVND(paymentDueNow, lang)}</span>
+                    </div>
+                    <p className="text-sm text-stone-500">{formatUSD(paymentDueNow, lang)}</p>
+                  </div>
+                )}
+                {context === "confirmed" && <p className="text-sm text-emerald-700">{t("deposit_received_msg")}</p>}
+              </div>
+            );
+          };
+
 
         const DEFAULT_RETREAT = RETREATS[0];
         const DEFAULT_DATE = DEFAULT_RETREAT.dates[0];
@@ -499,15 +1031,30 @@
           const routeStep = route?.step;
           const flowStep = STEPS.includes(routeStep) ? routeStep : "config";
           const controllerStep = flowStep;
+          const lang = route?.lang || "en";
+
+          const t = (key, data = {}) => {
+            let text = TRANSLATIONS[lang]?.[key] || TRANSLATIONS.en[key] || key;
+            Object.keys(data).forEach((placeholder) => {
+              text = text.replace(`{${placeholder}}`, data[placeholder]);
+            });
+            return text;
+          };
+
+          const switchLanguage = (newLang) => {
+            syncRoute({ ...route, lang: newLang });
+          };
+
 
           const syncRoute = (nextRoute, replace = false) => {
             const safeStep = STEPS.includes(nextRoute.step) ? nextRoute.step : "config";
-            const nextState = { step: safeStep };
+            const nextState = { step: safeStep, lang: nextRoute.lang || "en" };
             const url = buildRouteUrl(nextState);
             const method = replace ? "replaceState" : "pushState";
             safeHistoryUpdate(method, nextState, url);
             setRoute(nextState);
           };
+
 
           useEffect(() => {
             safeHistoryUpdate("replaceState", initialRouteRef.current, buildRouteUrl(initialRouteRef.current));
@@ -538,12 +1085,11 @@
           }, [selection.guests]);
 
           const goToStep = (nextStep, replace = false) => {
-            let targetStep = STEPS.includes(nextStep) ? nextStep : "config";
-            if (targetStep === "payment" && !safetyCleared) {
-              targetStep = "health_check";
-            }
-            syncRoute({ step: targetStep }, replace);
+            const targetStep = STEPS.includes(nextStep) ? nextStep : "config";
+            syncRoute({ ...route, step: targetStep }, replace);
           };
+
+
 
           const dateOptions = useMemo(() => {
             const now = new Date();
@@ -872,17 +1418,17 @@
           const renderConfigStep = () => (
             <div className="space-y-12">
               <header className="space-y-3">
-                <p className="text-[12px] uppercase tracking-[0.4em] text-stone-400">Step 1</p>
-                <h1 className="text-4xl font-bold">Plan your journey</h1>
+                <p className="text-[12px] uppercase tracking-[0.4em] text-stone-400">{t("step")} 1</p>
+                <h1 className="text-4xl font-bold">{t("plan_journey")}</h1>
                 <p className="text-stone-500">
-                  Select the start date, number of guests, and residence. Every price line item updates before we request personal details.
+                  {t("plan_description")}
                 </p>
               </header>
 
               <section className="space-y-4">
                 <div>
-                  <p className="text-xs uppercase tracking-[0.3em] text-stone-400 font-semibold">Upcoming retreats</p>
-                  <p className="text-sm text-stone-500">Choose the experience and date that resonates most with your well-being goals.</p>
+                  <p className="text-xs uppercase tracking-[0.3em] text-stone-400 font-semibold">{t("upcoming_retreats")}</p>
+                  <p className="text-sm text-stone-500">{t("retreats_description")}</p>
                 </div>
                 <div className="space-y-4">
                   {RETREATS.map((retreat) => {
@@ -932,7 +1478,7 @@
                           </div>
                         </div>
                         <div className="space-y-2">
-                          <p className="text-xs uppercase tracking-[0.3em] text-stone-400">Available dates</p>
+                          <p className="text-xs uppercase tracking-[0.3em] text-stone-400">{t("available_dates")}</p>
                           <div className="flex items-center gap-2">
                             {retreatDates.length > 2 && (
                               <button
@@ -970,12 +1516,12 @@
                                       <div className="flex flex-wrap gap-1 mt-1 justify-center">
                                         {showEarlyBird && (
                                           <span className={`text-[10px] font-semibold uppercase tracking-[0.2em] ${activeDate ? "text-emerald-100" : "text-emerald-700"}`}>
-                                            Early Bird –10%
+                                            {t("early_bird_label")}
                                           </span>
                                         )}
                                         {showLimited && (
                                           <span className={`text-[10px] font-semibold uppercase tracking-[0.2em] ${activeDate ? "text-amber-200" : "text-amber-700"}`}>
-                                            Limited spots available
+                                            {t("limited_spots")}
                                           </span>
                                         )}
                                       </div>
@@ -1006,7 +1552,7 @@
               </section>
 
               <section className="space-y-4">
-                <p className="text-xs uppercase tracking-[0.3em] text-stone-400 font-semibold">Guests</p>
+                <p className="text-xs uppercase tracking-[0.3em] text-stone-400 font-semibold">{t("guests")}</p>
                 <div className="flex flex-col md:flex-row gap-4">
                   {[1, 2].map((count) => {
                     const active = selection.guests === count;
@@ -1020,8 +1566,8 @@
                         }`}
                       >
                         <div className="text-left">
-                          <p className="font-semibold">{count === 1 ? "One guest" : "Two guests"}</p>
-                          <p className="text-sm text-stone-500">{count === 2 ? "Save 5% together" : "Fully private journey"}</p>
+                          <p className="font-semibold">{count === 1 ? t("one_guest") : t("two_guests")}</p>
+                          <p className="text-sm text-stone-500">{count === 2 ? t("save_together") : t("private_journey")}</p>
                         </div>
                         {count === 2 ? <Icons.Users /> : <Icons.User />}
                       </button>
@@ -1031,18 +1577,17 @@
               </section>
 
               <section className="space-y-4">
-                <p className="text-xs uppercase tracking-[0.3em] text-stone-400 font-semibold">Accommodation</p>
+                <p className="text-xs uppercase tracking-[0.3em] text-stone-400 font-semibold">{t("accommodation")}</p>
                 <div className="bg-emerald-50 border border-emerald-100 rounded-3xl p-5 text-left">
-                  <p className="text-xs uppercase tracking-[0.3em] text-emerald-700 font-semibold">Health preparation first</p>
+                  <p className="text-xs uppercase tracking-[0.3em] text-emerald-700 font-semibold">{t("health_prep_first")}</p>
                   <p className="text-sm text-stone-600">
-                    Every guest completes their own health & lifestyle questionnaire during booking and enjoys a personal preparation call with the
-                    Vietnam Detox team after payment.
+                    {t("health_prep_description")}
                   </p>
                 </div>
 
                 <div className="space-y-6">
                   {filteredRoomsForCurrentRetreat.length === 0 && (
-                    <p className="text-sm text-stone-500">Accommodation options will appear here for this retreat.</p>
+                    <p className="text-sm text-stone-500">{t("no_accommodation")}</p>
                   )}
                   {filteredRoomsForCurrentRetreat.map((room) => {
                     const active = selection.roomType === room.id;
@@ -1065,13 +1610,13 @@
                               <div className="flex items-center justify-between mt-2">
                                 <h3 className="text-2xl font-bold">{room.name}</h3>
                                 <p className="text-sm text-stone-500">
-                                  {selection.guests === 2 ? formatVND(room.price) : `Per guest ${formatVND(room.price)}`}
+                                  {selection.guests === 2 ? formatVND(room.price, lang) : `${t("per_guest")} ${formatVND(room.price, lang)}`}
                                 </p>
                               </div>
                             </div>
                             <div className="flex items-center justify-between pt-3 border-t border-stone-200">
                               <span className={`text-sm font-semibold ${active ? "text-emerald-700" : "text-stone-500"}`}>
-                                {active ? "Selected" : "Tap to select"}
+                                {active ? t("selected") : t("tap_to_select")}
                               </span>
                               <button
                                 type="button"
@@ -1081,7 +1626,7 @@
                                 }}
                                 className="text-sm font-semibold text-emerald-700 hover:text-emerald-800"
                               >
-                                View photos
+                                {t("view_photos")}
                               </button>
                             </div>
                           </div>
@@ -1093,7 +1638,7 @@
               </section>
 
               <section className="space-y-4">
-                <p className="text-xs uppercase tracking-[0.3em] text-stone-400 font-semibold">Airport transfer (optional)</p>
+                <p className="text-xs uppercase tracking-[0.3em] text-stone-400 font-semibold">{t("airport_transfer")}</p>
                 <select
                   className="w-full border border-stone-200 rounded-2xl p-4 bg-stone-50 focus:ring-2 focus:ring-emerald-100 outline-none"
                   value={selection.transfer}
@@ -1101,7 +1646,7 @@
                 >
                   {transportOptionsForCurrentRetreat.map((option) => (
                     <option key={option.id} value={option.id}>
-                      {option.label} {option.price > 0 ? `(+${formatVND(option.price)})` : ""}
+                      {option.label} {option.price > 0 ? `(+${formatVND(option.price, lang)})` : ""}
                     </option>
                   ))}
                 </select>
@@ -1113,11 +1658,12 @@
                   onClick={() => goToStep("details")}
                   className="inline-flex items-center bg-emerald-800 text-white px-6 py-3 rounded-full font-semibold hover:bg-emerald-900 transition"
                 >
-                  Continue <Icons.ChevronRight />
+                  {t("continue")} <Icons.ChevronRight />
                 </button>
               </div>
             </div>
           );
+
 
           const renderGuestDetailsStep = () => {
             const primary = guestDetails.guest1;
@@ -1139,27 +1685,26 @@
             return (
               <div className="space-y-10">
                 <header className="space-y-2">
-                  <p className="text-[12px] uppercase tracking-[0.4em] text-stone-400">Step 2</p>
-                  <h1 className="text-4xl font-bold">Details</h1>
+                  <p className="text-[12px] uppercase tracking-[0.4em] text-stone-400">{t("step")} 2</p>
+                  <h1 className="text-4xl font-bold">{t("details")}</h1>
                   <p className="text-sm text-stone-500">
-                    Used for booking confirmation and invoicing only. These contacts also receive each guest’s health questionnaire and preparation
-                    call details.
+                    {t("details_description")}
                   </p>
                 </header>
 
                 <section className="space-y-6">
                   <div className="space-y-1">
-                    <h2 className="text-xl font-semibold text-stone-900">Primary guest</h2>
-                    <p className="text-sm text-stone-500">This information appears on your booking confirmation and invoice.</p>
+                    <h2 className="text-xl font-semibold text-stone-900">{t("primary_guest")}</h2>
+                    <p className="text-sm text-stone-500">{t("primary_description")}</p>
                   </div>
                   <div className="space-y-6">
                     <div className="space-y-4">
-                      {renderInput("First name", primary.firstName, (e) => updateGuest("guest1", "firstName", e.target.value))}
-                      {renderInput("Last name", primary.lastName, (e) => updateGuest("guest1", "lastName", e.target.value))}
-                      {renderInput("Email address", primary.email, (e) => updateGuest("guest1", "email", e.target.value), "email")}
+                      {renderInput(t("first_name"), primary.firstName, (e) => updateGuest("guest1", "firstName", e.target.value))}
+                      {renderInput(t("last_name"), primary.lastName, (e) => updateGuest("guest1", "lastName", e.target.value))}
+                      {renderInput(t("email_address"), primary.email, (e) => updateGuest("guest1", "email", e.target.value), "email")}
                     </div>
                     <div className="space-y-2">
-                      <label className="text-[11px] uppercase tracking-[0.2em] text-stone-500">Phone number (optional)</label>
+                      <label className="text-[11px] uppercase tracking-[0.2em] text-stone-500">{t("phone_number")}</label>
                       <div className="flex flex-col sm:flex-row gap-3">
                         <div className="sm:w-32">
                           <select
@@ -1181,16 +1726,16 @@
                           onChange={(e) => updateGuest("guest1", "phone", e.target.value)}
                         />
                       </div>
-                      <p className="text-xs text-stone-500">Optional. Helpful in case we need to reach you shortly before arrival.</p>
+                      <p className="text-xs text-stone-500">{t("phone_helper")}</p>
                     </div>
                     <div className="space-y-2">
                       <p className="text-xs text-stone-500">
-                        We use this information only to issue your booking confirmation and invoice if required.
+                        {t("invoice_helper")}
                       </p>
-                      {renderInput("Street & house number", primary.street, (e) => updateGuest("guest1", "street", e.target.value))}
-                      {renderInput("City", primary.city, (e) => updateGuest("guest1", "city", e.target.value))}
-                      {renderInput("Postal code", primary.postalCode, (e) => updateGuest("guest1", "postalCode", e.target.value))}
-                      {renderInput("Country of residence", primary.country, (e) => handlePrimaryCountryChange(e.target.value))}
+                      {renderInput(t("street_house"), primary.street, (e) => updateGuest("guest1", "street", e.target.value))}
+                      {renderInput(t("city"), primary.city, (e) => updateGuest("guest1", "city", e.target.value))}
+                      {renderInput(t("postal_code"), primary.postalCode, (e) => updateGuest("guest1", "postalCode", e.target.value))}
+                      {renderInput(t("country_residence"), primary.country, (e) => handlePrimaryCountryChange(e.target.value))}
                     </div>
                     <div className="space-y-2">
                       <label className="flex items-center gap-2 text-sm text-stone-700">
@@ -1199,12 +1744,12 @@
                           checked={primary.needsCompanyInvoice}
                           onChange={(e) => updateGuest("guest1", "needsCompanyInvoice", e.target.checked)}
                         />
-                        I need an invoice issued to a company
+                        {t("need_company_invoice")}
                       </label>
                       {primary.needsCompanyInvoice && (
                         <div className="space-y-4">
-                          {renderInput("Company name", primary.companyName, (e) => updateGuest("guest1", "companyName", e.target.value))}
-                          {renderInput("VAT / Tax ID (optional)", primary.taxId, (e) => updateGuest("guest1", "taxId", e.target.value))}
+                          {renderInput(t("company_name"), primary.companyName, (e) => updateGuest("guest1", "companyName", e.target.value))}
+                          {renderInput(t("tax_id"), primary.taxId, (e) => updateGuest("guest1", "taxId", e.target.value))}
                         </div>
                       )}
                     </div>
@@ -1214,21 +1759,21 @@
                 {selection.guests === 2 && (
                   <section className="space-y-6 pt-8 border-t border-stone-200">
                     <div className="space-y-1">
-                      <h2 className="text-xl font-semibold text-stone-900">Second guest details</h2>
-                      <p className="text-sm text-stone-500">Used to send their questionnaire and schedule their personal preparation call.</p>
+                      <h2 className="text-xl font-semibold text-stone-900">{t("second_guest")}</h2>
+                      <p className="text-sm text-stone-500">{t("second_description")}</p>
                     </div>
                     <div className="space-y-4">
-                      {renderInput("First name", secondary.firstName, (e) => updateGuest("guest2", "firstName", e.target.value))}
-                      {renderInput("Last name", secondary.lastName, (e) => updateGuest("guest2", "lastName", e.target.value))}
-                      {renderInput("Email address (optional)", secondary.email, (e) => updateGuest("guest2", "email", e.target.value), "email")}
-                      {renderInput("Phone number (optional)", secondary.phone, (e) => updateGuest("guest2", "phone", e.target.value), "tel")}
+                      {renderInput(t("first_name"), secondary.firstName, (e) => updateGuest("guest2", "firstName", e.target.value))}
+                      {renderInput(t("last_name"), secondary.lastName, (e) => updateGuest("guest2", "lastName", e.target.value))}
+                      {renderInput(t("email_address"), secondary.email, (e) => updateGuest("guest2", "email", e.target.value), "email")}
+                      {renderInput(t("phone_number"), secondary.phone, (e) => updateGuest("guest2", "phone", e.target.value), "tel")}
                     </div>
                   </section>
                 )}
 
                 <div className="flex justify-between items-center">
                   <button type="button" onClick={() => goToStep("config")} className="inline-flex items-center text-stone-500 font-semibold">
-                    <Icons.ChevronLeft /> Back
+                    <Icons.ChevronLeft /> {t("back")}
                   </button>
                   <button
                     type="button"
@@ -1238,12 +1783,13 @@
                       guestDetailsValid() ? "bg-emerald-800 text-white hover:bg-emerald-900" : "bg-stone-200 text-stone-500 cursor-not-allowed"
                     }`}
                   >
-                    Review <Icons.ChevronRight />
+                    {t("review")} <Icons.ChevronRight />
                   </button>
                 </div>
               </div>
             );
           };
+
 
           const renderReviewStep = () => {
             const dateInfo = dateOptions.find((d) => d.label === selection.date);
@@ -1251,22 +1797,22 @@
             const transferOption =
               transportOptionsForCurrentRetreat.find((option) => option.id === selection.transfer) || transportOptionsForCurrentRetreat[0];
             const guests = [
-              { label: "Guest 1", data: guestDetails.guest1 },
-              ...(selection.guests === 2 ? [{ label: "Guest 2", data: guestDetails.guest2 }] : []),
+              { label: t("one_guest"), data: guestDetails.guest1 },
+              ...(selection.guests === 2 ? [{ label: t("two_guests"), data: guestDetails.guest2 }] : []),
             ];
 
             return (
               <div className="space-y-10">
                 <header className="space-y-3">
-                  <p className="text-[12px] uppercase tracking-[0.4em] text-stone-400">Step 3</p>
-                  <h1 className="text-4xl font-bold">Review</h1>
-                  <p className="text-stone-500">Confirm dates, residence, guests, and transfers before the deposit step.</p>
+                  <p className="text-[12px] uppercase tracking-[0.4em] text-stone-400">{t("step")} 3</p>
+                  <h1 className="text-4xl font-bold">{t("review")}</h1>
+                  <p className="text-stone-500">{t("review_description")}</p>
                 </header>
 
                 <div className="space-y-6">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-xs uppercase tracking-[0.3em] text-stone-400">Retreat</p>
+                      <p className="text-xs uppercase tracking-[0.3em] text-stone-400">{t("retreat")}</p>
                       <p className="font-semibold">{selection.retreatName}</p>
                       <p className="text-sm text-stone-500">{selection.retreatLocation}</p>
                       {selection.retreatEarlyBirdNote && <p className="text-xs text-emerald-700 mt-1">{selection.retreatEarlyBirdNote}</p>}
@@ -1274,38 +1820,38 @@
                   </div>
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-xs uppercase tracking-[0.3em] text-stone-400">Retreat dates</p>
+                      <p className="text-xs uppercase tracking-[0.3em] text-stone-400">{t("retreat_dates")}</p>
                       <p className="font-semibold">{dateInfo?.label}</p>
                     </div>
                     <button className="text-sm text-emerald-700 font-semibold" onClick={() => goToStep("config")}>
-                      Edit
+                      {t("edit")}
                     </button>
                   </div>
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-xs uppercase tracking-[0.3em] text-stone-400">Accommodation</p>
+                      <p className="text-xs uppercase tracking-[0.3em] text-stone-400">{t("accommodation")}</p>
                       <p className="font-semibold">{room?.name}</p>
                     </div>
                     <button className="text-sm text-emerald-700 font-semibold" onClick={() => goToStep("config")}>
-                      Edit
+                      {t("edit")}
                     </button>
                   </div>
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-xs uppercase tracking-[0.3em] text-stone-400">Airport transfer</p>
-                      <p className="font-semibold">{transferOption?.label || "No airport transfer"}</p>
+                      <p className="text-xs uppercase tracking-[0.3em] text-stone-400">{t("airport_transfer").replace(" (optional)", "")}</p>
+                      <p className="font-semibold">{transferOption?.label || t("no_transfer")}</p>
                     </div>
                     <button className="text-sm text-emerald-700 font-semibold" onClick={() => goToStep("config")}>
-                      Edit
+                      {t("edit")}
                     </button>
                   </div>
                 </div>
 
                 <div className="space-y-6">
                   <div className="flex items-center justify-between">
-                    <p className="text-xs uppercase tracking-[0.3em] text-stone-400">Guests</p>
+                    <p className="text-xs uppercase tracking-[0.3em] text-stone-400">{t("guests")}</p>
                     <button className="text-sm text-emerald-700 font-semibold" onClick={() => goToStep("details")}>
-                      Edit
+                      {t("edit")}
                     </button>
                   </div>
                   <div className="space-y-4">
@@ -1313,7 +1859,7 @@
                       <div key={guest.label} className={`${index > 0 ? "pt-4 border-t border-stone-200" : ""}`}>
                         <p className="font-semibold">{guest.label}</p>
                         <p className="text-sm text-stone-500">
-                          {guest.data.firstName || "First name"} {guest.data.lastName || ""}
+                          {guest.data.firstName || t("first_name")} {guest.data.lastName || ""}
                         </p>
                         <p className="text-sm text-stone-500">{guest.data.email || "Email pending"}</p>
                       </div>
@@ -1322,211 +1868,189 @@
                 </div>
 
                 <div className="bg-stone-50 border border-stone-100 rounded-3xl p-6 space-y-2">
-                  <h3 className="text-sm font-semibold text-stone-700 uppercase tracking-[0.3em]">Deposit & health review</h3>
+                  <h3 className="text-sm font-semibold text-stone-700 uppercase tracking-[0.3em]">{t("deposit_health_review")}</h3>
                   <ul className="space-y-1 text-sm text-stone-600 list-disc pl-4">
-                    <li>A 30% deposit secures your booking.</li>
-                    <li>After your deposit, each guest receives their own health questionnaire and we schedule a personal preparation call.</li>
+                    <li>{t("deposit_secures")}</li>
+                    <li>{t("health_info")}</li>
                   </ul>
                 </div>
 
                 <div className="flex justify-between items-center">
                   <button type="button" onClick={() => goToStep("details")} className="inline-flex items-center text-stone-500 font-semibold">
-                    <Icons.ChevronLeft /> Back
+                    <Icons.ChevronLeft /> {t("back")}
                   </button>
                   <button
                     type="button"
                     onClick={() => goToStep("health_check")}
                     className="inline-flex items-center bg-emerald-800 text-white px-6 py-3 rounded-full font-semibold hover:bg-emerald-900"
                   >
-                    Continue <Icons.ChevronRight />
+                    {t("continue")} <Icons.ChevronRight />
                   </button>
                 </div>
               </div>
             );
           };
 
+
           const renderHealthPreparationStep = () => (
             <div className="space-y-8">
               <header className="space-y-3">
-                <p className="text-[12px] uppercase tracking-[0.4em] text-stone-400">Step 4</p>
-                <h1 className="text-4xl font-bold">Health preparation (required)</h1>
-                <p className="text-stone-500">
-                  To support your well-being, each guest completes a short health & lifestyle questionnaire followed by a personal preparation call
-                  with the Vietnam Detox team. This ensures the retreat is tailored and safe for you.
-                </p>
+                <p className="text-[12px] uppercase tracking-[0.4em] text-stone-400">{t("step")} 4</p>
+                <h1 className="text-4xl font-bold">{t("health_prep")}</h1>
+                <p className="text-stone-500">{t("health_prep_desc")}</p>
               </header>
 
-              <div className="space-y-5">
-                {SAFETY_QUESTIONS.map((question) => {
-                  const currentValue = safetyAnswers[question.id];
-                  return (
-                    <div key={question.id} className="border border-stone-100 rounded-3xl p-6 space-y-4">
-                      <div className="space-y-1">
-                        <p className="text-sm font-semibold text-stone-800">{question.title}</p>
-                        <p className="text-sm text-stone-600">{question.description}</p>
-                      </div>
-                      <div className="flex flex-wrap gap-3">
-                        {[
-                          { label: "Yes", value: "yes" },
-                          { label: "No", value: "no" },
-                        ].map((option) => {
-                          const active = currentValue === option.value;
-                          return (
-                            <button
-                              key={option.value}
-                              type="button"
-                              aria-pressed={active}
-                              onClick={() => updateSafetyAnswer(question.id, option.value)}
-                              className={`px-4 py-2 rounded-full font-semibold text-sm border ${
-                                active ? "bg-emerald-800 text-white border-emerald-800" : "border-stone-200 text-stone-600 hover:border-emerald-200"
-                              }`}
-                            >
-                              {option.label}
-                            </button>
-                          );
-                        })}
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-
-              {safetyHasConcern && (
-                <div className="bg-rose-50 border border-rose-100 rounded-3xl p-6 space-y-4">
-                  <p className="font-semibold text-rose-900">Thank you very much for your honest answer.</p>
-                  <div className="space-y-3 text-sm text-stone-700 leading-relaxed">
-                    <p>
-                      Based on established fasting safety guidelines, the condition you have indicated is considered a situation where fasting should
-                      only be undertaken, if at all, under close specialist supervision in a clinical setting.
-                    </p>
-                    <p>
-                      Our fasting retreats are designed for preventive and restorative purposes and cannot provide the level of continuous monitoring
-                      required in this case.
-                    </p>
-                    <p>
-                      Out of responsibility for your safety and well-being, we are therefore unfortunately unable to offer participation in this
-                      retreat at this time. If you wish, you are very welcome to contact Vietnam Detox so we can share information about alternative,
-                      gentler lifestyle and nutrition programs that may be more appropriate for you right now.
-                    </p>
+              <div className="space-y-6">
+                <div className="bg-emerald-50 border border-emerald-100 rounded-3xl p-6 flex gap-4">
+                  <div className="flex-shrink-0 w-12 h-12 bg-white rounded-2xl flex items-center justify-center text-emerald-600 shadow-sm">
+                    <Icons.ShieldCheck />
                   </div>
-                  <div className="flex flex-wrap gap-3">
-                    <a
-                      href="mailto:hello@vietnamdetox.com"
-                      className="inline-flex items-center justify-center px-4 py-2 rounded-full border border-stone-200 text-sm font-semibold text-stone-700 hover:border-emerald-200"
-                    >
-                      Contact Vietnam Detox
-                    </a>
-                    <button
-                      type="button"
-                      onClick={() => goToStep("config")}
-                      className="inline-flex items-center justify-center px-4 py-2 rounded-full border border-stone-200 text-sm font-semibold text-stone-700 hover:border-emerald-200"
-                    >
-                      Return to retreat overview
-                    </button>
+                  <div>
+                    <h3 className="font-semibold text-emerald-900">{t("medical_confidentiality")}</h3>
+                    <p className="text-sm text-emerald-800/80 leading-relaxed mt-1">
+                      {t("medical_confidentiality_desc")}
+                    </p>
                   </div>
                 </div>
-              )}
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="bg-white border border-stone-100 rounded-3xl p-6 space-y-3">
+                    <p className="text-[10px] uppercase tracking-[0.2em] text-stone-400 font-bold">{t("after_deposit")}</p>
+                    <h4 className="font-semibold">{t("questionnaire")}</h4>
+                    <p className="text-sm text-stone-500">{t("questionnaire_desc")}</p>
+                  </div>
+                  <div className="bg-white border border-stone-100 rounded-3xl p-6 space-y-3">
+                    <p className="text-[10px] uppercase tracking-[0.2em] text-stone-400 font-bold">{t("before_arrival")}</p>
+                    <h4 className="font-semibold">{t("prep_call")}</h4>
+                    <p className="text-sm text-stone-500">{t("prep_call_desc")}</p>
+                  </div>
+                </div>
+
+                <div className="bg-amber-50 border border-amber-100 rounded-3xl p-6">
+                  <p className="text-sm text-amber-900 leading-relaxed font-medium">
+                    {t("refund_policy")}
+                  </p>
+                </div>
+              </div>
 
               <div className="flex justify-between items-center">
                 <button type="button" onClick={() => goToStep("review")} className="inline-flex items-center text-stone-500 font-semibold">
-                  <Icons.ChevronLeft /> Back
+                  <Icons.ChevronLeft /> {t("back")}
                 </button>
-                {!safetyHasConcern && (
-                  <button
-                    type="button"
-                    disabled={!safetyAllAnswered}
-                    onClick={() => goToStep("payment")}
-                    className={`inline-flex items-center px-6 py-3 rounded-full font-semibold ${
-                      safetyAllAnswered ? "bg-emerald-800 text-white hover:bg-emerald-900" : "bg-stone-200 text-stone-500 cursor-not-allowed"
-                    }`}
-                  >
-                    Continue with booking <Icons.ChevronRight />
-                  </button>
-                )}
+                <button
+                  type="button"
+                  onClick={() => goToStep("payment")}
+                  className="inline-flex items-center bg-emerald-800 text-white px-6 py-3 rounded-full font-semibold hover:bg-emerald-900"
+                >
+                  {t("continue_to_payment")} <Icons.ChevronRight />
+                </button>
               </div>
             </div>
           );
           const renderPaymentStep = () => (
             <div className="space-y-10">
-              <header className="space-y-3">
-                <p className="text-[12px] uppercase tracking-[0.4em] text-stone-400">Step 5</p>
-                <h1 className="text-4xl font-bold">Secure with a deposit</h1>
-                <p className="text-stone-500">30% is charged now. Status after payment: Reserved – preparation pending.</p>
+              <header className="space-y-2">
+                <p className="text-[12px] uppercase tracking-[0.4em] text-stone-400">{t("step")} 5</p>
+                <h1 className="text-4xl font-bold">{t("payment")}</h1>
+                <p className="text-sm text-stone-500">{t("payment_desc")}</p>
               </header>
 
-              <div className="bg-white border border-stone-100 rounded-3xl p-6 space-y-2">
-                <div className="flex justify-between">
-                  <span className="text-stone-500">Deposit due today</span>
-                  <span className="text-2xl font-semibold">{formatVND(pricing.deposit)}</span>
+              <PriceSummary
+                context="payment"
+                pricing={pricing}
+                paymentMethod={paymentMethod}
+                stripeFee={stripeFee}
+                paymentDueNow={paymentDueNow}
+                lang={lang}
+              />
+
+              <div className="space-y-6">
+                <div>
+                  <p className="text-xs uppercase tracking-[0.3em] text-stone-400 font-semibold mb-4">{t("payment_method")}</p>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <button
+                      type="button"
+                      onClick={() => setPaymentMethod("vnpay")}
+                      className={`p-4 border-2 rounded-2xl flex items-center justify-between transition-all ${
+                        paymentMethod === "vnpay" ? "border-emerald-600 bg-emerald-50 ring-4 ring-emerald-600/10 shadow-lg" : "border-stone-100"
+                      }`}
+                    >
+                      <div className="text-left">
+                        <p className="font-semibold">VNPay · VND</p>
+                        <p className="text-xs text-stone-500">{t("zero_extra_fees")}</p>
+                      </div>
+                      <Icons.Building />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setPaymentMethod("stripe")}
+                      className={`p-4 border-2 rounded-2xl flex items-center justify-between transition-all ${
+                        paymentMethod === "stripe" ? "border-emerald-600 bg-emerald-50 ring-4 ring-emerald-600/10 shadow-lg" : "border-stone-100"
+                      }`}
+                    >
+                      <div className="text-left">
+                        <p className="font-semibold">Stripe · USD</p>
+                        <p className="text-xs text-stone-500">{t("card_processing_fee")}</p>
+                      </div>
+                      <Icons.CreditCard />
+                    </button>
+                  </div>
                 </div>
-                <div className="flex justify-between text-sm text-stone-500">
-                  <span>Remaining balance on arrival</span>
-                  <span className="font-semibold">{formatVND(pricing.remaining)}</span>
+
+                <div className="bg-stone-50 rounded-3xl p-6">
+                  {paymentMethod === "stripe" ? (
+                    <div className="space-y-4">
+                      <p className="text-sm text-stone-600 leading-relaxed">
+                        {t("stripe_desc")}
+                      </p>
+                      <button
+                        type="button"
+                        onClick={handlePayment}
+                        disabled={paymentSubmitting}
+                        className="w-full bg-emerald-800 text-white py-4 rounded-full font-bold text-lg hover:bg-emerald-900 transition flex items-center justify-center gap-2"
+                      >
+                        {paymentSubmitting ? t("processing_payment") : t("pay_securely_msg").replace("{{amount}}", formatVND(paymentDueNow, lang))}
+                      </button>
+                      <img src="https://checkout.stripe.com/img/v3/home/twitter.png" className="h-6 mx-auto opacity-50 grayscale" alt="Stripe" />
+                    </div>
+                  ) : (
+                    <div className="space-y-4">
+                      <p className="text-sm text-stone-600 leading-relaxed">
+                        {t("bank_transfer_desc")}
+                      </p>
+                      <button
+                        type="button"
+                        onClick={handlePayment}
+                        disabled={paymentSubmitting}
+                        className="w-full bg-emerald-800 text-white py-4 rounded-full font-bold text-lg hover:bg-emerald-900 transition flex items-center justify-center gap-2"
+                      >
+                        {paymentSubmitting ? t("processing_payment") : t("confirm_bank_transfer")} <Icons.ChevronRight />
+                      </button>
+                    </div>
+                  )}
                 </div>
               </div>
 
-              <div className="bg-stone-50 border border-stone-100 rounded-3xl p-6 space-y-3">
-                <h3 className="text-sm font-semibold text-stone-700 uppercase tracking-[0.3em]">Deposit & Health Review</h3>
-                <p className="text-sm text-stone-600">The 30% deposit secures your room and retreat place.</p>
-                <p className="text-sm text-stone-600">
-                  After payment, each guest receives a private health questionnaire and a mandatory personal preparation call.
-                </p>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <button
-                  type="button"
-                  onClick={() => setPaymentMethod("vnpay")}
-                  className={`text-left border-2 rounded-2xl p-5 transition-all duration-200 ${
-                    paymentMethod === "vnpay" ? "border-2 border-emerald-600 bg-emerald-50 ring-4 ring-emerald-600/10 shadow-lg" : "border-stone-100 hover:border-stone-200"
-                  }`}
-                >
-                  <p className="text-xs uppercase tracking-[0.3em] text-stone-400">Local · Best for Vietnam residents</p>
-                  <h3 className="text-2xl font-bold">VNPay · VND</h3>
-                  <p className="text-sm text-stone-500">Pay in VND via domestic bank transfer.</p>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setPaymentMethod("stripe")}
-                  className={`text-left border-2 rounded-2xl p-5 transition-all duration-200 ${
-                    paymentMethod === "stripe" ? "border-2 border-emerald-600 bg-emerald-50 ring-4 ring-emerald-600/10 shadow-lg" : "border-stone-100 hover:border-stone-200"
-                  }`}
-                >
-                  <p className="text-xs uppercase tracking-[0.3em] text-stone-400">International</p>
-                  <h3 className="text-2xl font-bold">Stripe · USD</h3>
-                  <p className="text-sm text-stone-500">Card processing fee (3.6%) added.</p>
-                </button>
-              </div>
-
-              <div className="flex justify-between items-center">
+              <div className="flex justify-start">
                 <button type="button" onClick={() => goToStep("health_check")} className="inline-flex items-center text-stone-500 font-semibold">
-                  <Icons.ChevronLeft /> Back
-                </button>
-                <button
-                  type="button"
-                  onClick={handlePayment}
-                  disabled={paymentSubmitting}
-                  className={`inline-flex items-center px-6 py-3 rounded-full font-semibold ${
-                    paymentSubmitting ? "bg-stone-200 text-stone-500 cursor-not-allowed" : "bg-emerald-800 text-white hover:bg-emerald-900"
-                  }`}
-                >
-                  {paymentSubmitting ? "Processing payment..." : "Pay deposit & secure booking"} <Icons.ChevronRight />
+                  <Icons.ChevronLeft /> {t("back")}
                 </button>
               </div>
-              {paymentError && <p className="text-sm text-rose-600">{paymentError}</p>}
+              {paymentError && <p className="text-sm text-rose-600 mt-4">{paymentError}</p>}
               {paymentSuccess && (
                 <div className="fixed bottom-24 md:bottom-32 right-4 left-4 md:right-10 md:left-auto bg-emerald-800 text-white p-6 rounded-2xl shadow-2xl shadow-emerald-900/50 z-50 flex items-center gap-4 w-auto md:w-96 ring-4 ring-emerald-800 ring-opacity-50 transform transition-all duration-300">
                   <div className="bg-white/20 p-3 rounded-full shadow-inner">
                     <Icons.Check />
                   </div>
                   <div>
-                    <p className="font-extrabold text-lg tracking-wide">Booking secured!</p>
-                    <p className="text-sm text-emerald-50 font-medium mt-0.5">Proceeding to next step...</p>
+                    <p className="font-extrabold text-lg tracking-wide">{t("booking_secured")}</p>
+                    <p className="text-sm text-emerald-50 font-medium mt-0.5">{t("proceeding_next")}</p>
                   </div>
                 </div>
               )}
             </div>
           );
+
 
           const renderScreeningStep = () => {
             const handlePrimary = () => {
@@ -1538,45 +2062,44 @@
             };
 
             const questions = [
-              "Are you currently pregnant or breastfeeding?",
-              "Do you have Type 1 diabetes?",
-              "Do you have a diagnosed eating disorder?",
-              "Are you under active treatment that may affect fasting?",
+              t("safety_question_1"),
+              t("safety_question_2"),
+              t("safety_question_3"),
+              t("safety_question_4"),
             ];
 
             return (
               <div className="space-y-8 max-w-2xl">
                 <header className="space-y-3">
-                  <p className="text-[12px] uppercase tracking-[0.4em] text-stone-400">Step 6</p>
-                  <h1 className="text-4xl font-bold">Health preparation</h1>
-                  <p className="text-stone-500">You’re almost done.</p>
+                  <p className="text-[12px] uppercase tracking-[0.4em] text-stone-400">{t("step")} 6</p>
+                  <h1 className="text-4xl font-bold">{t("health_prep")}</h1>
+                  <p className="text-stone-500">{t("almost_done")}</p>
                   <p className="text-stone-500">
-                    Each guest completes a personal health questionnaire and a mandatory preparation call with the Vietnam Detox team. This is how we
-                    tailor the experience and make sure you feel confident before arrival.
+                    {t("health_prep_screening_desc")}
                   </p>
                 </header>
 
                 <div className="bg-stone-50 border border-stone-100 rounded-3xl p-6 space-y-3">
-                  <p className="text-xs uppercase tracking-[0.3em] text-stone-400">What happens next</p>
+                  <p className="text-xs uppercase tracking-[0.3em] text-stone-400">{t("what_happens_next")}</p>
                   <ul className="space-y-2 text-sm text-stone-600 list-disc pl-4">
-                    <li>Each guest receives their own health & lifestyle questionnaire.</li>
-                    <li>The Vietnam Detox team reviews every response personally.</li>
-                    <li>A mandatory 30-minute preparation call is scheduled after each questionnaire.</li>
-                    <li>Status after payment: Reserved – preparation pending.</li>
-                    <li>Status after calls: Booking confirmed.</li>
+                    <li>{t("timeline_item_1")}</li>
+                    <li>{t("timeline_item_2")}</li>
+                    <li>{t("timeline_item_3")}</li>
+                    <li>{t("timeline_item_4")}</li>
+                    <li>{t("timeline_item_5")}</li>
                   </ul>
                 </div>
 
                 <div className="space-y-4 border border-stone-100 rounded-3xl p-6">
-                  <p className="text-sm font-semibold text-stone-700">Quick pre-check</p>
-                  <p className="text-sm text-stone-500">If you answer “Yes” to any of these, our team will follow up personally.</p>
+                  <p className="text-sm font-semibold text-stone-700">{t("quick_pre_check")}</p>
+                  <p className="text-sm text-stone-500">{t("quick_pre_check_desc")}</p>
                   <div className="space-y-3">
                     {questions.map((question) => (
                       <label key={question} className="flex flex-col text-sm text-stone-600 gap-1">
                         {question}
                         <select className="border border-stone-200 rounded-2xl px-4 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-emerald-100">
-                          <option value="no">No</option>
-                          <option value="yes">Yes</option>
+                          <option value="no">{t("no")}</option>
+                          <option value="yes">{t("yes")}</option>
                         </select>
                       </label>
                     ))}
@@ -1589,10 +2112,10 @@
                     onClick={handlePrimary}
                     className="inline-flex items-center justify-center bg-emerald-800 text-white px-6 py-3 rounded-full font-semibold hover:bg-emerald-900"
                   >
-                    Continue – Begin Health Preparation <Icons.ChevronRight />
+                    {t("continue_begin_health_prep")} <Icons.ChevronRight />
                   </button>
                   <button type="button" onClick={() => goToStep("review")} className="text-sm font-semibold text-stone-500 hover:text-stone-700">
-                    Back to booking
+                    {t("back_to_booking")}
                   </button>
                 </div>
               </div>
@@ -1602,29 +2125,29 @@
           const renderReviewStateStep = () => {
             const timeline = [
               {
-                label: "Deposit received",
+                label: t("deposit_received"),
                 status: depositPaid ? "done" : "pending",
-                description: depositPaid ? "Status: Reserved – preparation pending" : "Awaiting payment",
+                description: depositPaid ? t("status_reserved_pending") : t("awaiting_payment"),
               },
               {
-                label: "Guest 1 health preparation",
+                label: t("guest_1_health_prep"),
                 status: screeningStatus.guest1 === "complete" ? "done" : "pending",
-                description: screeningStatus.guest1 === "complete" ? "Questionnaire + call complete" : "Awaiting questionnaire and call",
+                description: screeningStatus.guest1 === "complete" ? t("prep_complete") : t("awaiting_prep"),
               },
             ];
 
             if (selection.guests === 2) {
               timeline.push({
-                label: "Guest 2 health preparation",
+                label: t("guest_2_health_prep"),
                 status: screeningStatus.guest2 === "complete" ? "done" : "pending",
-                description: screeningStatus.guest2 === "complete" ? "Questionnaire + call complete" : "Awaiting questionnaire and call",
+                description: screeningStatus.guest2 === "complete" ? t("prep_complete") : t("awaiting_prep"),
               });
             }
 
             timeline.push({
-              label: "Vietnam Detox team confirmation",
+              label: t("team_confirmation"),
               status: screeningsComplete ? "done" : "waiting",
-              description: screeningsComplete ? "Status: Booking confirmed" : "Begins after preparation calls",
+              description: screeningsComplete ? t("status_confirmed") : t("begins_after_calls"),
             });
 
             const statusStyles = {
@@ -1635,18 +2158,18 @@
 
             const screeningGuests = [
               {
-                label: "Guest 1 health preparation",
+                label: t("guest_1_health_prep"),
                 status: screeningStatus.guest1,
                 guestNumber: 1,
-                name: `${guestDetails.guest1.firstName || "Guest"} ${guestDetails.guest1.lastName || ""}`.trim() || "Guest 1",
+                name: `${guestDetails.guest1.firstName || t("guest")} ${guestDetails.guest1.lastName || ""}`.trim() || t("guest") + " 1",
               },
               ...(selection.guests === 2
                 ? [
                     {
-                      label: "Guest 2 health preparation",
+                      label: t("guest_2_health_prep"),
                       status: screeningStatus.guest2,
                       guestNumber: 2,
-                      name: `${guestDetails.guest2.firstName || "Guest"} ${guestDetails.guest2.lastName || ""}`.trim() || "Guest 2",
+                      name: `${guestDetails.guest2.firstName || t("guest")} ${guestDetails.guest2.lastName || ""}`.trim() || t("guest") + " 2",
                     },
                   ]
                 : []),
@@ -1655,9 +2178,9 @@
             return (
               <div className="space-y-10 max-w-2xl">
                 <header className="space-y-3">
-                  <p className="text-[12px] uppercase tracking-[0.4em] text-stone-400">Step 7</p>
-                  <h1 className="text-4xl font-bold">Health preparation timeline</h1>
-                  <p className="text-stone-500">Track questionnaires, preparation calls, and final confirmation.</p>
+                  <p className="text-[12px] uppercase tracking-[0.4em] text-stone-400">{t("step")} 7</p>
+                  <h1 className="text-4xl font-bold">{t("prep_timeline")}</h1>
+                  <p className="text-stone-500">{t("prep_timeline_desc")}</p>
                 </header>
 
                 <div className="space-y-4">
@@ -1675,9 +2198,10 @@
                 </div>
 
                 <div className="bg-stone-50 border border-stone-100 rounded-3xl p-6 space-y-2">
-                  <p className="text-sm text-stone-600">Status: Reserved – preparation pending.</p>
-                  <p className="text-sm text-stone-600">We confirm once both questionnaires and preparation calls are complete.</p>
+                  <p className="text-sm text-stone-600">{t("status_reserved_pending")}</p>
+                  <p className="text-sm text-stone-600">{t("confirmation_note")}</p>
                 </div>
+
 
                 <div className="space-y-4">
                   {screeningGuests.map((guest) => {
@@ -1692,7 +2216,7 @@
                           <div>
                             <p className="text-xs uppercase tracking-[0.3em] text-stone-400">{guest.label}</p>
                             <p className="text-sm text-stone-500">
-                              {guest.status === "complete" ? "Questionnaire + call complete" : "Awaiting questionnaire and call"}
+                              {guest.status === "complete" ? t("questionnaire_call_complete") : t("awaiting_questionnaire_call")}
                             </p>
                           </div>
                           <div
@@ -1708,7 +2232,7 @@
                             target="_blank"
                             rel="noopener noreferrer"
                           >
-                            Open health questionnaire
+                            {t("open_health_questionnaire")}
                           </a>
                           <button
                             type="button"
@@ -1724,18 +2248,18 @@
                               if (typeof clipboard === "function") {
                                 clipboard
                                   .call(navigator.clipboard, absoluteUrl)
-                                  .then(() => alert("Link copied"))
-                                  .catch(() => alert(`Copy this link:\n${absoluteUrl}`));
+                                  .then(() => alert(t("link_copied")))
+                                  .catch(() => alert(`${t("copy_this_link")}:\n${absoluteUrl}`));
                               } else {
-                                alert(`Copy this link:\n${absoluteUrl}`);
+                                alert(`${t("copy_this_link")}:\n${absoluteUrl}`);
                               }
                             }}
                           >
-                            Copy link
+                            {t("copy_link")}
                           </button>
                         </div>
                         <p className="text-xs text-stone-500">
-                          You can share this link if the questionnaire should be completed on another device or by your travel partner.
+                          {t("share_link_description")}
                         </p>
                       </div>
                     );
@@ -1743,24 +2267,22 @@
                 </div>
 
                 <div className="border border-emerald-100 bg-emerald-50 rounded-3xl p-6 space-y-2 text-left">
-                  <p className="text-sm font-semibold text-stone-800">Included personal health review call</p>
+                  <p className="text-sm font-semibold text-stone-800">{t("included_personal_health_review_call")}</p>
                   <p className="text-sm text-stone-600">
-                    After submitting the health questionnaire, the Vietnam Detox team offers a complimentary 30-minute 1-on-1 call to review your
-                    answers, answer questions, and make sure the program is well suited for you. This call is included in your retreat and will be
-                    scheduled after the health preparation steps are submitted.
+                    {t("included_personal_health_review_call_desc")}
                   </p>
                   <button
                     type="button"
                     className="inline-flex items-center bg-emerald-800 text-white px-4 py-2 rounded-full text-sm font-semibold hover:bg-emerald-900"
-                    onClick={() => alert("Thank you. We will contact you to schedule your personal health review call.")}
+                    onClick={() => alert(t("request_health_review_call_alert"))}
                   >
-                    Request my health review call
+                    {t("request_my_health_review_call")}
                   </button>
                 </div>
 
                 <div className="flex justify-between items-center">
                   <button type="button" onClick={() => goToStep("screening")} className="inline-flex items-center text-stone-500 font-semibold">
-                    <Icons.ChevronLeft /> Back to health preparation hub
+                    <Icons.ChevronLeft /> {t("back_to_health_preparation_hub")}
                   </button>
                   <button
                     type="button"
@@ -1770,110 +2292,38 @@
                       screeningsComplete ? "bg-emerald-800 text-white hover:bg-emerald-900" : "bg-stone-200 text-stone-500 cursor-not-allowed"
                     }`}
                   >
-                    Move to confirmation <Icons.ChevronRight />
+                    {t("move_to_confirmation")} <Icons.ChevronRight />
                   </button>
                 </div>
               </div>
             );
           };
 
-          const renderConfirmedStep = () => {
-            const guestEntries = [
-              { label: selection.guests === 1 ? "Start health preparation" : "Guest 1 – Start health preparation", guestNumber: 1 },
-              ...(selection.guests === 2 ? [{ label: "Guest 2 – Start health preparation", guestNumber: 2 }] : []),
-            ];
-
-            return (
-              <div className="space-y-8 max-w-2xl text-center">
-                <header className="space-y-3">
-                  <p className="text-[12px] uppercase tracking-[0.4em] text-stone-400">Step 8</p>
-                  <h1 className="text-4xl font-bold">Booking Confirmed</h1>
-                  <p className="text-stone-500">
-                    Thank you for your booking. Your place is secured. We’re looking forward to welcoming you to your Vietnam Detox retreat. Remaining
-                    balance of {formatVND(pricing.remaining)} is payable on arrival.
-                  </p>
-                </header>
-                <div className="bg-white border border-stone-100 rounded-3xl p-6 space-y-2 text-left">
-                  <div className="flex justify-between text-sm text-stone-500">
-                    <span>Retreat dates</span>
-                    <span className="font-semibold">{selection.date}</span>
-                  </div>
-                  <div className="flex justify-between text-sm text-stone-500">
-                    <span>Guests</span>
-                    <span className="font-semibold">{selection.guests}</span>
-                  </div>
-                  <div className="flex justify-between text-sm text-stone-500">
-                    <span>Room</span>
-                    <span className="font-semibold">
-                      {roomsForCurrentRetreat.find((r) => r.id === selection.roomType)?.name || roomsForCurrentRetreat[0]?.name || "TBD"}
-                    </span>
-                  </div>
-                  <div className="flex justify-between text-sm text-stone-500">
-                    <span>Airport transfer</span>
-                    <span className="font-semibold">
-                      {transportOptionsForCurrentRetreat.find((option) => option.id === selection.transfer)?.label || "No airport transfer"}
-                    </span>
-                  </div>
-                  <div className="flex justify-between text-sm text-stone-500">
-                    <span>Deposit paid</span>
-                    <span className="font-semibold">{formatVND(pricing.deposit)}</span>
-                  </div>
-                </div>
-
-                <div className="bg-stone-50 border border-stone-100 rounded-3xl p-6 text-left space-y-4">
-                  <div>
-                    <p className="text-xs uppercase tracking-[0.3em] text-stone-400">Health Preparation</p>
-                    <p className="text-sm text-stone-600">
-                      Each guest completes their own questionnaire and personal preparation call. You can start now or later. The same links will also
-                      be sent by email.
-                    </p>
-                  </div>
-                  <div className="space-y-2">
-                    {guestEntries.map((guest) => {
-                      const fallbackUrl = `screening.html?guest=${guest.guestNumber}&booking=${encodeURIComponent(BOOKING_REFERENCE)}`;
-                      const url = buildHealthCheckUrl(bookingMeta.bookingId, bookingMeta.customerIds[guest.guestNumber - 1]) || fallbackUrl;
-                      return (
-                        <a
-                          key={guest.guestNumber}
-                          href={url}
-                          className="flex items-center justify-between border border-stone-200 rounded-2xl px-4 py-3 hover:border-emerald-300 transition"
-                        >
-                          <span className="font-semibold text-stone-700">{guest.label}</span>
-                          <span className="text-sm text-emerald-700 font-semibold">Start health preparation</span>
-                        </a>
-                      );
-                    })}
-                  </div>
-
-                  <div className="mt-4 border border-emerald-100 bg-emerald-50 rounded-2xl px-4 py-4 space-y-2 text-left">
-                    <p className="font-semibold text-stone-800">Included personal health review call</p>
-                    <p className="text-sm text-stone-600">
-                      After submitting the health questionnaire, the Vietnam Detox team offers a complimentary 30-minute 1-on-1 call to review your
-                      answers, answer questions, and make sure the program is well suited for you. This call is included in your retreat and will be
-                      scheduled after the health preparation steps are submitted.
-                    </p>
-                    <p className="text-xs text-stone-500">
-                      The call is optional unless the Vietnam Detox team recommends it based on your questionnaire.
-                    </p>
-                    <button
-                      type="button"
-                      className="inline-flex items-center bg-emerald-800 text-white px-4 py-2 rounded-full text-sm font-semibold hover:bg-emerald-900"
-                      onClick={() => alert("Thank you. We will contact you to schedule a personal health review call.")}
-                    >
-                      Request personal health review call
-                    </button>
-                  </div>
-                </div>
-
-                <p className="text-sm text-stone-500">
-                  Our concierge will reach out with itinerary planning, transfer coordination, and packing suggestions within 24 hours.
-                </p>
-                <button className="inline-flex items-center justify-center bg-stone-900 text-white px-6 py-3 rounded-full font-semibold hover:bg-black">
-                  Download booking summary
-                </button>
+          const renderConfirmedStep = () => (
+            <div className="flex flex-col items-center justify-center space-y-8 py-10 text-center">
+              <div className="w-20 h-20 bg-emerald-100 rounded-3xl flex items-center justify-center text-emerald-700">
+                <Icons.Check />
               </div>
-            );
-          };
+              <div className="space-y-3">
+                <h1 className="text-4xl font-bold">{t("booking_confirmed")}</h1>
+                <p className="text-stone-500 max-w-md mx-auto">
+                  {t("booking_confirmed_desc")}
+                </p>
+              </div>
+              <div className="bg-stone-50 border border-stone-100 rounded-3xl p-6 w-full max-w-md">
+                <p className="text-xs uppercase tracking-[0.3em] text-stone-400 mb-2">{t("booking_ref")}</p>
+                <p className="text-2xl font-mono font-bold text-stone-800">{BOOKING_REFERENCE}</p>
+              </div>
+              <PriceSummary context="confirmed" pricing={pricing} lang={lang} />
+              <button
+                type="button"
+                onClick={() => (window.location.href = "https://vietnamdetox.com")}
+                className="inline-flex items-center bg-stone-900 text-white px-8 py-4 rounded-full font-bold hover:bg-stone-800 transition"
+              >
+                {t("return_home")}
+              </button>
+            </div>
+          );
 
           const HeaderBar = () => (
             <nav className="border-b border-stone-100 px-6 py-6 sticky top-0 bg-white/80 backdrop-blur-md z-40">
@@ -1881,65 +2331,74 @@
                 <div className="flex items-center">
                   <img src="./vietnam-detox-logo.svg" alt="Vietnam Detox" className="h-8 w-auto" onError={handleImageError} />
                 </div>
-                <div className="hidden md:flex space-x-6 text-sm font-medium text-stone-400">
-                  <span>The Method</span>
-                  <span>Retreats</span>
-                  <span className="text-stone-900">Book Now</span>
+                <div className="hidden md:flex items-center space-x-6">
+                  <div className="flex space-x-6 text-sm font-medium text-stone-400 mr-6">
+                    <span>{t("the_method")}</span>
+                    <span>{t("retreats")}</span>
+                    <span className="text-stone-900">{t("book_now")}</span>
+                  </div>
+                  <div className="flex items-center bg-stone-50 rounded-full p-1 border border-stone-100">
+                    {[
+                      { code: "en", label: "EN" },
+                      { code: "vn", label: "VN" },
+                      { code: "de", label: "DE" },
+                    ].map((l) => (
+                      <button
+                        key={l.code}
+                        onClick={() => switchLanguage(l.code)}
+                        className={`px-3 py-1 rounded-full text-[10px] font-bold transition-all ${
+                          lang === l.code ? "bg-white text-emerald-800 shadow-sm ring-1 ring-stone-200/50" : "text-stone-400 hover:text-stone-600"
+                        }`}
+                      >
+                        {l.label}
+                      </button>
+                    ))}
+                  </div>
                 </div>
               </div>
             </nav>
           );
 
-          const DemoController = () => {
-            const scrollContainerRef = useRef(null);
 
-            useEffect(() => {
-              if (scrollContainerRef.current) {
-                const activeBtn = scrollContainerRef.current.querySelector('[data-active="true"]');
-                if (activeBtn) {
-                  const containerWidth = scrollContainerRef.current.clientWidth;
-                  const scrollLeft = scrollContainerRef.current.scrollLeft;
-                  const btnLeft = activeBtn.getBoundingClientRect().left;
-                  const containerLeft = scrollContainerRef.current.getBoundingClientRect().left;
-                  // Calculate position relative to container
-                  const relativeLeft = btnLeft - containerLeft + scrollLeft;
-                  
-                  // Center the active button
-                  scrollContainerRef.current.scrollTo({
-                    left: relativeLeft - containerWidth / 2 + activeBtn.clientWidth / 2,
-                    behavior: 'smooth'
-                  });
-                }
-              }
-            }, [controllerStep]);
+          const DemoController = () => {
+            const steps = ["config", "details", "review", "health_check", "payment", "screening", "review_state", "confirmed"];
+            const currentIndex = steps.indexOf(route.step);
 
             return (
-              <div 
-                className="fixed bottom-0 md:bottom-6 left-0 right-0 md:left-1/2 md:right-auto md:-translate-x-1/2 bg-white/95 backdrop-blur border-t md:border border-stone-200 shadow-2xl md:rounded-2xl flex items-center z-50 w-full md:w-max max-w-full overflow-hidden"
-              >
-                <div className="flex flex-col border-r border-stone-200 px-4 md:pl-6 md:pr-4 py-3 md:py-4 flex-shrink-0 bg-white/95 backdrop-blur z-20">
-                  <span className="text-[10px] font-black uppercase tracking-tighter text-emerald-700">Vietnam Detox</span>
-                </div>
-                <div 
-                  ref={scrollContainerRef}
-                  className="flex flex-nowrap items-center space-x-2 overflow-x-auto hide-scrollbar px-4 py-3 md:py-4 pr-6"
-                >
-                  {STEPS.map((step) => (
-                    <button
-                      key={step}
-                      data-active={controllerStep === step}
-                      onClick={() => goToStep(step)}
-                      className={`px-3 py-1.5 text-[10px] font-semibold rounded-md whitespace-nowrap flex-shrink-0 transition-colors ${
-                        controllerStep === step ? "bg-emerald-100 text-emerald-700 ring-1 ring-emerald-500/30" : "bg-stone-100 text-stone-500 hover:bg-stone-200"
-                      }`}
-                    >
-                      {step.replace("_", " ").toUpperCase()}
-                    </button>
-                  ))}
+              <div className="bg-stone-50 border-t border-stone-100 p-6">
+                <div className="max-w-4xl mx-auto flex flex-col md:flex-row md:items-center justify-between gap-6">
+                  <div className="space-y-1">
+                    <p className="text-[10px] uppercase tracking-[0.2em] text-stone-400 font-bold">{t("demo_mode")}</p>
+                    <h3 className="text-sm font-semibold text-stone-700">{t("booking_progress")}</h3>
+                  </div>
+                  <div className="flex-1 max-w-md bg-stone-200 h-1.5 rounded-full overflow-hidden">
+                    <div
+                      className="bg-emerald-600 h-full transition-all duration-500 ease-in-out"
+                      style={{ width: `${((currentIndex + 1) / steps.length) * 100}%` }}
+                    />
+                  </div>
+                  <div className="flex items-center gap-2">
+                    {steps.map((step, idx) => (
+                      <button
+                        key={step}
+                        onClick={() => goToStep(step)}
+                        className={`w-8 h-8 rounded-full text-[10px] font-bold transition-all ${
+                          idx === currentIndex
+                            ? "bg-emerald-600 text-white"
+                            : idx < currentIndex
+                              ? "bg-emerald-100 text-emerald-700"
+                              : "bg-white text-stone-400 border border-stone-100"
+                        }`}
+                      >
+                        {idx + 1}
+                      </button>
+                    ))}
+                  </div>
                 </div>
               </div>
             );
           };
+
 
           const stepConfig = {
             config: { content: renderConfigStep(), summaryContext: "default" },
@@ -1970,6 +2429,7 @@
                         paymentMethod={paymentMethod}
                         stripeFee={stripeFee}
                         paymentDueNow={paymentDueNow}
+                        lang={lang}
                       />
                     </div>
                   </div>
@@ -1981,9 +2441,11 @@
                     paymentMethod={paymentMethod}
                     stripeFee={stripeFee}
                     paymentDueNow={paymentDueNow}
+                    lang={lang}
                   />
                 </div>
               </main>
+
 
               <DemoController />
 
@@ -2078,25 +2540,29 @@
 
           render() {
             if (this.state.hasError) {
+              const lang = parseRouteFromLocation().lang || "en";
+              const t = (key) => TRANSLATIONS[lang]?.[key] || TRANSLATIONS.en[key] || key;
               return (
                 <div className="min-h-screen bg-white font-sans text-stone-900 selection:bg-emerald-100 flex items-center justify-center px-6">
                   <div className="max-w-md text-center space-y-4">
-                    <p className="text-[12px] uppercase tracking-[0.4em] text-stone-400">Booking status</p>
-                    <h1 className="text-3xl font-bold text-stone-900">We hit a snag</h1>
-                    <p className="text-stone-600">Your progress is safe. Continue when you’re ready.</p>
+                    <p className="text-[12px] uppercase tracking-[0.4em] text-stone-400">{t("booking_progress")}</p>
+                    <h1 className="text-3xl font-bold text-stone-900">{t("something_went_wrong")}</h1>
+                    <p className="text-stone-600">{t("error_desc")}</p>
                     <button
                       type="button"
                       onClick={this.handleReset}
                       className="inline-flex items-center justify-center bg-emerald-800 text-white px-6 py-3 rounded-full font-semibold hover:bg-emerald-900"
                     >
-                      Return to booking
+                      {t("refresh_page")}
                     </button>
                   </div>
                 </div>
               );
+
             }
             return this.props.children;
           }
+
         }
 
         const RootApp = () => {
