@@ -34,7 +34,7 @@
     <div id="root"></div>
 
     <script type="text/babel">
-      const FALLBACK_IMAGE = "./vietnam-detox-logo.svg";
+      const FALLBACK_IMAGE = "https://vietnamdetox.com/wp-content/uploads/2024/11/retreat-placeholder.webp";
       let bookingRoot = null;
 
       const showInlineError = (message, options = {}) => {
@@ -87,24 +87,18 @@
         target.alt = target.alt ? `${target.alt} unavailable` : "Image unavailable";
       };
 
-      const safeHistoryUpdate = (method, state, url) => {
-        try {
-          const historyMethod = window?.history?.[method];
-          if (typeof historyMethod === "function") {
-            historyMethod.call(window.history, state, "", url);
-          }
-        } catch (error) {
-          console.warn("History update blocked", error);
-        }
-      };
-
       let RETREATS = [];
       let TRANSPORT_BY_RETREAT = {};
       let ROOMS_BY_RETREAT = [];
 
-      const fetchRetreats = async () => {
+      const fetchRetreats = async (overrideLang = null) => {
         try {
-          const response = await fetch("/wp-json/retreats/v1/all");
+          const params = new URLSearchParams(window.location.search || "");
+          let langParam = overrideLang || params.get("booking_lang") || params.get("lang") || "en";
+          if (!["en", "vn", "de"].includes(langParam)) {
+            langParam = "en";
+          }
+          const response = await fetch(`/wp-json/retreats/v1/all?lang=${langParam}`);
           if (!response.ok) throw new Error(`HTTP ${response.status}`);
           const rawRetreats = await response.json();
           if (!Array.isArray(rawRetreats) || rawRetreats.length === 0) {
@@ -143,6 +137,8 @@
           return false;
         }
       };
+
+      window.__fetchRetreats = fetchRetreats;
 
       const TRANSLATIONS = {
         en: {
@@ -276,9 +272,12 @@
           real_time_update: "Line items update in real-time.",
           subtotal: "Subtotal",
           early_bird_discount: "Early Bird –10%",
-          friend_discount: "Friend discount –5%",
+          friend_discount: "Shared room discount",
           retreat_total: "Retreat total",
           deposit_label: "Deposit",
+          deposit_due_label: "Deposit due today",
+          quick_pre_check: "Quick Pre-Check",
+          quick_pre_check_desc: "Before we finalize your reservation, we need to ask a few health & safety questions.",
           remaining_balance: "Remaining balance",
           card_fee: "Card processing fee",
           due_today: "Due today",
@@ -438,9 +437,12 @@
           real_time_update: "Các mục chi phí cập nhật theo thời gian thực.",
           subtotal: "Tạm tính",
           early_bird_discount: "Ưu đãi đặt sớm –10%",
-          friend_discount: "Giảm giá khách đi cùng –5%",
+          friend_discount: "Giảm giá phòng chung",
           retreat_total: "Tổng cộng khóa thanh lọc",
           deposit_label: "Đặt cọc",
+          deposit_due_label: "Số tiền cọc cần thanh toán",
+          quick_pre_check: "Kiểm tra sơ bộ",
+          quick_pre_check_desc: "Trước khi hoàn tất đặt chỗ, chúng tôi cần hỏi một vài câu hỏi về sức khỏe & an toàn.",
           remaining_balance: "Số dư còn lại",
           card_fee: "Phí xử lý thẻ",
           due_today: "Thanh toán hôm nay",
@@ -600,9 +602,12 @@
           real_time_update: "Preise aktualisieren sich live.",
           subtotal: "Zwischensumme",
           early_bird_discount: "Frühbucher –10%",
-          friend_discount: "Freundes-Rabatt –5%",
+          friend_discount: "Mehrbettzimmer-Rabatt",
           retreat_total: "Gesamtbetrag",
           deposit_label: "Anzahlung",
+          deposit_due_label: "Heute fällige Anzahlung",
+          quick_pre_check: "Kurzer Vorab-Check",
+          quick_pre_check_desc: "Bevor wir Ihre Reservierung abschließen, müssen wir einige Gesundheits- und Sicherheitsfragen stellen.",
           remaining_balance: "Restbetrag",
           card_fee: "Kartengebühr",
           due_today: "Heute fällig",
@@ -834,17 +839,6 @@
           ),
         };
 
-        const DATES = RETREATS.flatMap((retreat) =>
-          retreat.dates.map((date) => ({
-            ...date,
-            retreatId: retreat.id,
-            retreatName: retreat.name,
-            location: retreat.location,
-            image: retreat.image,
-            earlyBirdNote: retreat.earlyBirdNote,
-          })),
-        );
-
         const COUNTRY_DIAL_CODES = {
           vietnam: "+84",
           "united states": "+1",
@@ -898,22 +892,11 @@
           if (!STEPS.includes(stepParam)) {
             stepParam = "config";
           }
-          let langParam = params.get("language") || params.get("lang") || "en";
+          let langParam = params.get("booking_lang") || params.get("lang") || "en";
           if (!["en", "vn", "de"].includes(langParam)) {
             langParam = "en";
           }
           return { step: stepParam, lang: langParam };
-        };
-
-
-        const buildRouteUrl = (routeState) => {
-          const params = new URLSearchParams();
-          const nextStep = STEPS.includes(routeState.step) ? routeState.step : "config";
-          params.set("step", nextStep);
-          if (routeState.lang && routeState.lang !== "en") {
-            params.set("language", routeState.lang);
-          }
-          return `${window.location.pathname}?${params.toString()}`;
         };
 
 
@@ -928,7 +911,7 @@
           return COUNTRY_DIAL_CODES[normalized] || null;
         };
 
-          const PriceSummary = ({ context = "default", pricing, paymentMethod, stripeFee, paymentDueNow, lang }) => {
+          const PriceSummary = ({ context = "default", pricing, paymentMethod, stripeFee, paymentDueNow, lang, roomName, guestsCount, retreatName }) => {
             const t = (key) => TRANSLATIONS[lang]?.[key] || TRANSLATIONS.en[key] || key;
 
 
@@ -940,14 +923,19 @@
             return (
               <div className="bg-white border border-stone-100 rounded-3xl p-6 shadow-sm space-y-4">
                 <div>
-                  <p className="text-xs uppercase tracking-[0.3em] text-stone-400 font-semibold">{t("investment_summary")}</p>
+                  <p className="text-xs uppercase tracking-[0.3em] text-stone-400 font-semibold mb-2">{t("investment_summary")}</p>
+                  {retreatName && (
+                    <p className="text-base font-semibold text-stone-900 truncate mb-1" title={retreatName}>{retreatName}</p>
+                  )}
                   <p className="text-sm text-stone-500">{t("real_time_update")}</p>
                 </div>
                 <div className="space-y-2 text-sm">
-                  <div className="flex justify-between">
-                    <span className="text-stone-500">{t("subtotal")}</span>
-                    <span className="font-semibold">{formatVND(pricing.subtotal, lang)}</span>
-
+                  <div className="flex items-start justify-between gap-3">
+                    <div>
+                      <p className="font-semibold text-stone-900">{roomName || t("accommodation")}</p>
+                      <p className="text-xs text-stone-500">{guestsCount === 2 ? t("two_guests") : t("one_guest")}</p>
+                    </div>
+                    <span className="font-semibold whitespace-nowrap">{formatVND(pricing.subtotal, lang)}</span>
                   </div>
                   {showEarlyBird && (
                     <div className="flex justify-between text-emerald-700">
@@ -1027,6 +1015,18 @@
 
         const App = () => {
           const [route, setRoute] = useState(parseRouteFromLocation);
+
+          useEffect(() => {
+            const rootNode = document.getElementById("root");
+            if (rootNode) {
+              rootNode.querySelectorAll('button').forEach(btn => {
+                if (!btn.getAttribute('type')) {
+                  btn.setAttribute('type', 'button');
+                }
+              });
+            }
+          });
+
           const [selection, setSelection] = useState(() => ({
             retreatId: DEFAULT_RETREAT.id,
             retreatName: DEFAULT_RETREAT.name,
@@ -1089,32 +1089,49 @@
             return text;
           };
 
-          const switchLanguage = (newLang) => {
-            syncRoute({ ...route, lang: newLang });
+          const [isSwitchingLang, setIsSwitchingLang] = useState(false);
+
+          const switchLanguage = async (newLang) => {
+            if (newLang === route.lang) return;
+            setIsSwitchingLang(true);
+            try {
+              if (window.__fetchRetreats) {
+                await window.__fetchRetreats(newLang);
+              }
+              
+              if (RETREATS.length > 0) {
+                const newDefaultRetreat = RETREATS[0];
+                const newDefaultDate = newDefaultRetreat.dates[0];
+                const newRoomsForRetreat = getRoomsForRetreat(newDefaultRetreat.id);
+                const newDefaultRoomId = newRoomsForRetreat[0]?.id || null;
+                const newTransport = getTransportOptionsForRetreat(newDefaultRetreat.id)[0]?.id ?? null;
+
+                setSelection((prev) => ({
+                  ...prev,
+                  retreatId: newDefaultRetreat.id,
+                  retreatName: newDefaultRetreat.name,
+                  retreatLocation: newDefaultRetreat.location,
+                  retreatEarlyBirdNote: newDefaultRetreat.earlyBirdNote,
+                  retreatImage: newDefaultRetreat.image,
+                  date: newDefaultDate?.label || null,
+                  roomType: newDefaultRoomId,
+                  transfer: newTransport,
+                }));
+              }
+
+              const safeStep = STEPS.includes(route.step) ? route.step : "config";
+              setRoute({ step: safeStep, lang: newLang });
+            } catch (e) {
+              console.error("Language switch failed", e);
+            } finally {
+              setIsSwitchingLang(false);
+            }
           };
 
-
-          const syncRoute = (nextRoute, replace = false) => {
+          const syncRoute = (nextRoute) => {
             const safeStep = STEPS.includes(nextRoute.step) ? nextRoute.step : "config";
-            const nextState = { step: safeStep, lang: nextRoute.lang || "en" };
-            const url = buildRouteUrl(nextState);
-            const method = replace ? "replaceState" : "pushState";
-            safeHistoryUpdate(method, nextState, url);
-            setRoute(nextState);
+            setRoute({ step: safeStep, lang: nextRoute.lang || "en" });
           };
-
-
-          useEffect(() => {
-            safeHistoryUpdate("replaceState", initialRouteRef.current, buildRouteUrl(initialRouteRef.current));
-          }, []);
-
-          useEffect(() => {
-            const handlePop = () => {
-              setRoute(parseRouteFromLocation());
-            };
-            window.addEventListener("popstate", handlePop);
-            return () => window.removeEventListener("popstate", handlePop);
-          }, []);
 
           useEffect(() => {
             window.scrollTo({ top: 0, behavior: "smooth" });
@@ -1143,9 +1160,20 @@
 
 
           const dateOptions = useMemo(() => {
+            const rawDates = RETREATS.flatMap((retreat) =>
+              (Array.isArray(retreat.dates) ? retreat.dates : []).map((date) => ({
+                ...date,
+                retreatId: retreat.id,
+                retreatName: retreat.name,
+                location: retreat.location,
+                image: retreat.image,
+                earlyBirdNote: retreat.earlyBirdNote,
+              })),
+            );
+
             const now = new Date();
             now.setHours(0, 0, 0, 0);
-            return DATES.map((date) => {
+            return rawDates.map((date) => {
               const startDate = new Date(date.start);
               startDate.setHours(0, 0, 0, 0);
               const earlyBirdDeadline = date.earlyBirdDeadline ? new Date(date.earlyBirdDeadline) : null;
@@ -1156,9 +1184,9 @@
                 isEarlyBirdActive,
               };
             });
-          }, []);
+          }, [route.lang]);
 
-          const roomsForCurrentRetreat = useMemo(() => getRoomsForRetreat(selection.retreatId), [selection.retreatId]);
+          const roomsForCurrentRetreat = useMemo(() => getRoomsForRetreat(selection.retreatId), [selection.retreatId, route.lang]);
           const filteredRoomsForCurrentRetreat = useMemo(() => {
             if (!Array.isArray(roomsForCurrentRetreat) || roomsForCurrentRetreat.length === 0) return [];
             const desired = selection.guests === 1 ? "single" : "shared";
@@ -1201,6 +1229,10 @@
           const safetyCleared = safetyAllAnswered && !safetyHasConcern;
 
           const updateSelection = (updates) => setSelection((prev) => ({ ...prev, ...updates }));
+
+          const roomOptionsForSummary = filteredRoomsForCurrentRetreat.length ? filteredRoomsForCurrentRetreat : roomsForCurrentRetreat;
+          const selectedRoomForSummary = roomOptionsForSummary.find((r) => r.id === selection.roomType) || roomOptionsForSummary[0];
+          const selectedRoomName = selectedRoomForSummary?.name || selectedRoomForSummary?.type || "";
 
           useEffect(() => {
             if (filteredRoomsForCurrentRetreat.length === 0) return;
@@ -1874,7 +1906,7 @@
                       <p className="text-xs uppercase tracking-[0.3em] text-stone-400">{t("retreat_dates")}</p>
                       <p className="font-semibold">{dateInfo?.label}</p>
                     </div>
-                    <button className="text-sm text-emerald-700 font-semibold" onClick={() => goToStep("config")}>
+                    <button type="button" className="text-sm text-emerald-700 font-semibold" onClick={() => goToStep("config")}>
                       {t("edit")}
                     </button>
                   </div>
@@ -1883,7 +1915,7 @@
                       <p className="text-xs uppercase tracking-[0.3em] text-stone-400">{t("accommodation")}</p>
                       <p className="font-semibold">{room?.name}</p>
                     </div>
-                    <button className="text-sm text-emerald-700 font-semibold" onClick={() => goToStep("config")}>
+                    <button type="button" className="text-sm text-emerald-700 font-semibold" onClick={() => goToStep("config")}>
                       {t("edit")}
                     </button>
                   </div>
@@ -1892,7 +1924,7 @@
                       <p className="text-xs uppercase tracking-[0.3em] text-stone-400">{t("airport_transfer").replace(" (optional)", "")}</p>
                       <p className="font-semibold">{transferOption?.label || t("no_transfer")}</p>
                     </div>
-                    <button className="text-sm text-emerald-700 font-semibold" onClick={() => goToStep("config")}>
+                    <button type="button" className="text-sm text-emerald-700 font-semibold" onClick={() => goToStep("config")}>
                       {t("edit")}
                     </button>
                   </div>
@@ -1901,7 +1933,7 @@
                 <div className="space-y-6">
                   <div className="flex items-center justify-between">
                     <p className="text-xs uppercase tracking-[0.3em] text-stone-400">{t("guests")}</p>
-                    <button className="text-sm text-emerald-700 font-semibold" onClick={() => goToStep("details")}>
+                    <button type="button" className="text-sm text-emerald-700 font-semibold" onClick={() => goToStep("details")}>
                       {t("edit")}
                     </button>
                   </div>
@@ -2054,6 +2086,9 @@
                 stripeFee={stripeFee}
                 paymentDueNow={paymentDueNow}
                 lang={lang}
+                roomName={selectedRoomName}
+                guestsCount={selection.guests}
+                retreatName={selection.retreatName}
               />
 
               <div className="space-y-6">
@@ -2406,7 +2441,7 @@
                 <p className="text-xs uppercase tracking-[0.3em] text-stone-400 mb-2">{t("booking_ref")}</p>
                 <p className="text-2xl font-mono font-bold text-stone-800">{BOOKING_REFERENCE}</p>
               </div>
-              <PriceSummary context="confirmed" pricing={pricing} lang={lang} />
+              <PriceSummary context="confirmed" pricing={pricing} lang={lang} roomName={selectedRoomName} guestsCount={selection.guests} retreatName={selection.retreatName} />
               <button
                 type="button"
                 onClick={() => (window.location.href = "https://vietnamdetox.com")}
@@ -2423,8 +2458,8 @@
                 <div className="flex items-center">
                   <img src="./vietnam-detox-logo.svg" alt="Vietnam Detox" className="h-8 w-auto" onError={handleImageError} />
                 </div>
-                <div className="hidden md:flex items-center space-x-6">
-                  <div className="flex space-x-6 text-sm font-medium text-stone-400 mr-6">
+                <div className="flex items-center space-x-6">
+                  <div className="hidden md:flex space-x-6 text-sm font-medium text-stone-400 mr-6">
                     <span>{t("the_method")}</span>
                     <span>{t("retreats")}</span>
                     <span className="text-stone-900">{t("book_now")}</span>
@@ -2435,7 +2470,7 @@
                       { code: "vn", label: "VN" },
                       { code: "de", label: "DE" },
                     ].map((l) => (
-                      <button
+                      <button type="button"
                         key={l.code}
                         onClick={() => switchLanguage(l.code)}
                         className={`px-3 py-1 rounded-full text-[10px] font-bold transition-all ${
@@ -2454,6 +2489,36 @@
 
           const DemoController = () => {
             const scrollContainerRef = useRef(null);
+
+            useEffect(() => {
+              const hideBar = (e) => {
+                if (window.innerWidth < 768 && ['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target?.tagName)) {
+                  const bar = document.getElementById('mobile-step-bar');
+                  if (bar) bar.style.display = 'none';
+                }
+              };
+              const showBar = (e) => {
+                if (window.innerWidth < 768 && ['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target?.tagName)) {
+                  const bar = document.getElementById('mobile-step-bar');
+                  if (bar) {
+                    setTimeout(() => {
+                      bar.style.display = '';
+                    }, 50);
+                  }
+                }
+              };
+
+              // touchstart fires before focus, making the hide instant
+              window.addEventListener('pointerdown', hideBar, { capture: true, passive: true });
+              window.addEventListener('focus', hideBar, true);
+              window.addEventListener('blur', showBar, true);
+              
+              return () => {
+                window.removeEventListener('pointerdown', hideBar, { capture: true });
+                window.removeEventListener('focus', hideBar, true);
+                window.removeEventListener('blur', showBar, true);
+              };
+            }, []);
 
             useEffect(() => {
               if (scrollContainerRef.current) {
@@ -2477,7 +2542,8 @@
 
             return (
               <div 
-                className="fixed bottom-0 md:bottom-6 left-0 right-0 md:left-1/2 md:right-auto md:-translate-x-1/2 bg-white/95 backdrop-blur border-t md:border border-stone-200 shadow-2xl md:rounded-2xl flex items-center z-50 w-full md:w-max max-w-full overflow-hidden"
+                id="mobile-step-bar"
+                className="fixed bottom-0 md:bottom-6 left-0 right-0 md:left-1/2 md:right-auto md:-translate-x-1/2 bg-white/95 backdrop-blur border-t md:border border-stone-200 shadow-2xl md:rounded-2xl items-center z-50 w-full md:w-max max-w-full overflow-hidden flex"
               >
                 <div className="flex flex-col border-r border-stone-200 px-4 md:pl-6 md:pr-4 py-3 md:py-4 flex-shrink-0 bg-white/95 backdrop-blur z-20">
                   <span className="text-[10px] font-black uppercase tracking-tighter text-emerald-700">Vietnam Detox</span>
@@ -2487,7 +2553,7 @@
                   className="flex flex-nowrap items-center space-x-2 overflow-x-auto hide-scrollbar px-4 py-3 md:py-4 pr-6"
                 >
                   {STEPS.map((step) => (
-                    <button
+                    <button type="button"
                       key={step}
                       data-active={controllerStep === step}
                       onClick={() => goToStep(step)}
@@ -2535,6 +2601,9 @@
                         stripeFee={stripeFee}
                         paymentDueNow={paymentDueNow}
                         lang={lang}
+                        roomName={selectedRoomName}
+                        guestsCount={selection.guests}
+                        retreatName={selection.retreatName}
                       />
                     </div>
                   </div>
@@ -2547,6 +2616,9 @@
                     stripeFee={stripeFee}
                     paymentDueNow={paymentDueNow}
                     lang={lang}
+                    roomName={selectedRoomName}
+                    guestsCount={selection.guests}
+                    retreatName={selection.retreatName}
                   />
                 </div>
               </main>
