@@ -37,6 +37,13 @@
       const FALLBACK_IMAGE = "https://vietnamdetox.com/wp-content/uploads/2024/11/retreat-placeholder.webp";
       let bookingRoot = null;
 
+      const getInitialLang = () => {
+        const docLang = document.documentElement.lang?.toLowerCase() || "";
+        if (docLang.startsWith("vi")) return "vn";
+        if (docLang.startsWith("de")) return "de";
+        return "en";
+      };
+
       const showInlineError = (message, options = {}) => {
         const { retry = false } = options;
         const container = document.getElementById("root");
@@ -94,9 +101,9 @@
       const fetchRetreats = async (overrideLang = null) => {
         try {
           const params = new URLSearchParams(window.location.search || "");
-          let langParam = overrideLang || params.get("booking_lang") || params.get("lang") || "en";
+          let langParam = overrideLang || params.get("booking_lang") || params.get("lang") || getInitialLang();
           if (!["en", "vn", "de"].includes(langParam)) {
-            langParam = "en";
+            langParam = getInitialLang();
           }
           const response = await fetch(`/wp-json/retreats/v1/all?lang=${langParam}`);
           if (!response.ok) throw new Error(`HTTP ${response.status}`);
@@ -212,6 +219,10 @@
           payment_method: "Payment method",
           zero_extra_fees: "Zero extra fees",
           card_processing_fee: "Card processing fee (3.6%)",
+          onepay_domestic: "OnePay · Domestic ATM / QR",
+          onepay_international: "OnePay · International Cards",
+          onepay_domestic_desc: "Pay via local bank apps, ATM cards, or QR. No extra fees.",
+          onepay_intl_desc: "Pay via Visa, Mastercard, JCB, Amex. Secured by OnePay.",
           stripe_desc: "Secure card payment in USD. A 3.6% processing fee is automatically added to the total.",
           bank_transfer_desc: "Pay in VND via local bank transfer. No extra processing fees.",
           processing_payment: "Processing payment...",
@@ -378,6 +389,10 @@
           payment_method: "Phương thức thanh toán",
           zero_extra_fees: "Không phát sinh phí",
           card_processing_fee: "Phí xử lý thẻ (3.6%)",
+          onepay_domestic: "OnePay · Thẻ nội địa / QR",
+          onepay_international: "OnePay · Thẻ quốc tế",
+          onepay_domestic_desc: "Thanh toán qua ứng dụng ngân hàng, thẻ ATM hoặc QR. Không mất phí.",
+          onepay_intl_desc: "Thanh toán qua Visa, Mastercard, JCB, Amex. Bảo mật bởi OnePay.",
           stripe_desc: "Thanh toán bằng thẻ qua Stripe (USD). Phí 3.6% sẽ được tự động cộng vào tổng tiền.",
           bank_transfer_desc: "Thanh toán bằng VND qua chuyển khoản ngân hàng nội địa. Không mất phí xử lý.",
           processing_payment: "Đang xử lý thanh toán...",
@@ -544,6 +559,10 @@
           payment_method: "Zahlungsmethode",
           zero_extra_fees: "Keine Extragebühren",
           card_processing_fee: "Kartengebühr (3,6%)",
+          onepay_domestic: "OnePay · Inland ATM / QR",
+          onepay_international: "OnePay · Internationale Karten",
+          onepay_domestic_desc: "Zahlung über lokale Bank-Apps, ATM-Karten oder QR. Keine Extragebühren.",
+          onepay_intl_desc: "Zahlung über Visa, Mastercard, JCB, Amex. Gesichert durch OnePay.",
           stripe_desc: "Sichere Kartenzahlung in USD. 3,6% Gebühr werden automatisch hinzugefügt.",
           bank_transfer_desc: "Zahlung in VND per Banküberweisung. Keine Extragebühren.",
           processing_payment: "Verarbeitung...",
@@ -671,7 +690,7 @@
         };
 
         const formatVND = (value, l = null) => {
-          const localeLang = l || parseRouteFromLocation().lang || "en";
+          const localeLang = l || parseRouteFromLocation().lang || getInitialLang();
           const locale = localeLang === "vn" ? "vi-VN" : localeLang === "de" ? "de-DE" : "en-US";
           return new Intl.NumberFormat(locale, { 
             style: "currency", 
@@ -681,7 +700,7 @@
           }).format(Math.round(value));
         };
         const formatUSD = (value, l = null) => {
-          const localeLang = l || parseRouteFromLocation().lang || "en";
+          const localeLang = l || parseRouteFromLocation().lang || getInitialLang();
           const locale = localeLang === "de" ? "de-DE" : "en-US";
           const formatted = Math.round(value / CURRENCY_RATE).toLocaleString(locale);
           return `~ $${formatted} USD`;
@@ -895,9 +914,9 @@
           if (!STEPS.includes(stepParam)) {
             stepParam = "config";
           }
-          let langParam = params.get("booking_lang") || params.get("lang") || "en";
+          let langParam = params.get("booking_lang") || params.get("lang") || getInitialLang();
           if (!["en", "vn", "de"].includes(langParam)) {
-            langParam = "en";
+            langParam = getInitialLang();
           }
           return { step: stepParam, lang: langParam };
         };
@@ -1083,7 +1102,7 @@
           const routeStep = route?.step;
           const flowStep = STEPS.includes(routeStep) ? routeStep : "config";
           const controllerStep = flowStep;
-          const lang = route?.lang || "en";
+          const lang = route?.lang || getInitialLang();
 
           const t = (key, data = {}) => {
             let text = TRANSLATIONS[lang]?.[key] || TRANSLATIONS.en[key] || key;
@@ -1137,7 +1156,7 @@
             setIsTransitioning(true);
             window.scrollTo({ top: 0, behavior: "smooth" });
             setTimeout(() => {
-              setRoute({ step: safeStep, lang: nextRoute.lang || "en" });
+              setRoute({ step: safeStep, lang: nextRoute.lang || getInitialLang() });
               setIsTransitioning(false);
             }, 400);
           };
@@ -1486,10 +1505,32 @@
                 throw new Error(`HTTP ${response.status}`);
               }
               const responseBody = await response.json();
+              const bookingId = responseBody?.booking_id;
+              
               setBookingMeta({
-                bookingId: responseBody?.booking_id ?? null,
+                bookingId: bookingId ?? null,
                 customerIds: Array.isArray(responseBody?.customer_ids) ? responseBody.customer_ids : [],
               });
+
+              // If OnePay, redirect to OnePay URL generator
+              if (paymentMethod === "onepay_domestic" || paymentMethod === "onepay_intl") {
+                const urlResponse = await fetch("/wp-json/retreats/v1/onepay-url", {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({ 
+                    booking_id: bookingId, 
+                    payment_type: paymentMethod,
+                    lang: lang
+                  }),
+                });
+                if (!urlResponse.ok) throw new Error("Failed to generate OnePay URL");
+                const urlData = await urlResponse.json();
+                if (urlData.payment_url) {
+                  window.location.href = urlData.payment_url;
+                  return;
+                }
+              }
+
               setPaymentSuccess(true);
               if (!depositPaid) {
                 setDepositPaid(true);
@@ -2127,16 +2168,29 @@
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <button
                       type="button"
-                      onClick={() => setPaymentMethod("vnpay")}
+                      onClick={() => setPaymentMethod("onepay_domestic")}
                       className={`p-4 border-2 rounded-2xl flex items-center justify-between transition-all ${
-                        paymentMethod === "vnpay" ? "border-emerald-600 bg-emerald-50 ring-4 ring-emerald-600/10 shadow-lg" : "border-stone-100"
+                        paymentMethod === "onepay_domestic" ? "border-emerald-600 bg-emerald-50 ring-4 ring-emerald-600/10 shadow-lg" : "border-stone-100"
                       }`}
                     >
                       <div className="text-left">
-                        <p className="font-semibold">VNPay · VND</p>
-                        <p className="text-xs text-stone-500">{t("zero_extra_fees")}</p>
+                        <p className="font-semibold">{t("onepay_domestic")}</p>
+                        <p className="text-[10px] text-stone-500 max-w-[180px]">{t("onepay_domestic_desc")}</p>
                       </div>
                       <Icons.Building />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setPaymentMethod("onepay_intl")}
+                      className={`p-4 border-2 rounded-2xl flex items-center justify-between transition-all ${
+                        paymentMethod === "onepay_intl" ? "border-emerald-600 bg-emerald-50 ring-4 ring-emerald-600/10 shadow-lg" : "border-stone-100"
+                      }`}
+                    >
+                      <div className="text-left">
+                        <p className="font-semibold">{t("onepay_international")}</p>
+                        <p className="text-[10px] text-stone-500 max-w-[180px]">{t("onepay_intl_desc")}</p>
+                      </div>
+                      <Icons.CreditCard />
                     </button>
                     <button
                       type="button"
@@ -2147,9 +2201,22 @@
                     >
                       <div className="text-left">
                         <p className="font-semibold">Stripe · USD</p>
-                        <p className="text-xs text-stone-500">{t("card_processing_fee")}</p>
+                        <p className="text-[10px] text-stone-500 max-w-[180px]">{t("card_processing_fee")}</p>
                       </div>
                       <Icons.CreditCard />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setPaymentMethod("bank_transfer")}
+                      className={`p-4 border-2 rounded-2xl flex items-center justify-between transition-all ${
+                        paymentMethod === "bank_transfer" ? "border-emerald-600 bg-emerald-50 ring-4 ring-emerald-600/10 shadow-lg" : "border-stone-100"
+                      }`}
+                    >
+                      <div className="text-left">
+                        <p className="font-semibold">Bank Transfer · VND</p>
+                        <p className="text-[10px] text-stone-500 max-w-[180px]">{t("zero_extra_fees")}</p>
+                      </div>
+                      <Icons.Building />
                     </button>
                   </div>
                 </div>
@@ -2168,9 +2235,8 @@
                       >
                         {paymentSubmitting ? t("processing_payment") : t("pay_securely_msg").replace("{{amount}}", formatVND(paymentDueNow, lang))}
                       </button>
-                      <img src="https://checkout.stripe.com/img/v3/home/twitter.png" className="h-6 mx-auto opacity-50 grayscale" alt="Stripe" />
                     </div>
-                  ) : (
+                  ) : paymentMethod === "bank_transfer" ? (
                     <div className="space-y-4">
                       <p className="text-sm text-stone-600 leading-relaxed">
                         {t("bank_transfer_desc")}
@@ -2182,6 +2248,20 @@
                         className="w-full bg-emerald-800 text-white py-4 rounded-full font-bold text-lg hover:bg-emerald-900 transition flex items-center justify-center gap-2"
                       >
                         {paymentSubmitting ? t("processing_payment") : t("confirm_bank_transfer")} <Icons.ChevronRight />
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="space-y-4">
+                      <p className="text-sm text-stone-600 leading-relaxed">
+                        {paymentMethod === "onepay_domestic" ? t("onepay_domestic_desc") : t("onepay_intl_desc")}
+                      </p>
+                      <button
+                        type="button"
+                        onClick={handlePayment}
+                        disabled={paymentSubmitting}
+                        className="w-full bg-emerald-800 text-white py-4 rounded-full font-bold text-lg hover:bg-emerald-900 transition flex items-center justify-center gap-2"
+                      >
+                        {paymentSubmitting ? t("processing_payment") : t("pay_securely_msg").replace("{{amount}}", formatVND(paymentDueNow, lang))}
                       </button>
                     </div>
                   )}
@@ -2488,30 +2568,8 @@
                 <div className="flex items-center">
                   <img src="./vietnam-detox-logo.svg" alt="Vietnam Detox" className="h-8 w-auto" onError={handleImageError} />
                 </div>
-                <div className="flex items-center space-x-6">
-                  {/*<div className="hidden md:flex space-x-6 text-sm font-medium text-stone-400 mr-6">
-                    <span>{t("the_method")}</span>
-                    <span>{t("retreats")}</span>
-                    <span className="text-stone-900">{t("book_now")}</span>
-                  </div>*/}
-                  <div className="flex items-center bg-stone-50 rounded-full p-1 border border-stone-100">
-                    {[
-                      { code: "en", label: "EN" },
-                      { code: "vn", label: "VN" },
-                      // { code: "de", label: "DE" },
-                    ].map((l) => (
-                      <button type="button"
-                        key={l.code}
-                        onClick={() => switchLanguage(l.code)}
-                        className={`px-3 py-1 rounded-full text-[10px] font-bold transition-all ${
-                          lang === l.code ? "bg-white text-emerald-800 shadow-sm ring-1 ring-stone-200/50" : "text-stone-400 hover:text-stone-600"
-                        }`}
-                      >
-                        {l.label}
-                      </button>
-                    ))}
+                  <div className="flex items-center space-x-6">
                   </div>
-                </div>
               </div>
             </nav>
           );
@@ -2642,7 +2700,7 @@
             <div id="booking-app-wrapper" className="min-h-screen bg-white font-sans text-stone-900 selection:bg-emerald-100 pb-32 relative">
               <HeaderBar />
 
-              {(isTransitioning || isSwitchingLang) && (
+              {(isTransitioning) && (
                 <div className="fixed inset-0 z-[100] flex items-center justify-center bg-white/60 backdrop-blur-[2px] transition-all duration-300">
                   <div className="w-14 h-14 bg-white rounded-full shadow-2xl flex items-center justify-center border border-stone-100">
                     <div className="w-6 h-6 border-[3px] border-emerald-600 border-t-transparent animate-spin rounded-full"></div>
@@ -2650,7 +2708,7 @@
                 </div>
               )}
 
-              <div className={`transition-opacity duration-500 ease-in-out ${isTransitioning || isSwitchingLang ? "opacity-30 pointer-events-none" : "opacity-100"}`}>
+              <div className={`transition-opacity duration-500 ease-in-out ${isTransitioning ? "opacity-30 pointer-events-none" : "opacity-100"}`}>
                 <main className="max-w-6xl mx-auto px-6 py-12 space-y-8">
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
                   <div className="lg:col-span-2 space-y-10">{content}</div>
@@ -2779,7 +2837,7 @@
 
           render() {
             if (this.state.hasError) {
-              const lang = parseRouteFromLocation().lang || "en";
+              const lang = parseRouteFromLocation().lang || getInitialLang();
               const t = (key) => TRANSLATIONS[lang]?.[key] || TRANSLATIONS.en[key] || key;
               return (
                 <div className="min-h-screen bg-white font-sans text-stone-900 selection:bg-emerald-100 flex items-center justify-center px-6">
