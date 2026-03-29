@@ -905,12 +905,10 @@
         const parseRouteFromLocation = () => {
           const params = new URLSearchParams(window.location.search || "");
           const wantsScreening = params.get("view") === "screening" || params.get("screening") === "true";
-          if (wantsScreening) {
-            const search = window.location.search || "";
-            window.location.href = `screening.html${search}`;
-            return { step: "config" };
-          }
           let stepParam = params.get("step");
+          if (wantsScreening) {
+            stepParam = "screening";
+          }
           if (!STEPS.includes(stepParam)) {
             stepParam = "config";
           }
@@ -1050,7 +1048,18 @@
             }
           });
 
-          const [selection, setSelection] = useState(() => ({
+          const [savedState] = useState(() => {
+            const params = new URLSearchParams(window.location.search || "");
+            if (params.get("payment") === "success") {
+              try {
+                const raw = sessionStorage.getItem("vdx_booking_state");
+                if (raw) return JSON.parse(raw);
+              } catch(e) {}
+            }
+            return null;
+          });
+
+          const [selection, setSelection] = useState(() => savedState?.selection || ({
             retreatId: DEFAULT_RETREAT.id,
             retreatName: DEFAULT_RETREAT.name,
             retreatLocation: DEFAULT_RETREAT.location,
@@ -1061,7 +1070,7 @@
             roomType: DEFAULT_ROOM_ID,
             transfer: DEFAULT_TRANSPORT,
           }));
-          const [guestDetails, setGuestDetails] = useState({
+          const [guestDetails, setGuestDetails] = useState(() => savedState?.guestDetails || ({
             guest1: {
               firstName: "",
               lastName: "",
@@ -1078,16 +1087,16 @@
               taxId: "",
             },
             guest2: { firstName: "", lastName: "", email: "", phone: "" },
-          });
-          const [paymentMethod, setPaymentMethod] = useState("vnpay");
+          }));
+          const [paymentMethod, setPaymentMethod] = useState(() => savedState?.paymentMethod || "onepay_domestic");
           const [paymentSubmitting, setPaymentSubmitting] = useState(false);
           const [paymentError, setPaymentError] = useState("");
           const [paymentSuccess, setPaymentSuccess] = useState(false);
           const [galleryRoom, setGalleryRoom] = useState(null);
           const [galleryIndex, setGalleryIndex] = useState(0);
-          const [depositPaid, setDepositPaid] = useState(false);
-          const [bookingMeta, setBookingMeta] = useState({ bookingId: null, customerIds: [] });
-          const [screeningStatus, setScreeningStatus] = useState({ guest1: "pending", guest2: selection.guests === 2 ? "pending" : "not_required" });
+          const [depositPaid, setDepositPaid] = useState(() => savedState ? true : false);
+          const [bookingMeta, setBookingMeta] = useState(() => savedState?.bookingMeta || { bookingId: null, customerIds: [] });
+          const [screeningStatus, setScreeningStatus] = useState(() => savedState?.screeningStatus || { guest1: "pending", guest2: (savedState?.selection?.guests || 1) === 2 ? "pending" : "not_required" });
           const [safetyAnswers, setSafetyAnswers] = useState({
             underweight: "",
             liverKidney: "",
@@ -1526,6 +1535,18 @@
                 if (!urlResponse.ok) throw new Error("Failed to generate OnePay URL");
                 const urlData = await urlResponse.json();
                 if (urlData.payment_url) {
+                  try {
+                    sessionStorage.setItem("vdx_booking_state", JSON.stringify({
+                      selection,
+                      guestDetails,
+                      paymentMethod,
+                      bookingMeta: {
+                        bookingId: bookingId ?? null,
+                        customerIds: Array.isArray(responseBody?.customer_ids) ? responseBody.customer_ids : [],
+                      },
+                      screeningStatus
+                    }));
+                  } catch(e) {}
                   window.location.href = urlData.payment_url;
                   return;
                 }
@@ -2192,32 +2213,6 @@
                       </div>
                       <Icons.CreditCard />
                     </button>
-                    <button
-                      type="button"
-                      onClick={() => setPaymentMethod("stripe")}
-                      className={`p-4 border-2 rounded-2xl flex items-center justify-between transition-all ${
-                        paymentMethod === "stripe" ? "border-emerald-600 bg-emerald-50 ring-4 ring-emerald-600/10 shadow-lg" : "border-stone-100"
-                      }`}
-                    >
-                      <div className="text-left">
-                        <p className="font-semibold">Stripe · USD</p>
-                        <p className="text-[10px] text-stone-500 max-w-[180px]">{t("card_processing_fee")}</p>
-                      </div>
-                      <Icons.CreditCard />
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setPaymentMethod("bank_transfer")}
-                      className={`p-4 border-2 rounded-2xl flex items-center justify-between transition-all ${
-                        paymentMethod === "bank_transfer" ? "border-emerald-600 bg-emerald-50 ring-4 ring-emerald-600/10 shadow-lg" : "border-stone-100"
-                      }`}
-                    >
-                      <div className="text-left">
-                        <p className="font-semibold">Bank Transfer · VND</p>
-                        <p className="text-[10px] text-stone-500 max-w-[180px]">{t("zero_extra_fees")}</p>
-                      </div>
-                      <Icons.Building />
-                    </button>
                   </div>
                 </div>
 
@@ -2311,10 +2306,35 @@
                   <p className="text-[12px] uppercase tracking-[0.4em] text-stone-400">{t("step")} 6</p>
                   <h1 className="text-4xl font-bold">{t("health_prep")}</h1>
                   <p className="text-stone-500">{t("almost_done")}</p>
-                  <p className="text-stone-500">
-                    {t("health_prep_screening_desc")}
-                  </p>
+                  <p className="text-sm text-stone-500">{t("health_prep_screening_desc")}</p>
                 </header>
+
+                {new URLSearchParams(window.location.search).get("payment") === "success" && (
+                  <div className="bg-emerald-50 border border-emerald-100 rounded-3xl p-6 space-y-3 mb-8">
+                    <div className="flex items-center gap-3 text-emerald-800 font-bold">
+                      <div className="bg-emerald-600 text-white p-1 rounded-full scale-75">
+                        <Icons.Check />
+                      </div>
+                      <p>✓ {t("deposit_received_msg") || "Deposit payment successful. Your booking is now reserved."}</p>
+                    </div>
+                    {(new URLSearchParams(window.location.search).get("txn_id") || new URLSearchParams(window.location.search).get("amount")) && (
+                      <div className="text-xs text-emerald-700/80 items-center gap-6 pl-9 pt-2 border-t border-emerald-200/50 flex flex-wrap">
+                        {new URLSearchParams(window.location.search).get("txn_id") && (
+                          <p>
+                            <span className="font-semibold uppercase tracking-wider opacity-60 mr-2">Transaction ID</span>
+                            <span className="font-mono">{new URLSearchParams(window.location.search).get("txn_id")}</span>
+                          </p>
+                        )}
+                        {new URLSearchParams(window.location.search).get("amount") && (
+                          <p>
+                            <span className="font-semibold uppercase tracking-wider opacity-60 mr-2">Amount Paid</span>
+                            <span>{formatVND(parseInt(new URLSearchParams(window.location.search).get("amount")) / 100, lang)}</span>
+                          </p>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                )}
 
                 <div className="bg-stone-50 border border-stone-100 rounded-3xl p-6 space-y-3">
                   <p className="text-xs uppercase tracking-[0.3em] text-stone-400">{t("what_happens_next")}</p>
@@ -2443,7 +2463,7 @@
                 <div className="space-y-4">
                   {screeningGuests.map((guest) => {
                     const encodedName = encodeURIComponent(guest.name || `Guest ${guest.guestNumber}`);
-                    const fallbackUrl = `/screening.html?guest=${guest.guestNumber}&booking=${encodeURIComponent(
+                    const fallbackUrl = `?view=screening&guest=${guest.guestNumber}&booking=${encodeURIComponent(
                       BOOKING_REFERENCE,
                     )}&name=${encodedName}`;
                     const url = buildHealthCheckUrl(bookingMeta.bookingId, bookingMeta.customerIds[guest.guestNumber - 1]) || fallbackUrl;
