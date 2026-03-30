@@ -1529,7 +1529,8 @@
                   body: JSON.stringify({ 
                     booking_id: bookingId, 
                     payment_type: paymentMethod,
-                    lang: lang
+                    lang: lang,
+                    return_base: window.location.origin + window.location.pathname
                   }),
                 });
                 if (!urlResponse.ok) throw new Error("Failed to generate OnePay URL");
