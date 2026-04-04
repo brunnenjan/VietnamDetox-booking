@@ -316,7 +316,10 @@
           contact_vd: "Contact Vietnam Detox",
           return_overview: "Return to retreat overview",
           continue_with_booking: "Continue with booking",
-          read_more: "Read more"
+          read_more: "Read more",
+          payment_failed: "Payment failed",
+          payment_failed_desc: "Something went wrong with your transaction. Please check your details or try a different payment method.",
+          try_again: "Try again"
         },
         vn: {
           step: "Bước",
@@ -486,7 +489,10 @@
           contact_vd: "Liên hệ Vietnam Detox",
           return_overview: "Trở lại trang tổng quan",
           continue_with_booking: "Tiếp tục đặt chỗ",
-          read_more: "Xem thêm"
+          read_more: "Xem thêm",
+          payment_failed: "Thanh toán không thành công",
+          payment_failed_desc: "Đã xảy ra lỗi trong quá trình giao dịch. Vui lòng kiểm tra lại thông tin hoặc thử phương thức thanh toán khác.",
+          try_again: "Thử lại"
         },
         de: {
           step: "Schritt",
@@ -656,7 +662,10 @@
           contact_vd: "Vietnam Detox kontaktieren",
           return_overview: "Zurück zur Retreat-Übersicht",
           continue_with_booking: "Mit Buchung fortfahren",
-          read_more: "Mehr lesen"
+          read_more: "Weiterlesen",
+          payment_failed: "Zahlung fehlgeschlagen",
+          payment_failed_desc: "Bei Ihrer Transaktion ist etwas schiefgelaufen. Bitte überprüfen Sie Ihre Angaben oder versuchen Sie eine andere Zahlungsmethode.",
+          try_again: "Erneut versuchen"
         }
       };
 
@@ -735,6 +744,22 @@
               <path d="M16 14h.01" />
               <path d="M8 10h.01" />
               <path d="M8 14h.01" />
+            </svg>
+          ),
+          Lock: ({ className }) => (
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className={className}
+            >
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+              <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
             </svg>
           ),
           CreditCard: () => (
@@ -905,9 +930,12 @@
         const parseRouteFromLocation = () => {
           const params = new URLSearchParams(window.location.search || "");
           const wantsScreening = params.get("view") === "screening" || params.get("screening") === "true";
+          const wantsPayment = params.get("view") === "payment";
           let stepParam = params.get("step");
           if (wantsScreening) {
             stepParam = "screening";
+          } else if (wantsPayment) {
+            stepParam = "payment";
           }
           if (!STEPS.includes(stepParam)) {
             stepParam = "config";
@@ -1050,7 +1078,8 @@
 
           const [savedState] = useState(() => {
             const params = new URLSearchParams(window.location.search || "");
-            if (params.get("payment") === "success") {
+            const paymentStatus = params.get("payment");
+            if (paymentStatus === "success" || paymentStatus === "failed") {
               try {
                 const raw = sessionStorage.getItem("vdx_booking_state");
                 if (raw) return JSON.parse(raw);
@@ -1094,7 +1123,12 @@
           const [paymentSuccess, setPaymentSuccess] = useState(false);
           const [galleryRoom, setGalleryRoom] = useState(null);
           const [galleryIndex, setGalleryIndex] = useState(0);
-          const [depositPaid, setDepositPaid] = useState(() => savedState ? true : false);
+          const [depositPaid, setDepositPaid] = useState(() => {
+            const params = new URLSearchParams(window.location.search || "");
+            if (params.get("payment") === "success") return true; 
+            if (params.get("payment") === "failed") return false;
+            return savedState ? true : false;
+          });
           const [bookingMeta, setBookingMeta] = useState(() => savedState?.bookingMeta || { bookingId: null, customerIds: [] });
           const [screeningStatus, setScreeningStatus] = useState(() => savedState?.screeningStatus || { guest1: "pending", guest2: (savedState?.selection?.guests || 1) === 2 ? "pending" : "not_required" });
           const [safetyAnswers, setSafetyAnswers] = useState({
@@ -1191,8 +1225,19 @@
             if (targetStep === "payment" && !safetyCleared) {
               targetStep = "health_check";
             }
+            const postPaymentSteps = ["screening", "review_state", "confirmed"];
+            if (postPaymentSteps.includes(targetStep) && !depositPaid) {
+              targetStep = "payment";
+            }
             syncRoute({ ...route, step: targetStep }, replace);
           };
+
+          useEffect(() => {
+            const postPaymentSteps = ["screening", "review_state", "confirmed"];
+            if (postPaymentSteps.includes(flowStep) && !depositPaid) {
+              goToStep("payment", true);
+            }
+          }, [flowStep, depositPaid]);
 
 
 
@@ -1504,22 +1549,28 @@
             setPaymentError("");
             setPaymentSubmitting(true);
             try {
-              const payload = buildBookingPayload();
-              const response = await fetch(BOOKING_API_ENDPOINT, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(payload),
-              });
-              if (!response.ok) {
-                throw new Error(`HTTP ${response.status}`);
+              let bookingId = bookingMeta.bookingId;
+              let customerIds = bookingMeta.customerIds;
+
+              if (!bookingId) {
+                const payload = buildBookingPayload();
+                const response = await fetch(BOOKING_API_ENDPOINT, {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify(payload),
+                });
+                if (!response.ok) {
+                  throw new Error(`HTTP ${response.status}`);
+                }
+                const responseBody = await response.json();
+                bookingId = responseBody?.booking_id;
+                customerIds = Array.isArray(responseBody?.customer_ids) ? responseBody.customer_ids : [];
+                
+                setBookingMeta({
+                  bookingId: bookingId ?? null,
+                  customerIds: customerIds,
+                });
               }
-              const responseBody = await response.json();
-              const bookingId = responseBody?.booking_id;
-              
-              setBookingMeta({
-                bookingId: bookingId ?? null,
-                customerIds: Array.isArray(responseBody?.customer_ids) ? responseBody.customer_ids : [],
-              });
 
               // If OnePay, redirect to OnePay URL generator
               if (paymentMethod === "onepay_domestic" || paymentMethod === "onepay_intl") {
@@ -1543,7 +1594,7 @@
                       paymentMethod,
                       bookingMeta: {
                         bookingId: bookingId ?? null,
-                        customerIds: Array.isArray(responseBody?.customer_ids) ? responseBody.customer_ids : [],
+                        customerIds: customerIds,
                       },
                       screeningStatus
                     }));
@@ -2164,25 +2215,59 @@
               </div>
             </div>
           );
-          const renderPaymentStep = () => (
-            <div className="space-y-10">
-              <header className="space-y-2">
-                <p className="text-[12px] uppercase tracking-[0.4em] text-stone-400">{t("step")} 5</p>
-                <h1 className="text-4xl font-bold">{t("payment")}</h1>
-                <p className="text-sm text-stone-500">{t("payment_desc")}</p>
-              </header>
+          const renderPaymentStep = () => {
+            const params = new URLSearchParams(window.location.search);
+            const isFailed = params.get("payment") === "failed";
+            const failureReason = params.get("reason");
 
-              <PriceSummary
-                context="payment"
-                pricing={pricing}
-                paymentMethod={paymentMethod}
-                stripeFee={stripeFee}
-                paymentDueNow={paymentDueNow}
-                lang={lang}
-                roomName={selectedRoomName}
-                guestsCount={selection.guests}
-                retreatName={selection.retreatName}
-              />
+            const handleTryAgain = () => {
+              const newUrl = window.location.pathname + "?view=payment&lang=" + lang;
+              window.history.replaceState({}, "", newUrl);
+              setRoute({ step: "payment", lang: lang });
+            };
+
+            return (
+              <div className="space-y-10">
+                <header className="space-y-2">
+                  <p className="text-[12px] uppercase tracking-[0.4em] text-stone-400">{t("step")} 5</p>
+                  <h1 className="text-4xl font-bold">{t("payment")}</h1>
+                  <p className="text-sm text-stone-500">{t("payment_desc")}</p>
+                </header>
+
+                {isFailed && (
+                  <div className="bg-rose-50 border border-rose-100 rounded-3xl p-6 space-y-3 mb-6">
+                    <div className="flex items-center gap-3 text-rose-800 font-bold text-lg">
+                      <div className="bg-rose-600 text-white p-1 rounded-full scale-75">
+                         <Icons.Info />
+                      </div>
+                      <p>{t("payment_failed")}</p>
+                    </div>
+                    <p className="text-sm text-stone-600 leading-relaxed pl-10">
+                      {failureReason || t("payment_failed_desc")}
+                    </p>
+                    <div className="pl-10 pt-2">
+                       <button
+                         type="button"
+                         onClick={handleTryAgain}
+                         className="inline-flex items-center justify-center bg-rose-100 text-rose-900 px-6 py-2 rounded-full font-bold text-sm hover:bg-rose-200 transition gap-2"
+                       >
+                         {t("try_again")} <Icons.ChevronRight />
+                       </button>
+                    </div>
+                  </div>
+                )}
+
+                <PriceSummary
+                  context="payment"
+                  pricing={pricing}
+                  paymentMethod={paymentMethod}
+                  stripeFee={stripeFee}
+                  paymentDueNow={paymentDueNow}
+                  lang={lang}
+                  roomName={selectedRoomName}
+                  guestsCount={selection.guests}
+                  retreatName={selection.retreatName}
+                />
 
               <div className="space-y-6">
                 <div>
@@ -2281,8 +2366,9 @@
                   </div>
                 </div>
               )}
-            </div>
-          );
+              </div>
+            );
+          };
 
 
           const renderScreeningStep = () => {
@@ -2684,18 +2770,25 @@
                   ref={scrollContainerRef}
                   className="flex flex-nowrap items-center space-x-2 overflow-x-auto hide-scrollbar px-4 py-3 md:py-4 pr-6"
                 >
-                  {STEPS.map((step) => (
-                    <button type="button"
-                      key={step}
-                      data-active={controllerStep === step}
-                      onClick={() => goToStep(step)}
-                      className={`px-3 py-1.5 text-[10px] font-semibold rounded-md whitespace-nowrap flex-shrink-0 transition-colors ${
-                        controllerStep === step ? "bg-emerald-100 text-emerald-700 ring-1 ring-emerald-500/30" : "bg-stone-100 text-stone-500 hover:bg-stone-200"
-                      }`}
-                    >
-                      {step.replace("_", " ").toUpperCase()}
-                    </button>
-                  ))}
+                  {STEPS.map((step) => {
+                    const isPostPayment = ["screening", "review_state", "confirmed"].includes(step);
+                    const isDisabled = isPostPayment && !depositPaid;
+                    return (
+                      <button type="button"
+                        key={step}
+                        data-active={controllerStep === step}
+                        onClick={() => !isDisabled && goToStep(step)}
+                        disabled={isDisabled}
+                        className={`px-3 py-1.5 text-[10px] font-semibold rounded-md whitespace-nowrap flex-shrink-0 transition-colors flex items-center gap-1 ${
+                          isDisabled ? "bg-stone-50 text-stone-300 cursor-not-allowed border border-stone-100" :
+                          controllerStep === step ? "bg-emerald-100 text-emerald-700 ring-1 ring-emerald-500/30" : "bg-stone-100 text-stone-500 hover:bg-stone-200"
+                        }`}
+                      >
+                        {step.replace("_", " ").toUpperCase()}
+                        {isDisabled && <Icons.Lock className="w-2.5 h-2.5 opacity-50" />}
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
             );
@@ -2732,36 +2825,42 @@
               <div className={`transition-opacity duration-500 ease-in-out ${isTransitioning ? "opacity-30 pointer-events-none" : "opacity-100"}`}>
                 <main className="max-w-6xl mx-auto px-6 py-12 space-y-8">
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
-                  <div className="lg:col-span-2 space-y-10">{content}</div>
-                  <div className="hidden lg:block lg:col-span-1">
-                    <div className="sticky top-24">
-                      <PriceSummary
-                        context={summaryContext}
-                        pricing={pricing}
-                        paymentMethod={paymentMethod}
-                        stripeFee={stripeFee}
-                        paymentDueNow={paymentDueNow}
-                        lang={lang}
-                        roomName={selectedRoomName}
-                        guestsCount={selection.guests}
-                        retreatName={selection.retreatName}
-                      />
-                    </div>
+                  <div className={`${["payment", "confirmed"].includes(flowStep) ? "lg:col-span-3 max-w-4xl mx-auto w-full" : "lg:col-span-2"} space-y-10`}>
+                    {content}
                   </div>
+                  {!["payment", "confirmed"].includes(flowStep) && (
+                    <div className="hidden lg:block lg:col-span-1">
+                      <div className="sticky top-24">
+                        <PriceSummary
+                          context={summaryContext}
+                          pricing={pricing}
+                          paymentMethod={paymentMethod}
+                          stripeFee={stripeFee}
+                          paymentDueNow={paymentDueNow}
+                          lang={lang}
+                          roomName={selectedRoomName}
+                          guestsCount={selection.guests}
+                          retreatName={selection.retreatName}
+                        />
+                      </div>
+                    </div>
+                  )}
                 </div>
-                <div className="lg:hidden">
-                  <PriceSummary
-                    context={summaryContext}
-                    pricing={pricing}
-                    paymentMethod={paymentMethod}
-                    stripeFee={stripeFee}
-                    paymentDueNow={paymentDueNow}
-                    lang={lang}
-                    roomName={selectedRoomName}
-                    guestsCount={selection.guests}
-                    retreatName={selection.retreatName}
-                  />
-                </div>
+                {!["payment", "confirmed"].includes(flowStep) && (
+                  <div className="lg:hidden">
+                    <PriceSummary
+                      context={summaryContext}
+                      pricing={pricing}
+                      paymentMethod={paymentMethod}
+                      stripeFee={stripeFee}
+                      paymentDueNow={paymentDueNow}
+                      lang={lang}
+                      roomName={selectedRoomName}
+                      guestsCount={selection.guests}
+                      retreatName={selection.retreatName}
+                    />
+                  </div>
+                )}
               </main>
             </div>
 
