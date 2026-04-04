@@ -1129,6 +1129,7 @@
             if (params.get("payment") === "failed") return false;
             return savedState ? true : false;
           });
+
           const [bookingMeta, setBookingMeta] = useState(() => savedState?.bookingMeta || { bookingId: null, customerIds: [] });
           const [screeningStatus, setScreeningStatus] = useState(() => savedState?.screeningStatus || { guest1: "pending", guest2: (savedState?.selection?.guests || 1) === 2 ? "pending" : "not_required" });
           const [safetyAnswers, setSafetyAnswers] = useState({
@@ -1477,7 +1478,7 @@
             const packageType = selectedRoom?.type || selectedRoom?.roomType || "";
             const transportType = selectedTransport?.label ?? selectedTransport?.id ?? "";
             return {
-              bookingReference: BOOKING_REFERENCE,
+              bookingReference: bookingMeta.bookingId || BOOKING_REFERENCE,
               retreat_id: selection.retreatId,
               retreat_name: selection.retreatName,
               location: selection.retreatLocation,
@@ -2224,6 +2225,12 @@
               const newUrl = window.location.pathname + "?view=payment&lang=" + lang;
               window.history.replaceState({}, "", newUrl);
               setRoute({ step: "payment", lang: lang });
+              
+              // Scroll to payment button after UI update
+              setTimeout(() => {
+                const el = document.getElementById("payment-actions");
+                if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
+              }, 100);
             };
 
             return (
@@ -2302,7 +2309,7 @@
                   </div>
                 </div>
 
-                <div className="bg-stone-50 rounded-3xl p-6">
+                <div id="payment-actions" className="bg-stone-50 rounded-3xl p-6">
                   {paymentMethod === "stripe" ? (
                     <div className="space-y-4">
                       <p className="text-sm text-stone-600 leading-relaxed">
@@ -2551,7 +2558,7 @@
                   {screeningGuests.map((guest) => {
                     const encodedName = encodeURIComponent(guest.name || `Guest ${guest.guestNumber}`);
                     const fallbackUrl = `?view=screening&guest=${guest.guestNumber}&booking=${encodeURIComponent(
-                      BOOKING_REFERENCE,
+                      bookingMeta.bookingId ? "#" + bookingMeta.bookingId : BOOKING_REFERENCE,
                     )}&name=${encodedName}`;
                     const url = buildHealthCheckUrl(bookingMeta.bookingId, bookingMeta.customerIds[guest.guestNumber - 1]) || fallbackUrl;
                     return (
@@ -2656,7 +2663,7 @@
               </div>
               <div className="bg-stone-50 border border-stone-100 rounded-3xl p-6 w-full max-w-md">
                 <p className="text-xs uppercase tracking-[0.3em] text-stone-400 mb-2">{t("booking_ref")}</p>
-                <p className="text-2xl font-mono font-bold text-stone-800">{BOOKING_REFERENCE}</p>
+                <p className="text-2xl font-mono font-bold text-stone-800">{bookingMeta.bookingId ? "#" + bookingMeta.bookingId : BOOKING_REFERENCE}</p>
               </div>
               <PriceSummary context="confirmed" pricing={pricing} lang={lang} roomName={selectedRoomName} guestsCount={selection.guests} retreatName={selection.retreatName} />
               <button
@@ -2772,7 +2779,8 @@
                 >
                   {STEPS.map((step) => {
                     const isPostPayment = ["screening", "review_state", "confirmed"].includes(step);
-                    const isDisabled = isPostPayment && !depositPaid;
+                    const isStepConfirmed = step === "confirmed";
+                    const isDisabled = (isPostPayment && !depositPaid) || (isStepConfirmed && !screeningsComplete);
                     return (
                       <button type="button"
                         key={step}
