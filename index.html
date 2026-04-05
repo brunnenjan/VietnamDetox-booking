@@ -1525,6 +1525,7 @@
             const transportType = selectedTransport?.label ?? selectedTransport?.id ?? "";
             return {
               bookingReference: bookingMeta.bookingId || BOOKING_REFERENCE,
+              lang: lang,
               retreat_id: selection.retreatId,
               retreat_name: selection.retreatName,
               location: selection.retreatLocation,
