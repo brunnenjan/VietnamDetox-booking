@@ -1192,16 +1192,7 @@
             }
           }, [route.recoveryId, route.recoveryToken]);
 
-          if (recoveryLoading) {
-            return (
-              <div className="min-h-screen bg-stone-50 flex items-center justify-center p-6">
-                <div className="text-center space-y-4">
-                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-stone-800 mx-auto"></div>
-                  <p className="text-stone-500 font-medium">Restoring your booking session...</p>
-                </div>
-              </div>
-            );
-          }
+
 
           const t = (key, data = {}) => {
             let text = TRANSLATIONS[lang]?.[key] || TRANSLATIONS.en[key] || key;
@@ -2872,6 +2863,17 @@
 
           const stepEntry = stepConfig[flowStep] || stepConfig.config;
           const { content, summaryContext } = stepEntry;
+
+          if (recoveryLoading) {
+            return (
+              <div className="min-h-screen bg-stone-50 flex items-center justify-center p-6">
+                <div className="text-center space-y-4">
+                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-stone-800 mx-auto"></div>
+                  <p className="text-stone-500 font-medium">Restoring your booking session...</p>
+                </div>
+              </div>
+            );
+          }
 
           return (
             <div id="booking-app-wrapper" className="min-h-screen bg-white font-sans text-stone-900 selection:bg-emerald-100 pb-32 relative">
