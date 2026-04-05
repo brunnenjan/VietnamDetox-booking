@@ -931,6 +931,8 @@
           const params = new URLSearchParams(window.location.search || "");
           const wantsScreening = params.get("view") === "screening" || params.get("screening") === "true";
           const wantsPayment = params.get("view") === "payment";
+          const recoveryId = params.get("recovery_id");
+          const recoveryToken = params.get("token");
           let stepParam = params.get("step");
           if (wantsScreening) {
             stepParam = "screening";
@@ -944,7 +946,7 @@
           if (!["en", "vn", "de"].includes(langParam)) {
             langParam = getInitialLang();
           }
-          return { step: stepParam, lang: langParam };
+          return { step: stepParam, lang: langParam, recoveryId, recoveryToken };
         };
 
 
@@ -1147,6 +1149,48 @@
           const flowStep = STEPS.includes(routeStep) ? routeStep : "config";
           const controllerStep = flowStep;
           const lang = route?.lang || getInitialLang();
+
+          const [recoveryLoading, setRecoveryLoading] = useState(!!route.recoveryId);
+
+          useEffect(() => {
+            if (route.recoveryId && route.recoveryToken) {
+              const fetchRecovery = async () => {
+                try {
+                  const response = await fetch(`/wp-json/retreats/v1/registration-recovery/${route.recoveryId}?token=${route.recoveryToken}`);
+                  if (response.ok) {
+                    const data = await response.json();
+                    if (data.selection) {
+                      setSelection(prev => ({ ...prev, ...data.selection }));
+                    }
+                    if (data.guestDetails) {
+                      setGuestDetails(data.guestDetails);
+                    }
+                    if (data.bookingMeta) {
+                      setBookingMeta(data.bookingMeta);
+                    }
+                    // Jump to Review/Payment step
+                    setRoute(prev => ({ ...prev, step: "payment", recoveryId: null, recoveryToken: null }));
+                  }
+                } catch (err) {
+                  console.error("Recovery failed", err);
+                } finally {
+                  setRecoveryLoading(false);
+                }
+              };
+              fetchRecovery();
+            }
+          }, [route.recoveryId, route.recoveryToken]);
+
+          if (recoveryLoading) {
+            return (
+              <div className="min-h-screen bg-stone-50 flex items-center justify-center p-6">
+                <div className="text-center space-y-4">
+                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-stone-800 mx-auto"></div>
+                  <p className="text-stone-500 font-medium">Restoring your booking session...</p>
+                </div>
+              </div>
+            );
+          }
 
           const t = (key, data = {}) => {
             let text = TRANSLATIONS[lang]?.[key] || TRANSLATIONS.en[key] || key;
