@@ -1047,12 +1047,7 @@
           };
 
 
-        const DEFAULT_RETREAT = RETREATS[0];
-        const DEFAULT_DATE = DEFAULT_RETREAT.dates[0];
-        const DEFAULT_ROOMS = getRoomsForRetreat(DEFAULT_RETREAT.id);
-        const DEFAULT_ROOM_ID = DEFAULT_ROOMS[0]?.id || null;
-        const DEFAULT_TRANSPORT = getTransportOptionsForRetreat(DEFAULT_RETREAT.id)[0]?.id ?? null;
-        const DEFAULT_PHONE_CODE = getDialCodeForCountry("Vietnam") || "+84";
+        // Constants will be defined inside App to ensure RETREATS is loaded
 
         const buildHealthCheckUrl = (bookingId, customerId) => {
           if (!bookingId || !customerId) return "";
@@ -1064,6 +1059,13 @@
         };
 
         const App = () => {
+          const DEFAULT_RETREAT = RETREATS[0] || { id: 0, dates: [{}], image: FALLBACK_IMAGE };
+          const DEFAULT_DATE = DEFAULT_RETREAT.dates?.[0] || { label: "" };
+          const DEFAULT_ROOMS = getRoomsForRetreat(DEFAULT_RETREAT.id);
+          const DEFAULT_ROOM_ID = DEFAULT_ROOMS[0]?.id || null;
+          const DEFAULT_TRANSPORT = getTransportOptionsForRetreat(DEFAULT_RETREAT.id)?.[0]?.id ?? null;
+          const DEFAULT_PHONE_CODE = getDialCodeForCountry("Vietnam") || "+84";
+
           const [route, setRoute] = useState(parseRouteFromLocation);
           const [isTransitioning, setIsTransitioning] = useState(false);
 
@@ -1160,10 +1162,19 @@
                   if (response.ok) {
                     const data = await response.json();
                     if (data.selection) {
-                      setSelection(prev => ({ ...prev, ...data.selection }));
+                      const r = RETREATS.find(ret => ret.id === data.selection.retreatId);
+                      setSelection(prev => ({ 
+                        ...prev, 
+                        ...data.selection,
+                        retreatImage: r?.image || prev.retreatImage,
+                        retreatEarlyBirdNote: r?.earlyBirdNote || prev.retreatEarlyBirdNote
+                      }));
                     }
                     if (data.guestDetails) {
-                      setGuestDetails(data.guestDetails);
+                      setGuestDetails(prev => ({
+                        guest1: { ...prev.guest1, ...data.guestDetails.guest1 },
+                        guest2: { ...prev.guest2, ...data.guestDetails.guest2 },
+                      }));
                     }
                     if (data.bookingMeta) {
                       setBookingMeta(data.bookingMeta);
