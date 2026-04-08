@@ -1282,7 +1282,16 @@
 
           const goToStep = (nextStep, replace = false) => {
             let targetStep = STEPS.includes(nextStep) ? nextStep : "config";
-            if (targetStep === "payment" && !safetyCleared) {
+            
+            // If we have a recovery bookingId, don't allow going back to pre-payment steps
+            if (bookingMeta.bookingId) {
+                const prePaymentSteps = ["config", "details", "review", "health_check"];
+                if (prePaymentSteps.includes(targetStep)) {
+                    targetStep = "payment";
+                }
+            }
+
+            if (targetStep === "payment" && !safetyCleared && !bookingMeta.bookingId) {
               targetStep = "health_check";
             }
             const postPaymentSteps = ["screening", "review_state", "confirmed"];
@@ -2060,9 +2069,11 @@
                 )}
 
                 <div className="flex justify-between items-center">
-                  <button type="button" onClick={() => goToStep("config")} className="inline-flex items-center text-stone-500 font-semibold">
-                    <Icons.ChevronLeft /> {t("back")}
-                  </button>
+                  {!bookingMeta.bookingId ? (
+                    <button type="button" onClick={() => goToStep("config")} className="inline-flex items-center text-stone-500 font-semibold">
+                      <Icons.ChevronLeft /> {t("back")}
+                    </button>
+                  ) : <div></div>}
                   <button
                     type="button"
                     disabled={!guestDetailsValid()}
@@ -2111,27 +2122,33 @@
                       <p className="text-xs uppercase tracking-[0.3em] text-stone-400">{t("retreat_dates")}</p>
                       <p className="font-semibold">{dateInfo?.label}</p>
                     </div>
-                    <button type="button" className="text-sm text-emerald-700 font-semibold" onClick={() => goToStep("config")}>
-                      {t("edit")}
-                    </button>
+                    {!bookingMeta.bookingId && (
+                      <button type="button" className="text-sm text-emerald-700 font-semibold" onClick={() => goToStep("config")}>
+                        {t("edit")}
+                      </button>
+                    )}
                   </div>
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="text-xs uppercase tracking-[0.3em] text-stone-400">{t("accommodation")}</p>
                       <p className="font-semibold">{room?.name}</p>
                     </div>
-                    <button type="button" className="text-sm text-emerald-700 font-semibold" onClick={() => goToStep("config")}>
-                      {t("edit")}
-                    </button>
+                    {!bookingMeta.bookingId && (
+                      <button type="button" className="text-sm text-emerald-700 font-semibold" onClick={() => goToStep("config")}>
+                        {t("edit")}
+                      </button>
+                    )}
                   </div>
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="text-xs uppercase tracking-[0.3em] text-stone-400">{t("airport_transfer").replace(" (optional)", "")}</p>
                       <p className="font-semibold">{transferOption?.label || t("no_transfer")}</p>
                     </div>
-                    <button type="button" className="text-sm text-emerald-700 font-semibold" onClick={() => goToStep("config")}>
-                      {t("edit")}
-                    </button>
+                    {!bookingMeta.bookingId && (
+                      <button type="button" className="text-sm text-emerald-700 font-semibold" onClick={() => goToStep("config")}>
+                        {t("edit")}
+                      </button>
+                    )}
                   </div>
                 </div>
 
@@ -2417,11 +2434,13 @@
                 </div>
               </div>
 
-              <div className="flex justify-start">
-                <button type="button" onClick={() => goToStep("health_check")} className="inline-flex items-center text-stone-500 font-semibold">
-                  <Icons.ChevronLeft /> {t("back")}
-                </button>
-              </div>
+              {!bookingMeta.bookingId && (
+                <div className="flex justify-start">
+                  <button type="button" onClick={() => goToStep("health_check")} className="inline-flex items-center text-stone-500 font-semibold">
+                    <Icons.ChevronLeft /> {t("back")}
+                  </button>
+                </div>
+              )}
               {paymentError && <p className="text-sm text-rose-600 mt-4">{paymentError}</p>}
               {paymentSuccess && (
                 <div className="fixed bottom-24 md:bottom-32 right-4 left-4 md:right-10 md:left-auto bg-emerald-800 text-white p-6 rounded-2xl shadow-2xl shadow-emerald-900/50 z-50 flex items-center gap-4 w-auto md:w-96 ring-4 ring-emerald-800 ring-opacity-50 transform transition-all duration-300">
@@ -2840,8 +2859,11 @@
                 >
                   {STEPS.map((step) => {
                     const isPostPayment = ["screening", "review_state", "confirmed"].includes(step);
+                    const isPrePayment = ["config", "details", "review", "health_check"].includes(step);
                     const isStepConfirmed = step === "confirmed";
-                    const isDisabled = (isPostPayment && !depositPaid) || (isStepConfirmed && !screeningsComplete);
+                    const isDisabled = (isPostPayment && !depositPaid) || 
+                                       (isStepConfirmed && !screeningsComplete) ||
+                                       (!!bookingMeta.bookingId && isPrePayment);
                     return (
                       <button type="button"
                         key={step}
