@@ -1466,12 +1466,17 @@
           useEffect(() => {
             if (!galleryRoom) return undefined;
             const previousFocus = document.activeElement;
-            const top = window.scrollY || 0;
-            scrollLockRef.current = { top, previousFocus };
             const body = document.body;
-            body.style.position = "fixed";
-            body.style.top = `-${top}px`;
-            body.style.width = "100%";
+            const originalOverflow = body.style.overflow;
+            const originalPaddingRight = body.style.paddingRight;
+
+            // To prevent layout shift when scrollbar disappears
+            const scrollBarWidth = window.innerWidth - document.documentElement.clientWidth;
+
+            body.style.overflow = "hidden";
+            if (scrollBarWidth > 0) {
+              body.style.paddingRight = `${scrollBarWidth}px`;
+            }
 
             const handleKeyDown = (event) => {
               if (event.key === "Escape") {
@@ -1503,11 +1508,9 @@
 
             return () => {
               document.removeEventListener("keydown", handleKeyDown);
-              body.style.position = "";
-              body.style.top = "";
-              body.style.width = "";
-              window.scrollTo(0, scrollLockRef.current.top || 0);
-              scrollLockRef.current.previousFocus?.focus?.();
+              body.style.overflow = originalOverflow;
+              body.style.paddingRight = originalPaddingRight;
+              previousFocus?.focus?.();
             };
           }, [galleryRoom]);
 
