@@ -1218,33 +1218,39 @@
           }, [route.recoveryId, route.recoveryToken]);
 
           useEffect(() => {
-            if (bookingMeta.bookingId) {
-              const fetchStatus = async () => {
-                try {
-                  const response = await fetch(`/wp-json/retreats/v1/registration-status/${bookingMeta.bookingId}`);
-                  if (response.ok) {
-                    const data = await response.json();
-                    setBookingStatus(data.status);
-                    
-                    const isPaid = data.status === "Deposit received" || data.status === "Payment received";
-                    if (isPaid) setDepositPaid(true);
+            if (!bookingMeta.bookingId) return;
+            
+            const fetchStatus = async () => {
+              try {
+                const response = await fetch(`/wp-json/retreats/v1/registration-status/${bookingMeta.bookingId}`);
+                if (response.ok) {
+                  const data = await response.json();
+                  setBookingStatus(data.status);
+                  
+                  const isPaid = data.status === "Deposit received" || data.status === "Payment received";
+                  if (isPaid) setDepositPaid(true);
 
-                    setBookingMeta(prev => ({
-                      ...prev,
-                      customerIds: data.customer_ids || []
-                    }));
+                  setBookingMeta(prev => ({
+                    ...prev,
+                    customerIds: data.customer_ids || []
+                  }));
 
-                    setScreeningStatus(prev => ({
-                      guest1: data.guest1_hc === "yes" ? "complete" : "pending",
-                      guest2: data.total_guests === 2 ? (data.guest2_hc === "yes" ? "complete" : "pending") : "not_required"
-                    }));
-                  }
-                } catch (err) {
-                  console.error("Status fetch failed", err);
+                  const isDone = (hc) => hc === "yes" || hc === "Yes" || hc === true || hc === "1" || hc === 1 || String(hc).toLowerCase().trim() === "yes";
+
+                  setScreeningStatus(prev => ({
+                    guest1: isDone(data.guest1_hc) ? "complete" : "pending",
+                    guest2: data.total_guests === 2 ? (isDone(data.guest2_hc) ? "complete" : "pending") : "not_required"
+                  }));
                 }
-              };
-              fetchStatus();
-            }
+              } catch (err) {
+                console.error("Status fetch failed", err);
+              }
+            };
+            
+            fetchStatus();
+            
+            const pollInterval = setInterval(fetchStatus, 5000);
+            return () => clearInterval(pollInterval);
           }, [bookingMeta.bookingId]);
 
 
