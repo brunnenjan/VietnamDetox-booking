@@ -1147,7 +1147,14 @@
             return savedState ? true : false;
           });
 
-          const [bookingMeta, setBookingMeta] = useState(() => savedState?.bookingMeta || { bookingId: null, customerIds: [] });
+          const [bookingMeta, setBookingMeta] = useState(() => {
+            if (savedState?.bookingMeta) return savedState.bookingMeta;
+            const params = new URLSearchParams(window.location.search || "");
+            const bId = params.get("booking_id");
+            if (bId) return { bookingId: parseInt(bId), customerIds: [] };
+            return { bookingId: null, customerIds: [] };
+          });
+          const [bookingStatus, setBookingStatus] = useState("");
           const [screeningStatus, setScreeningStatus] = useState(() => savedState?.screeningStatus || { guest1: "pending", guest2: (savedState?.selection?.guests || 1) === 2 ? "pending" : "not_required" });
           const [safetyAnswers, setSafetyAnswers] = useState({
             underweight: "",
@@ -1204,6 +1211,36 @@
               fetchRecovery();
             }
           }, [route.recoveryId, route.recoveryToken]);
+
+          useEffect(() => {
+            if (bookingMeta.bookingId) {
+              const fetchStatus = async () => {
+                try {
+                  const response = await fetch(`/wp-json/retreats/v1/registration-status/${bookingMeta.bookingId}`);
+                  if (response.ok) {
+                    const data = await response.json();
+                    setBookingStatus(data.status);
+                    
+                    const isPaid = data.status === "Deposit received" || data.status === "Payment received";
+                    if (isPaid) setDepositPaid(true);
+
+                    setBookingMeta(prev => ({
+                      ...prev,
+                      customerIds: data.customer_ids || []
+                    }));
+
+                    setScreeningStatus(prev => ({
+                      guest1: data.guest1_hc === "yes" ? "complete" : "pending",
+                      guest2: data.total_guests === 2 ? (data.guest2_hc === "yes" ? "complete" : "pending") : "not_required"
+                    }));
+                  }
+                } catch (err) {
+                  console.error("Status fetch failed", err);
+                }
+              };
+              fetchStatus();
+            }
+          }, [bookingMeta.bookingId]);
 
 
 
@@ -1374,7 +1411,9 @@
 
           const stripeFee = paymentMethod === "stripe" ? Math.round(pricing.deposit * STRIPE_FEE_RATE) : 0;
           const paymentDueNow = pricing.deposit + stripeFee;
-          const screeningsComplete = screeningStatus.guest1 === "complete" && (selection.guests === 1 || screeningStatus.guest2 === "complete");
+          const screeningsComplete = screeningStatus.guest1 === "complete" && 
+                                     (selection.guests === 1 || screeningStatus.guest2 === "complete") &&
+                                     (bookingStatus === "Payment received" || bookingStatus === "Deposit received");
           const safetyAllAnswered = Object.values(safetyAnswers).every((value) => value === "yes" || value === "no");
           const safetyHasConcern = Object.values(safetyAnswers).some((value) => value === "yes");
           const safetyCleared = safetyAllAnswered && !safetyHasConcern;
@@ -2580,8 +2619,8 @@
 
             timeline.push({
               label: t("team_confirmation"),
-              status: screeningsComplete ? "done" : "waiting",
-              description: screeningsComplete ? t("status_confirmed") : t("begins_after_calls"),
+              status: (bookingStatus === "Payment received" || bookingStatus === "Deposit received") ? "done" : "waiting",
+              description: (bookingStatus === "Payment received" || bookingStatus === "Deposit received") ? t("status_confirmed") : t("begins_after_calls"),
             });
 
             const statusStyles = {
@@ -2640,9 +2679,7 @@
                 <div className="space-y-4">
                   {screeningGuests.map((guest) => {
                     const encodedName = encodeURIComponent(guest.name || `Guest ${guest.guestNumber}`);
-                    const fallbackUrl = `?view=screening&guest=${guest.guestNumber}&booking=${encodeURIComponent(
-                      bookingMeta.bookingId ? "#" + bookingMeta.bookingId : BOOKING_REFERENCE,
-                    )}&name=${encodedName}`;
+                    const fallbackUrl = `?view=screening&guest=${guest.guestNumber}&booking_id=${bookingMeta.bookingId || ""}&name=${encodedName}`;
                     const url = buildHealthCheckUrl(bookingMeta.bookingId, bookingMeta.customerIds[guest.guestNumber - 1]) || fallbackUrl;
                     return (
                       <div key={guest.guestNumber} className="border border-stone-200 rounded-3xl p-5 space-y-3">
@@ -2862,7 +2899,7 @@
                 >
                   {STEPS.map((step) => {
                     const isPostPayment = ["screening", "review_state", "confirmed"].includes(step);
-                    const isPrePayment = ["config", "details", "review", "health_check"].includes(step);
+                    const isPrePayment = ["config", "details", "review", "health_check", "payment"].includes(step);
                     const isStepConfirmed = step === "confirmed";
                     const isDisabled = (isPostPayment && !depositPaid) || 
                                        (isStepConfirmed && !screeningsComplete) ||
