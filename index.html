@@ -724,7 +724,11 @@
 
 
         const BOOKING_REFERENCE = "VDX-DEMO-001";
-        const HEALTHCHECK_BASE_URL = "https://vietnamdetox.com/healthcheck-2/";
+        const HEALTHCHECK_URLS = {
+          vn: "https://vietnamdetox.com/healthcheck-2/",
+          en: "https://vietnamdetox.com/en/healthcheck/",
+          de: "https://vietnamdetox.com/de/healthcheck/",
+        };
 
         const Icons = {
           Building: () => (
@@ -1067,13 +1071,14 @@
 
         // Constants will be defined inside App to ensure RETREATS is loaded
 
-        const buildHealthCheckUrl = (bookingId, customerId) => {
+        const buildHealthCheckUrl = (bookingId, customerId, lang = "en") => {
           if (!bookingId || !customerId) return "";
           const params = new URLSearchParams({
             reg_id: bookingId,
             cus_id: customerId,
           });
-          return `${HEALTHCHECK_BASE_URL}?${params.toString()}`;
+          const baseUrl = HEALTHCHECK_URLS[lang] || HEALTHCHECK_URLS.en;
+          return `${baseUrl}?${params.toString()}`;
         };
 
         const App = () => {
@@ -2691,7 +2696,7 @@
                   {screeningGuests.map((guest) => {
                     const encodedName = encodeURIComponent(guest.name || `Guest ${guest.guestNumber}`);
                     const fallbackUrl = `?view=screening&guest=${guest.guestNumber}&booking_id=${bookingMeta.bookingId || ""}&name=${encodedName}`;
-                    const url = buildHealthCheckUrl(bookingMeta.bookingId, bookingMeta.customerIds[guest.guestNumber - 1]) || fallbackUrl;
+                    const url = buildHealthCheckUrl(bookingMeta.bookingId, bookingMeta.customerIds[guest.guestNumber - 1], lang) || fallbackUrl;
                     return (
                       <div key={guest.guestNumber} className="border border-stone-200 rounded-3xl p-5 space-y-3">
                         <div className="flex items-center justify-between">
