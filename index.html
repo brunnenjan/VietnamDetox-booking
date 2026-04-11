@@ -41,6 +41,11 @@
         const docLang = document.documentElement.lang?.toLowerCase() || "";
         if (docLang.startsWith("vi")) return "vn";
         if (docLang.startsWith("de")) return "de";
+        
+        const path = window.location.pathname.toLowerCase();
+        if (path.includes("dang-ky")) return "vn";
+        if (path.includes("/de/")) return "de";
+        
         return "en";
       };
 
@@ -2903,7 +2908,7 @@
                     const isStepConfirmed = step === "confirmed";
                     const isDisabled = (isPostPayment && !depositPaid) || 
                                        (isStepConfirmed && !screeningsComplete) ||
-                                       (!!bookingMeta.bookingId && isPrePayment);
+                                       (!!bookingMeta.bookingId && isPrePayment && (step !== "payment" || depositPaid));
                     return (
                       <button type="button"
                         key={step}
