@@ -131,7 +131,7 @@
               const sku = pkg.sku || null;
               return {
                 ...pkg,
-                id: sku ? `${sku}-${index}` : `pkg-${retreat.id}-${index}`,
+                id: sku || `pkg-${retreat.id}-${index}`,
                 sku,
                 images: Array.isArray(pkg.images) && pkg.images.length > 0 ? pkg.images : [FALLBACK_IMAGE],
                 benefit: buildRoomBenefit(pkg),
@@ -1193,9 +1193,26 @@
                     const data = await response.json();
                     if (data.selection) {
                       const r = RETREATS.find(ret => ret.id === data.selection.retreatId);
+                      const rooms = r ? (ROOMS_BY_RETREAT[r.id] || []) : [];
+                      
+                      // Better room matching logic
+                      let recoveredRoomId = data.selection.roomType;
+                      if (recoveredRoomId) {
+                        const directMatch = rooms.find(rm => rm.id === recoveredRoomId);
+                        if (!directMatch) {
+                          // Fallback: match by SKU if the ID was a legacy "SKU-index" format
+                          const recoveredSku = recoveredRoomId.split(/[-_]/)[0];
+                          const skuMatch = rooms.find(rm => rm.sku === recoveredSku || rm.id === recoveredSku);
+                          if (skuMatch) {
+                            recoveredRoomId = skuMatch.id;
+                          }
+                        }
+                      }
+
                       setSelection(prev => ({ 
                         ...prev, 
                         ...data.selection,
+                        roomType: recoveredRoomId || data.selection.roomType,
                         retreatImage: r?.image || prev.retreatImage,
                         retreatEarlyBirdNote: r?.earlyBirdNote || prev.retreatEarlyBirdNote
                       }));
@@ -1441,12 +1458,13 @@
           const selectedRoomName = selectedRoomForSummary?.name || selectedRoomForSummary?.type || "";
 
           useEffect(() => {
+            if (recoveryLoading) return;
             if (filteredRoomsForCurrentRetreat.length === 0) return;
             const hasSelected = filteredRoomsForCurrentRetreat.some((room) => room.id === selection.roomType);
             if (!hasSelected) {
               setSelection((prev) => ({ ...prev, roomType: filteredRoomsForCurrentRetreat[0].id }));
             }
-          }, [filteredRoomsForCurrentRetreat, selection.roomType]);
+          }, [filteredRoomsForCurrentRetreat, selection.roomType, recoveryLoading]);
 
           const updateGuest = (guestKey, field, value) => {
             setGuestDetails((prev) => ({
@@ -2926,8 +2944,8 @@
                     const isPrePayment = ["config", "details", "review", "health_check", "payment"].includes(step);
                     const isStepConfirmed = step === "confirmed";
                     
-                    const detailsMissing = stepIndex > detailsIndex && !guestDetailsValid();
-                    const healthMissing = stepIndex > healthIndex && !safetyCleared;
+                    const detailsMissing = !bookingMeta.bookingId && stepIndex > detailsIndex && !guestDetailsValid();
+                    const healthMissing = !bookingMeta.bookingId && stepIndex > healthIndex && !safetyCleared;
 
                     const isDisabled = (isPostPayment && !depositPaid) || 
                                        (isStepConfirmed && !screeningsComplete) ||
