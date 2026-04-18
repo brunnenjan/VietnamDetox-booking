@@ -167,6 +167,8 @@
           two_guests: "Two guests",
           save_together: "Save 5% together",
           private_journey: "Fully private journey",
+          guest_one: "Guest One",
+          guest_two: "Guest Two",
           accommodation: "Accommodation",
           health_prep_first: "Health preparation first",
           health_prep_description: "Every guest completes their own health & lifestyle questionnaire during booking and enjoys a personal preparation call with the Vietnam Detox team after payment.",
@@ -340,6 +342,8 @@
           two_guests: "Hai khách",
           save_together: "Tiết kiệm 5% khi đi cùng nhau",
           private_journey: "Hành trình riêng tư",
+          guest_one: "Khách thứ nhất",
+          guest_two: "Khách thứ hai",
           accommodation: "Chỗ ở",
           health_prep_first: "Chuẩn bị sức khỏe trước",
           health_prep_description: "Mỗi khách sẽ hoàn thành bảng hỏi sức khỏe & lối sống trong khi đặt chỗ và có cuộc gọi chuẩn bị cá nhân với Vietnam Detox sau khi thanh toán.",
@@ -513,6 +517,8 @@
           two_guests: "Zwei Gäste",
           save_together: "5% sparen bei zwei Personen",
           private_journey: "Exklusive Reise",
+          guest_one: "Erster Gast",
+          guest_two: "Zweiter Gast",
           accommodation: "Unterkunft",
           health_prep_first: "Gesundheitsvorbereitung",
           health_prep_description: "Jeder Gast füllt einen Fragebogen aus und führt nach der Zahlung ein persönliches Gespräch mit dem Vietnam Detox Team.",
@@ -2176,8 +2182,8 @@
             const transferOption =
               transportOptionsForCurrentRetreat.find((option) => option.id === selection.transfer) || transportOptionsForCurrentRetreat[0];
             const guests = [
-              { label: t("one_guest"), data: guestDetails.guest1 },
-              ...(selection.guests === 2 ? [{ label: t("two_guests"), data: guestDetails.guest2 }] : []),
+              { label: t("guest_one"), data: guestDetails.guest1 },
+              ...(selection.guests === 2 ? [{ label: t("guest_two"), data: guestDetails.guest2 }] : []),
             ];
 
             return (
