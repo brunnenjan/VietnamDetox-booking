@@ -186,7 +186,7 @@
           last_name: "Last name",
           email_address: "Email address",
           phone_number: "Phone number",
-          phone_helper: "Optional. Helpful in case we need to reach you shortly before arrival.",
+          phone_helper: "Helpful in case we need to reach you shortly before arrival.",
           invoice_helper: "We use this information only to issue your booking confirmation and invoice if required.",
           street_house: "Street & house number",
           city: "City",
@@ -194,7 +194,7 @@
           country_residence: "Country of residence",
           need_company_invoice: "I need an invoice issued to a company",
           company_name: "Company name",
-          tax_id: "VAT / Tax ID (optional)",
+          tax_id: "VAT / Tax ID",
           second_guest: "Second guest",
           second_description: "Used to send their questionnaire and schedule their personal preparation call.",
           back: "Back",
@@ -359,7 +359,7 @@
           last_name: "Họ",
           email_address: "Địa chỉ email",
           phone_number: "Số điện thoại",
-          phone_helper: "Tùy chọn. Giúp chúng tôi liên hệ với bạn trước khi đến.",
+          phone_helper: "Giúp chúng tôi liên hệ với bạn trước khi đến.",
           invoice_helper: "Chúng tôi chỉ sử dụng thông tin này để xuất xác nhận đặt chỗ và hóa đơn nếu cần.",
           street_house: "Số nhà & tên đường",
           city: "Thành phố",
@@ -367,7 +367,7 @@
           country_residence: "Quốc gia cư trú",
           need_company_invoice: "Tôi cần xuất hóa đơn cho công ty",
           company_name: "Tên công ty",
-          tax_id: "Mã số thuế (tùy chọn)",
+          tax_id: "Mã số thuế",
           second_guest: "Khách thứ hai",
           second_description: "Dùng để gửi bảng hỏi và sắp xếp cuộc gọi chuẩn bị sức khỏe.",
           back: "Quay lại",
@@ -532,7 +532,7 @@
           last_name: "Nachname",
           email_address: "E-Mail-Adresse",
           phone_number: "Telefonnummer",
-          phone_helper: "Optional. Hilfreich für kurzfristige Erreichbarkeit.",
+          phone_helper: "Hilfreich für kurzfristige Erreichbarkeit.",
           invoice_helper: "Nur für Buchungsbestätigung und Rechnung verwendet.",
           street_house: "Straße & Hausnummer",
           city: "Stadt",
@@ -540,7 +540,7 @@
           country_residence: "Land",
           need_company_invoice: "Ich benötige eine Firmenrechnung",
           company_name: "Firmenname",
-          tax_id: "Steuernummer (optional)",
+          tax_id: "Steuernummer",
           second_guest: "Zweiter Gast",
           second_description: "Für Fragebogen und Vorbereitungsgespräch.",
           back: "Zurück",
@@ -1577,18 +1577,22 @@
               g1.lastName.trim() &&
               g1.email.trim() &&
               emailPattern.test(g1.email.trim()) &&
+              g1.phone.trim() &&
               g1.street.trim() &&
               g1.city.trim() &&
               g1.postalCode.trim() &&
               g1.country.trim();
-            const companyValid = !g1.needsCompanyInvoice || g1.companyName.trim();
+            const companyValid = !g1.needsCompanyInvoice || (g1.companyName.trim() && g1.taxId.trim());
             if (!primaryFieldsFilled || !companyValid) return false;
             if (selection.guests === 1) return true;
+
             const g2 = guestDetails.guest2;
-            const g2Valid = g2.firstName.trim() && g2.lastName.trim();
-            if (g2.email.trim()) {
-              return g2Valid && emailPattern.test(g2.email.trim());
-            }
+            const g2Valid =
+              g2.firstName.trim() &&
+              g2.lastName.trim() &&
+              g2.email.trim() &&
+              emailPattern.test(g2.email.trim()) &&
+              g2.phone.trim();
             return g2Valid;
           };
 
@@ -2914,12 +2918,21 @@
                   className="flex flex-nowrap items-center space-x-2 overflow-x-auto hide-scrollbar px-4 py-3 md:py-4 pr-6"
                 >
                   {STEPS.map((step) => {
+                    const stepIndex = STEPS.indexOf(step);
+                    const detailsIndex = STEPS.indexOf("details");
+                    const healthIndex = STEPS.indexOf("health_check");
+                    
                     const isPostPayment = ["screening", "review_state", "confirmed"].includes(step);
                     const isPrePayment = ["config", "details", "review", "health_check", "payment"].includes(step);
                     const isStepConfirmed = step === "confirmed";
+                    
+                    const detailsMissing = stepIndex > detailsIndex && !guestDetailsValid();
+                    const healthMissing = stepIndex > healthIndex && !safetyCleared;
+
                     const isDisabled = (isPostPayment && !depositPaid) || 
                                        (isStepConfirmed && !screeningsComplete) ||
-                                       (!!bookingMeta.bookingId && isPrePayment && (step !== "payment" || depositPaid));
+                                       (!!bookingMeta.bookingId && isPrePayment && (step !== "payment" || depositPaid)) ||
+                                       detailsMissing || healthMissing;
                     return (
                       <button type="button"
                         key={step}
