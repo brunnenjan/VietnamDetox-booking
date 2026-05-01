@@ -28,6 +28,12 @@
         -ms-overflow-style: none;
         scrollbar-width: none;
       }
+      /* Prevent iOS Safari auto-zoom on input focus */
+      @media screen and (max-width: 768px) {
+        input, select, textarea {
+          font-size: 16px !important;
+        }
+      }
     </style>
   </head>
   <body class="bg-white">
@@ -2930,7 +2936,7 @@
             return (
               <div 
                 id="mobile-step-bar"
-                className={`transition-all duration-300 left-0 right-0 md:left-1/2 md:right-auto md:-translate-x-1/2 bg-white/95 backdrop-blur border-t md:border border-stone-200 shadow-2xl md:rounded-2xl items-center w-full md:w-max max-w-full overflow-hidden flex ${
+                className={`transition-all duration-300 left-0 right-0 md:left-1/2 md:right-auto md:-translate-x-1/2 bg-white/95 backdrop-blur border-t md:border border-stone-200 shadow-2xl md:rounded-2xl items-center w-full md:w-max max-w-full overflow-hidden hidden md:flex ${
                   isAtBottom ? "absolute bottom-0 md:bottom-6 z-10" : "fixed bottom-0 md:bottom-6 z-50"
                 }`}
               >
@@ -2954,9 +2960,9 @@
                     const healthMissing = !bookingMeta.bookingId && stepIndex > healthIndex && !safetyCleared;
 
                     const isDisabled = (isPostPayment && !depositPaid) || 
-                                       (isStepConfirmed && !screeningsComplete) ||
-                                       (!!bookingMeta.bookingId && isPrePayment && (step !== "payment" || depositPaid)) ||
-                                       detailsMissing || healthMissing;
+                                        (isStepConfirmed && !screeningsComplete) ||
+                                        (!!bookingMeta.bookingId && isPrePayment && (step !== "payment" || depositPaid)) ||
+                                        detailsMissing || healthMissing;
                     return (
                       <button type="button"
                         key={step}
