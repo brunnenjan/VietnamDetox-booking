@@ -2545,9 +2545,6 @@
                     </div>
                   ) : (
                     <div className="space-y-4">
-                      <div className="text-sm text-stone-600 leading-relaxed flex flex-col gap-2">
-                        {paymentMethod === "onepay_domestic" ? <VietQRLogo /> : <PaymentLogos />}
-                      </div>
                       <button
                         type="button"
                         onClick={handlePayment}
@@ -2556,6 +2553,9 @@
                       >
                         {paymentSubmitting ? t("processing_payment") : t("pay_securely_msg").replace("{{amount}}", formatVND(paymentDueNow, lang))}
                       </button>
+                      <div className="text-sm text-stone-600 leading-relaxed flex flex-col gap-2">
+                        {paymentMethod === "onepay_domestic" ? <VietQRLogo /> : <PaymentLogos />}
+                      </div>
                     </div>
                   )}
                 </div>
@@ -2971,7 +2971,7 @@
             return (
               <div 
                 id="mobile-step-bar"
-                className={`transition-all duration-300 left-0 right-0 md:left-1/2 md:right-auto md:-translate-x-1/2 bg-white/95 backdrop-blur border-t md:border border-stone-200 shadow-2xl md:rounded-2xl items-center w-full md:w-max max-w-full overflow-hidden hidden md:flex ${
+                className={`transition-all duration-300 left-0 right-0 md:left-1/2 md:right-auto md:-translate-x-1/2 bg-white/95 backdrop-blur border-t md:border border-stone-200 shadow-2xl md:rounded-2xl items-center w-full md:w-max max-w-full overflow-hidden hidden lg:flex ${
                   isAtBottom ? "absolute bottom-0 md:bottom-6 z-10" : "fixed bottom-0 md:bottom-6 z-50"
                 }`}
               >
