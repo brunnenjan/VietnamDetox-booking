@@ -2385,6 +2385,41 @@
               </div>
             </div>
           );
+
+          const PaymentLogos = () => (
+            <div className="flex flex-wrap gap-1.5 mt-1.5">
+              <span className="px-1.5 py-0.5 bg-[#1434CB] text-white text-[9px] font-bold italic rounded-[3px] tracking-wider leading-tight shadow-sm">VISA</span>
+              <div className="px-1.5 py-0.5 bg-gradient-to-r from-[#202020] to-[#1a1a1a] flex items-center gap-1 rounded-[3px] shadow-sm">
+                <div className="flex items-center">
+                  <div className="w-2.5 h-2.5 rounded-full bg-[#EB001B] opacity-90"></div>
+                  <div className="w-2.5 h-2.5 rounded-full bg-[#F79E1B] -ml-1 opacity-90"></div>
+                </div>
+                <span className="text-[8px] text-white font-medium leading-tight">mastercard</span>
+              </div>
+              <span className="px-1.5 py-0.5 bg-white text-[#0039A6] border border-stone-200 text-[9px] font-black rounded-[3px] leading-tight shadow-sm">JCB</span>
+              <span className="px-1.5 py-0.5 bg-[#2E77BC] text-white text-[9px] font-bold rounded-[3px] leading-tight shadow-sm">AMEX</span>
+              <span className="px-1.5 py-0.5 bg-black text-white text-[9px] font-medium rounded-[3px] flex items-center gap-0.5 leading-tight shadow-sm">
+                <span className="text-[10px] leading-none">&#63743;</span> Pay
+              </span>
+              <span className="px-1.5 py-0.5 bg-white text-stone-700 border border-stone-200 text-[9px] font-semibold rounded-[3px] flex items-center gap-0.5 leading-tight shadow-sm">
+                <span className="font-bold text-blue-500">G</span> Pay
+              </span>
+              <span className="px-1.5 py-0.5 bg-[#1428A0] text-white text-[9px] font-bold rounded-[3px] leading-tight shadow-sm">Samsung Pay</span>
+            </div>
+          );
+
+          const VietQRLogo = () => (
+            <div className="flex flex-wrap gap-1.5 mt-1.5">
+              <div className="flex items-center bg-white border border-stone-200 px-2 py-0.5 rounded-[3px] shadow-sm">
+                <span className="text-[11px] font-extrabold italic text-red-600 tracking-tight leading-tight">Viet</span>
+                <span className="text-[11px] font-extrabold italic text-blue-700 tracking-tight leading-tight">QR</span>
+              </div>
+              <div className="flex items-center bg-white border border-stone-200 px-2 py-0.5 rounded-[3px] shadow-sm">
+                <span className="text-[10px] font-bold text-green-700 tracking-tight leading-tight">NAPAS</span>
+              </div>
+            </div>
+          );
+
           const renderPaymentStep = () => {
             const params = new URLSearchParams(window.location.search);
             const isFailed = params.get("payment") === "failed";
@@ -2457,9 +2492,9 @@
                         paymentMethod === "onepay_domestic" ? "border-emerald-600 bg-emerald-50 ring-4 ring-emerald-600/10 shadow-lg" : "border-stone-100"
                       }`}
                     >
-                      <div className="text-left">
-                        <p className="font-semibold">{t("onepay_domestic")}</p>
-                        <p className="text-[10px] text-stone-500 max-w-[180px]">{t("onepay_domestic_desc")}</p>
+                      <div className="text-left flex flex-col justify-center">
+                        <p className="font-semibold leading-none">{t("onepay_domestic")}</p>
+                        <VietQRLogo />
                       </div>
                       <Icons.Building />
                     </button>
@@ -2470,9 +2505,9 @@
                         paymentMethod === "onepay_intl" ? "border-emerald-600 bg-emerald-50 ring-4 ring-emerald-600/10 shadow-lg" : "border-stone-100"
                       }`}
                     >
-                      <div className="text-left">
-                        <p className="font-semibold">{t("onepay_international")}</p>
-                        <p className="text-[10px] text-stone-500 max-w-[180px]">{t("onepay_intl_desc")}</p>
+                      <div className="text-left flex flex-col justify-center">
+                        <p className="font-semibold leading-none">{t("onepay_international")}</p>
+                        <PaymentLogos />
                       </div>
                       <Icons.CreditCard />
                     </button>
@@ -2510,9 +2545,9 @@
                     </div>
                   ) : (
                     <div className="space-y-4">
-                      <p className="text-sm text-stone-600 leading-relaxed">
-                        {paymentMethod === "onepay_domestic" ? t("onepay_domestic_desc") : t("onepay_intl_desc")}
-                      </p>
+                      <div className="text-sm text-stone-600 leading-relaxed flex flex-col gap-2">
+                        {paymentMethod === "onepay_domestic" ? <VietQRLogo /> : <PaymentLogos />}
+                      </div>
                       <button
                         type="button"
                         onClick={handlePayment}
