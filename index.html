@@ -69,7 +69,8 @@
 
     <script type="text/babel" data-presets="react">
       /** @jsxRuntime classic */
-      const FALLBACK_IMAGE = "https://vietnamdetox.com/wp-content/uploads/2024/11/retreat-placeholder.webp";
+      const SITE_URL = window.location.origin;
+      const FALLBACK_IMAGE = `${SITE_URL}/wp-content/uploads/2024/11/retreat-placeholder.webp`;
       let bookingRoot = null;
 
       const getInitialLang = () => {
@@ -766,9 +767,9 @@
 
         const BOOKING_REFERENCE = "VDX-DEMO-001";
         const HEALTHCHECK_URLS = {
-          vn: "https://vietnamdetox.com/healthcheck-2/",
-          en: "https://vietnamdetox.com/en/healthcheck/",
-          de: "https://vietnamdetox.com/de/healthcheck/",
+          vn: `${SITE_URL}/healthcheck-2/`,
+          en: `${SITE_URL}/en/healthcheck/`,
+          de: `${SITE_URL}/de/healthcheck/`,
         };
 
         const Icons = {
@@ -2902,7 +2903,7 @@
               <PriceSummary context="confirmed" pricing={pricing} lang={lang} roomName={selectedRoomName} guestsCount={selection.guests} retreatName={selection.retreatName} retreatDate={selection.date} />
               <button
                 type="button"
-                onClick={() => (window.location.href = "https://vietnamdetox.com")}
+                onClick={() => (window.location.href = SITE_URL)}
                 className="inline-flex items-center bg-stone-900 text-white px-8 py-4 rounded-full font-bold hover:bg-stone-800 transition"
               >
                 {t("return_home")}
