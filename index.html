@@ -10,19 +10,67 @@
         theme: {
           extend: {
             colors: {
+              brand: {
+                ivory: '#fefaf2',
+                panna: '#f5e8d0',
+                ember: '#e06420',
+                gold: '#f5a030',
+                forest: '#1e3d20',
+                ink: '#1c1c18',
+                muted: '#8a8070',
+              },
               emerald: {
-                50: '#f4f7f3',
-                100: '#e5eee3',
-                200: '#cbe0c7',
-                300: '#a6c9a0',
-                400: '#8db481',
-                500: '#7ba770',
-                600: '#7ba770',
-                700: '#7ba770',
-                800: '#7ba770',
-                900: '#649458',
-                950: '#4d7543',
-              }
+                50: '#fff6ed',
+                100: '#fce5d3',
+                200: '#f6c8a5',
+                300: '#efa06c',
+                400: '#e97b3f',
+                500: '#e06420',
+                600: '#e06420',
+                700: '#d45318',
+                800: '#e06420',
+                900: '#c43010',
+                950: '#8c2a0c',
+              },
+              stone: {
+                50: '#fdf9f1',
+                100: '#f5e8d0',
+                200: '#e5d5ba',
+                300: '#cbbba3',
+                400: '#a89d89',
+                500: '#8a8070',
+                600: '#655f54',
+                700: '#2c2820',
+                800: '#1e3d20',
+                900: '#1c1c18',
+                950: '#12120f',
+              },
+              amber: {
+                50: '#fff8e8',
+                100: '#fceed0',
+                200: '#fbd99b',
+                300: '#f8bd60',
+                400: '#f5a030',
+                500: '#f5a030',
+                600: '#d78b25',
+                700: '#a9671c',
+                800: '#7f4c19',
+                900: '#663e18',
+                950: '#3b200a',
+              },
+              rose: {
+                50: '#fff3ed',
+                100: '#fbded0',
+                200: '#f4bca4',
+                300: '#ea8f6d',
+                400: '#e06420',
+                500: '#d45318',
+                600: '#c43010',
+                700: '#a42b0d',
+                800: '#85250f',
+                900: '#6d2210',
+                950: '#3b0e06',
+              },
             }
           }
         }
@@ -36,6 +84,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600;700&display=swap" rel="stylesheet" />
     <style>
       body {
+        background: #fefaf2;
         font-family:
           "Roboto",
           system-ui,
@@ -57,14 +106,62 @@
           font-size: 16px !important;
         }
       }
-      /* Prevent blue browser outlines, use brand green instead */
+      /* Prevent blue browser outlines, use the brand ember accent instead */
       *:focus-visible {
-        outline: 2px solid #7ba770 !important;
+        outline: 2px solid #e06420 !important;
         outline-offset: 2px;
+      }
+      /* Keep selected/action colors from being replaced by Hello Elementor's button:focus rule. */
+      #booking-app-wrapper button.bg-emerald-50:hover,
+      #booking-app-wrapper button.bg-emerald-50:focus,
+      #booking-app-wrapper button.bg-emerald-50:active {
+        color: #1c1c18 !important;
+        background-color: #fff6ed !important;
+        border-color: #e06420 !important;
+      }
+      #booking-app-wrapper button.bg-emerald-800:focus,
+      #booking-app-wrapper button.bg-emerald-800:active {
+        color: #fff !important;
+        background-color: #e06420 !important;
+        border-color: #e06420 !important;
+      }
+      #booking-app-wrapper button.bg-emerald-800:hover {
+        color: #fff !important;
+        background-color: #c43010 !important;
+        border-color: #c43010 !important;
+      }
+      #booking-app-wrapper .vdx-date-arrow,
+      #booking-app-wrapper .vdx-date-arrow:active {
+        width: 28px !important;
+        min-width: 28px !important;
+        height: 28px !important;
+        padding: 0 !important;
+        color: #1e3d20 !important;
+        background-color: #fefaf2 !important;
+        border-color: #e5d5ba !important;
+      }
+      #booking-app-wrapper .vdx-date-arrow svg {
+        display: block !important;
+        width: 16px !important;
+        height: 16px !important;
+        flex: 0 0 16px !important;
+        fill: none !important;
+        stroke: #1e3d20 !important;
+        stroke-width: 2.5 !important;
+      }
+      #booking-app-wrapper .vdx-date-arrow:hover,
+      #booking-app-wrapper .vdx-date-arrow:focus-visible {
+        color: #fff !important;
+        background-color: #e06420 !important;
+        border-color: #e06420 !important;
+      }
+      #booking-app-wrapper .vdx-date-arrow:hover svg,
+      #booking-app-wrapper .vdx-date-arrow:focus-visible svg {
+        stroke: #fff !important;
       }
     </style>
   </head>
-  <body class="bg-white">
+  <body class="bg-brand-ivory">
     <div id="root"></div>
 
     <script type="text/babel" data-presets="react">
@@ -99,10 +196,10 @@
         const heading = document.createElement("h2");
         heading.textContent = "We hit a snag";
         heading.style.marginBottom = "12px";
-        heading.style.color = "#0f172a";
+        heading.style.color = "#1c1c18";
         const body = document.createElement("p");
         body.textContent = message || "Please try again in a moment.";
-        body.style.color = "#475569";
+        body.style.color = "#8a8070";
         body.style.marginBottom = retry ? "20px" : "0";
         wrapper.appendChild(heading);
         wrapper.appendChild(body);
@@ -110,7 +207,7 @@
           const button = document.createElement("button");
           button.type = "button";
           button.textContent = "Try again";
-          button.style.background = "#065f46";
+          button.style.background = "#e06420";
           button.style.color = "#fff";
           button.style.border = "none";
           button.style.padding = "12px 24px";
@@ -209,6 +306,7 @@
           health_prep_first: "Health preparation first",
           health_prep_description: "Every guest completes their own health & lifestyle questionnaire during booking and enjoys a personal preparation call with the Vietnam Detox team after payment.",
           no_accommodation: "Accommodation options will appear here for this retreat.",
+          no_upcoming_dates: "No upcoming retreat dates are currently available.",
           per_guest: "Per guest",
           selected: "Selected",
           tap_to_select: "Tap to select",
@@ -384,6 +482,7 @@
           health_prep_first: "Chuẩn bị sức khỏe trước",
           health_prep_description: "Mỗi khách sẽ hoàn thành bảng hỏi sức khỏe & lối sống trong khi đặt chỗ và có cuộc gọi chuẩn bị cá nhân với Vietnam Detox sau khi thanh toán.",
           no_accommodation: "Các lựa chọn chỗ ở sẽ xuất hiện ở đây cho khóa này.",
+          no_upcoming_dates: "Hiện chưa có ngày retreat sắp tới.",
           per_guest: "Mỗi khách",
           selected: "Đã chọn",
           tap_to_select: "Nhấn để chọn",
@@ -559,6 +658,7 @@
           health_prep_first: "Gesundheitsvorbereitung",
           health_prep_description: "Jeder Gast füllt einen Fragebogen aus und führt nach der Zahlung ein persönliches Gespräch mit dem Vietnam Detox Team.",
           no_accommodation: "Unterkunftsoptionen werden hier angezeigt.",
+          no_upcoming_dates: "Derzeit sind keine zukünftigen Retreat-Termine verfügbar.",
           per_guest: "Pro Gast",
           selected: "Ausgewählt",
           tap_to_select: "Auswählen",
@@ -1123,9 +1223,30 @@
           return `${baseUrl}?${params.toString()}`;
         };
 
+        const parseRetreatStartDate = (value) => {
+          if (!value) return null;
+          const dateOnlyMatch = String(value).match(/^(\d{4})-(\d{2})-(\d{2})/);
+          const parsed = dateOnlyMatch
+            ? new Date(Number(dateOnlyMatch[1]), Number(dateOnlyMatch[2]) - 1, Number(dateOnlyMatch[3]))
+            : new Date(value);
+          if (Number.isNaN(parsed.getTime())) return null;
+          parsed.setHours(0, 0, 0, 0);
+          return parsed;
+        };
+
+        const isRetreatDateAvailable = (date) => {
+          const startDate = parseRetreatStartDate(date?.start);
+          if (!startDate) return false;
+          const today = new Date();
+          today.setHours(0, 0, 0, 0);
+          return startDate >= today;
+        };
+
         const App = () => {
-          const DEFAULT_RETREAT = RETREATS[0] || { id: 0, dates: [{}], image: FALLBACK_IMAGE };
-          const DEFAULT_DATE = DEFAULT_RETREAT.dates?.[0] || { label: "" };
+          const DEFAULT_RETREAT = RETREATS.find((retreat) =>
+            (Array.isArray(retreat.dates) ? retreat.dates : []).some(isRetreatDateAvailable)
+          ) || { id: 0, dates: [], image: FALLBACK_IMAGE };
+          const DEFAULT_DATE = DEFAULT_RETREAT.dates?.find(isRetreatDateAvailable) || { label: "" };
           const DEFAULT_ROOMS = getRoomsForRetreat(DEFAULT_RETREAT.id);
           const DEFAULT_ROOM_ID = DEFAULT_ROOMS[0]?.id || null;
           const DEFAULT_TRANSPORT = getTransportOptionsForRetreat(DEFAULT_RETREAT.id)?.[0]?.id ?? null;
@@ -1338,8 +1459,14 @@
               }
               
               if (RETREATS.length > 0) {
-                const newDefaultRetreat = RETREATS[0];
-                const newDefaultDate = newDefaultRetreat.dates[0];
+                const newDefaultRetreat = RETREATS.find((retreat) =>
+                  (Array.isArray(retreat.dates) ? retreat.dates : []).some(isRetreatDateAvailable)
+                );
+                if (!newDefaultRetreat) {
+                  setRoute({ step: "config", lang: newLang });
+                  return;
+                }
+                const newDefaultDate = newDefaultRetreat.dates.find(isRetreatDateAvailable);
                 const newRoomsForRetreat = getRoomsForRetreat(newDefaultRetreat.id);
                 const newDefaultRoomId = newRoomsForRetreat[0]?.id || null;
                 const newTransport = getTransportOptionsForRetreat(newDefaultRetreat.id)[0]?.id ?? null;
@@ -1436,18 +1563,60 @@
 
             const now = new Date();
             now.setHours(0, 0, 0, 0);
-            return rawDates.map((date) => {
-              const startDate = new Date(date.start);
-              startDate.setHours(0, 0, 0, 0);
-              const earlyBirdDeadline = date.earlyBirdDeadline ? new Date(date.earlyBirdDeadline) : null;
-              const isEarlyBirdActive = earlyBirdDeadline ? now <= earlyBirdDeadline : false;
-              return {
-                ...date,
-                startDate,
-                isEarlyBirdActive,
-              };
-            });
+            return rawDates
+              .map((date) => {
+                const startDate = parseRetreatStartDate(date.start);
+                const earlyBirdDeadline = date.earlyBirdDeadline ? parseRetreatStartDate(date.earlyBirdDeadline) : null;
+                const isEarlyBirdActive = earlyBirdDeadline ? now <= earlyBirdDeadline : false;
+                return {
+                  ...date,
+                  startDate,
+                  isEarlyBirdActive,
+                };
+              })
+              .filter((date) => date.startDate && date.startDate >= now)
+              .sort((a, b) => a.startDate - b.startDate);
           }, [route.lang]);
+
+          const hasValidDateSelection = dateOptions.some(
+            (date) => date.retreatId === selection.retreatId && date.label === selection.date,
+          );
+
+          useEffect(() => {
+            if (recoveryLoading || bookingMeta.bookingId || hasValidDateSelection) return;
+            const fallbackDate =
+              dateOptions.find((date) => date.retreatId === selection.retreatId) || dateOptions[0];
+            if (!fallbackDate) {
+              setSelection((prev) => ({
+                ...prev,
+                retreatId: 0,
+                retreatName: "",
+                retreatLocation: "",
+                retreatEarlyBirdNote: "",
+                retreatImage: FALLBACK_IMAGE,
+                date: "",
+                roomType: null,
+                transfer: null,
+              }));
+              return;
+            }
+            const fallbackRetreat = RETREATS.find((retreat) => retreat.id === fallbackDate.retreatId);
+            const roomsForFallback = getRoomsForRetreat(fallbackDate.retreatId);
+            setSelection((prev) => ({
+              ...prev,
+              retreatId: fallbackDate.retreatId,
+              retreatName: fallbackDate.retreatName,
+              retreatLocation: fallbackDate.location,
+              retreatEarlyBirdNote: fallbackDate.earlyBirdNote,
+              retreatImage: fallbackDate.image || fallbackRetreat?.image || FALLBACK_IMAGE,
+              date: fallbackDate.label,
+              roomType: prev.retreatId === fallbackDate.retreatId ? prev.roomType : roomsForFallback[0]?.id || null,
+              transfer:
+                prev.retreatId === fallbackDate.retreatId
+                  ? prev.transfer
+                  : (getTransportOptionsForRetreat(fallbackDate.retreatId)[0]?.id ?? null),
+            }));
+          }, [dateOptions, hasValidDateSelection, recoveryLoading, bookingMeta.bookingId, selection.retreatId]);
 
           const roomsForCurrentRetreat = useMemo(() => getRoomsForRetreat(selection.retreatId), [selection.retreatId, route.lang]);
           const filteredRoomsForCurrentRetreat = useMemo(() => {
@@ -1473,7 +1642,9 @@
             const transportOption =
               transportOptionsForCurrentRetreat.find((option) => option.id === selection.transfer) || transportOptionsForCurrentRetreat[0];
             const subtotal = roomPrice;
-            const selectedDate = dateOptions.find((d) => d.label === selection.date);
+            const selectedDate = dateOptions.find(
+              (date) => date.retreatId === selection.retreatId && date.label === selection.date,
+            );
             const earlyBird = selectedDate?.isEarlyBirdActive ? Math.round(subtotal * 0.1) : 0;
             const friendBase = subtotal - earlyBird;
             const friend = selection.guests === 2 ? Math.round(friendBase * 0.05) : 0;
@@ -1657,7 +1828,9 @@
           };
 
           const buildBookingPayload = () => {
-            const selectedDate = dateOptions.find((date) => date.label === selection.date);
+            const selectedDate = dateOptions.find(
+              (date) => date.retreatId === selection.retreatId && date.label === selection.date,
+            );
             const selectedRoom = roomsForCurrentRetreat.find((room) => room.id === selection.roomType) || roomsForCurrentRetreat[0] || null;
             const selectedTransport =
               transportOptionsForCurrentRetreat.find((option) => option.id === selection.transfer) || transportOptionsForCurrentRetreat[0] || null;
@@ -1837,9 +2010,11 @@
                     return (
                       <div key={retreat.id} className={`space-y-3 border rounded-3xl p-4 md:p-6 transition-all duration-300 ${isActiveRetreat ? "border-2 border-emerald-600 bg-emerald-50 shadow-md" : "border-stone-100 bg-white shadow-sm"}`}>
                         <div
-                          className="flex flex-col md:flex-row md:items-center gap-4 cursor-pointer"
+                          className={`flex flex-col md:flex-row md:items-center gap-4 ${preferredDate ? "cursor-pointer" : "cursor-default"}`}
                           role="button"
-                          tabIndex={0}
+                          aria-pressed={isActiveRetreat}
+                          aria-disabled={!preferredDate}
+                          tabIndex={preferredDate ? 0 : -1}
                           onClick={() => preferredDate && handleRetreatSelection(preferredDate)}
                           onKeyDown={(event) => {
                             if (event.key === "Enter" || event.key === " ") {
@@ -1895,7 +2070,8 @@
                             {retreatDates.length > 2 && (
                               <button
                                 type="button"
-                                className="hidden md:inline-flex h-7 w-7 items-center justify-center rounded-full border border-stone-200 text-stone-500 hover:border-emerald-200"
+                                aria-label="Show earlier retreat dates"
+                                className="vdx-date-arrow hidden md:inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full border"
                                 onClick={(event) => {
                                   event.stopPropagation();
                                   const container = event.currentTarget.nextSibling;
@@ -1906,6 +2082,9 @@
                               </button>
                             )}
                             <div className="flex gap-2 overflow-x-auto hide-scrollbar py-2 px-2 flex-1" onWheel={(event) => event.stopPropagation()}>
+                              {retreatDates.length === 0 && (
+                                <p className="py-2 text-sm text-stone-500">{t("no_upcoming_dates")}</p>
+                              )}
                               {retreatDates.map((dateOption) => {
                                 const activeDate = selection.date === dateOption.label;
                                 const showEarlyBird = dateOption.isEarlyBirdActive;
@@ -1915,6 +2094,7 @@
                                     key={dateOption.label}
                                     type="button"
                                     aria-label={`Select ${dateOption.label}`}
+                                    aria-pressed={activeDate}
                                     onClick={(event) => {
                                       event.stopPropagation();
                                       handleRetreatSelection(dateOption);
@@ -1945,7 +2125,8 @@
                             {retreatDates.length > 2 && (
                               <button
                                 type="button"
-                                className="hidden md:inline-flex h-7 w-7 items-center justify-center rounded-full border border-stone-200 text-stone-500 hover:border-emerald-200"
+                                aria-label="Show later retreat dates"
+                                className="vdx-date-arrow hidden md:inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full border"
                                 onClick={(event) => {
                                   event.stopPropagation();
                                   const container = event.currentTarget.previousSibling;
@@ -1972,6 +2153,7 @@
                       <button
                         key={count}
                         type="button"
+                        aria-pressed={active}
                         onClick={() => updateSelection({ guests: count })}
                         className={`flex-1 border-2 rounded-2xl p-4 flex items-center justify-between transition-all duration-200 ${
                           active ? "border-2 border-emerald-600 bg-emerald-50 ring-4 ring-emerald-600/10 shadow-lg" : "border-stone-100 hover:border-stone-200"
@@ -2007,6 +2189,7 @@
                       <div
                         key={room.id}
                         role="button"
+                        aria-pressed={active}
                         tabIndex={0}
                         onClick={() => updateSelection({ roomType: room.id })}
                         onKeyDown={(event) => {
@@ -2074,8 +2257,13 @@
               <div className="flex justify-end">
                 <button
                   type="button"
+                  disabled={!hasValidDateSelection}
                   onClick={() => goToStep("details")}
-                  className="inline-flex items-center bg-emerald-800 text-white px-6 py-3 rounded-full font-semibold hover:bg-emerald-900 transition"
+                  className={`inline-flex items-center px-6 py-3 rounded-full font-semibold transition ${
+                    hasValidDateSelection
+                      ? "bg-emerald-800 text-white hover:bg-emerald-900"
+                      : "bg-stone-200 text-stone-500 cursor-not-allowed"
+                  }`}
                 >
                   {t("continue")} <Icons.ChevronRight />
                 </button>
@@ -2213,7 +2401,9 @@
 
 
           const renderReviewStep = () => {
-            const dateInfo = dateOptions.find((d) => d.label === selection.date);
+            const dateInfo = dateOptions.find(
+              (date) => date.retreatId === selection.retreatId && date.label === selection.date,
+            );
             const room = roomsForCurrentRetreat.find((r) => r.id === selection.roomType) || roomsForCurrentRetreat[0];
             const transferOption =
               transportOptionsForCurrentRetreat.find((option) => option.id === selection.transfer) || transportOptionsForCurrentRetreat[0];
@@ -2517,6 +2707,7 @@
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <button
                       type="button"
+                      aria-pressed={paymentMethod === "onepay_domestic"}
                       onClick={() => setPaymentMethod("onepay_domestic")}
                       className={`p-4 border-2 rounded-2xl flex items-center justify-between transition-all ${
                         paymentMethod === "onepay_domestic" ? "border-emerald-600 bg-emerald-50 ring-4 ring-emerald-600/10 shadow-lg" : "border-stone-100"
@@ -2530,6 +2721,7 @@
                     </button>
                     <button
                       type="button"
+                      aria-pressed={paymentMethod === "onepay_intl"}
                       onClick={() => setPaymentMethod("onepay_intl")}
                       className={`p-4 border-2 rounded-2xl flex items-center justify-between transition-all ${
                         paymentMethod === "onepay_intl" ? "border-emerald-600 bg-emerald-50 ring-4 ring-emerald-600/10 shadow-lg" : "border-stone-100"
@@ -2911,18 +3103,6 @@
             </div>
           );
 
-          const HeaderBar = () => (
-            <nav className="border-b border-stone-100 px-6 py-6 sticky top-0 bg-white/80 backdrop-blur-md z-40">
-              <div className="max-w-6xl mx-auto flex justify-between items-center">
-                <div className="flex items-center">
-                  <img src="./vietnam-detox-logo.svg" alt="Vietnam Detox" className="h-8 w-auto" onError={handleImageError} />
-                </div>
-                  <div className="flex items-center space-x-6">
-                  </div>
-              </div>
-            </nav>
-          );
-
 
           const DemoController = () => {
             const scrollContainerRef = useRef(null);
@@ -3077,8 +3257,7 @@
           }
 
           return (
-            <div id="booking-app-wrapper" className="min-h-screen bg-white font-sans text-stone-900 selection:bg-emerald-100 pb-32 relative">
-              <HeaderBar />
+            <div id="booking-app-wrapper" className="min-h-screen bg-brand-ivory font-sans text-stone-900 selection:bg-emerald-100 pb-32 relative">
 
               {(isTransitioning) && (
                 <div className="fixed inset-0 z-[100] flex items-center justify-center bg-white/60 backdrop-blur-[2px] transition-all duration-300">
@@ -3228,7 +3407,7 @@
               const lang = parseRouteFromLocation().lang || getInitialLang();
               const t = (key) => TRANSLATIONS[lang]?.[key] || TRANSLATIONS.en[key] || key;
               return (
-                <div className="min-h-screen bg-white font-sans text-stone-900 selection:bg-emerald-100 flex items-center justify-center px-6">
+                <div className="min-h-screen bg-brand-ivory font-sans text-stone-900 selection:bg-emerald-100 flex items-center justify-center px-6">
                   <div className="max-w-md text-center space-y-4">
                     <p className="text-[12px] uppercase tracking-[0.4em] text-stone-400">{t("booking_progress")}</p>
                     <h1 className="text-3xl font-bold text-stone-900">{t("something_went_wrong")}</h1>
