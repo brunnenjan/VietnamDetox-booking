@@ -71,7 +71,11 @@
                 900: '#6d2210',
                 950: '#3b0e06',
               },
-            }
+            },
+            fontFamily: {
+              sans: ['"Be Vietnam Pro"', 'system-ui', 'sans-serif'],
+              display: ['"Cormorant Garamond"', 'Georgia', 'serif'],
+            },
           }
         }
       }
@@ -81,17 +85,30 @@
     <script src="https://unpkg.com/@babel/standalone@7.26.2/babel.min.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&display=swap" rel="stylesheet" />
     <style>
+      :root {
+        --vdx-ivory: #fefaf2;
+        --vdx-panna: #f5e8d0;
+        --vdx-warm: #edd5a8;
+        --vdx-white: #fffdf8;
+        --vdx-ember: #e06420;
+        --vdx-flame: #c43010;
+        --vdx-gold: #f5a030;
+        --vdx-forest: #1e3d20;
+        --vdx-ink: #1c1c18;
+        --vdx-body: #2c2820;
+        --vdx-muted: #8a8070;
+        --vdx-border: rgba(30, 61, 32, 0.13);
+        --vdx-display: "Cormorant Garamond", Georgia, serif;
+        --vdx-sans: "Be Vietnam Pro", system-ui, sans-serif;
+      }
+
       body {
-        background: #fefaf2;
-        font-family:
-          "Roboto",
-          system-ui,
-          -apple-system,
-          "Segoe UI",
-          Arial,
-          sans-serif;
+        margin: 0;
+        background: var(--vdx-ivory);
+        color: var(--vdx-body);
+        font-family: var(--vdx-sans);
       }
       .hide-scrollbar::-webkit-scrollbar {
         display: none;
@@ -102,14 +119,319 @@
       }
       /* Prevent iOS Safari auto-zoom on input focus */
       @media screen and (max-width: 768px) {
-        input, select, textarea {
+        #booking-app-wrapper input,
+        #booking-app-wrapper select,
+        #booking-app-wrapper textarea {
           font-size: 16px !important;
         }
       }
       /* Prevent blue browser outlines, use the brand ember accent instead */
-      *:focus-visible {
+      #booking-app-wrapper *:focus-visible {
         outline: 2px solid #e06420 !important;
         outline-offset: 2px;
+      }
+
+      /* ---------------------------------------------------------------
+         VIETNAM DETOX 2026 DESIGN SYSTEM
+         Shared visual foundation for every step of the booking flow.
+         --------------------------------------------------------------- */
+
+      #root,
+      #booking-app-wrapper,
+      #booking-app-wrapper *,
+      #booking-app-wrapper *::before,
+      #booking-app-wrapper *::after {
+        box-sizing: border-box;
+      }
+
+      #booking-app-wrapper {
+        min-height: 100vh;
+        overflow-x: clip;
+        background:
+          radial-gradient(circle at 8% 4%, rgba(245, 160, 48, 0.09), transparent 28rem),
+          radial-gradient(circle at 94% 28%, rgba(30, 61, 32, 0.055), transparent 34rem),
+          var(--vdx-ivory) !important;
+        color: var(--vdx-body) !important;
+        font-family: var(--vdx-sans) !important;
+        font-weight: 400;
+        line-height: 1.7;
+      }
+
+      #booking-app-wrapper button,
+      #booking-app-wrapper input,
+      #booking-app-wrapper select,
+      #booking-app-wrapper textarea {
+        font-family: var(--vdx-sans) !important;
+      }
+
+      #booking-app-wrapper > div > main {
+        padding-top: clamp(48px, 6vw, 76px) !important;
+        padding-bottom: clamp(88px, 9vw, 124px) !important;
+      }
+
+      /* Editorial step introductions used throughout Home and Yên Retreat. */
+      #booking-app-wrapper header {
+        position: relative;
+        max-width: 760px;
+        padding-left: 22px;
+      }
+
+      #booking-app-wrapper header::before {
+        position: absolute;
+        top: 4px;
+        bottom: 4px;
+        left: 0;
+        width: 2px;
+        background: linear-gradient(180deg, var(--vdx-ember), rgba(224, 100, 32, 0.12));
+        content: "";
+      }
+
+      #booking-app-wrapper header > p:first-child,
+      #booking-app-wrapper section > p:first-child[class*="uppercase"],
+      #booking-app-wrapper section > div:first-child > p:first-child[class*="uppercase"] {
+        color: var(--vdx-ember) !important;
+        font-family: var(--vdx-sans) !important;
+        font-size: 10px !important;
+        font-weight: 600 !important;
+        letter-spacing: 0.2em !important;
+        line-height: 1.5;
+      }
+
+      #booking-app-wrapper h1 {
+        margin: 0;
+        color: var(--vdx-forest) !important;
+        font-family: var(--vdx-display) !important;
+        font-size: clamp(44px, 5vw, 62px) !important;
+        font-weight: 300 !important;
+        letter-spacing: -0.025em;
+        line-height: 1.02;
+        text-wrap: balance;
+      }
+
+      #booking-app-wrapper h2,
+      #booking-app-wrapper h3 {
+        color: var(--vdx-forest) !important;
+        font-family: var(--vdx-display) !important;
+        font-weight: 400 !important;
+        letter-spacing: -0.012em;
+        line-height: 1.12;
+      }
+
+      #booking-app-wrapper h2 {
+        font-size: clamp(26px, 3vw, 34px) !important;
+      }
+
+      #booking-app-wrapper header h1 + p {
+        max-width: 66ch;
+        color: var(--vdx-muted) !important;
+        font-size: 15px;
+        font-weight: 300;
+        line-height: 1.8;
+      }
+
+      /* Softer cards and restrained radii from the current site. */
+      #booking-app-wrapper .rounded-3xl {
+        border-radius: 20px !important;
+      }
+
+      #booking-app-wrapper .rounded-2xl {
+        border-radius: 14px !important;
+      }
+
+      #booking-app-wrapper .bg-white {
+        background-color: rgba(255, 253, 248, 0.96) !important;
+      }
+
+      #booking-app-wrapper .bg-stone-50 {
+        background-color: rgba(245, 232, 208, 0.28) !important;
+      }
+
+      #booking-app-wrapper .border-stone-100,
+      #booking-app-wrapper .border-stone-200 {
+        border-color: var(--vdx-border) !important;
+      }
+
+      #booking-app-wrapper .shadow-sm {
+        box-shadow: 0 10px 28px rgba(30, 61, 32, 0.065) !important;
+      }
+
+      #booking-app-wrapper .shadow-md,
+      #booking-app-wrapper .shadow-lg {
+        box-shadow: 0 18px 42px rgba(30, 61, 32, 0.1) !important;
+      }
+
+      #booking-app-wrapper .shadow-xl,
+      #booking-app-wrapper .shadow-2xl {
+        box-shadow: 0 24px 60px rgba(28, 28, 24, 0.14) !important;
+      }
+
+      #booking-app-wrapper .bg-emerald-50 {
+        background-color: rgba(224, 100, 32, 0.065) !important;
+      }
+
+      #booking-app-wrapper .border-emerald-100,
+      #booking-app-wrapper .border-emerald-200 {
+        border-color: rgba(224, 100, 32, 0.2) !important;
+      }
+
+      /* Fields use the same quiet white surface and ember focus treatment. */
+      #booking-app-wrapper input:not([type="checkbox"]):not([type="radio"]),
+      #booking-app-wrapper select,
+      #booking-app-wrapper textarea {
+        min-height: 52px;
+        border: 1px solid rgba(30, 61, 32, 0.18) !important;
+        border-radius: 8px !important;
+        background: var(--vdx-white) !important;
+        color: var(--vdx-ink) !important;
+        box-shadow: none !important;
+        transition: border-color 180ms ease, box-shadow 180ms ease;
+      }
+
+      #booking-app-wrapper textarea {
+        min-height: 126px;
+        resize: vertical;
+      }
+
+      #booking-app-wrapper input::placeholder,
+      #booking-app-wrapper textarea::placeholder {
+        color: rgba(44, 40, 32, 0.42) !important;
+        opacity: 1;
+      }
+
+      #booking-app-wrapper input:not([type="checkbox"]):not([type="radio"]):focus,
+      #booking-app-wrapper select:focus,
+      #booking-app-wrapper textarea:focus {
+        border-color: var(--vdx-ember) !important;
+        outline: none !important;
+        box-shadow: 0 0 0 3px rgba(224, 100, 32, 0.13) !important;
+      }
+
+      #booking-app-wrapper input[type="checkbox"],
+      #booking-app-wrapper input[type="radio"] {
+        accent-color: var(--vdx-ember);
+      }
+
+      /* Primary navigation actions: compact, uppercase and ember—not pills. */
+      #booking-app-wrapper button.bg-emerald-800.px-6,
+      #booking-app-wrapper button.bg-emerald-800.px-8,
+      #booking-app-wrapper button.bg-emerald-800.w-full,
+      #booking-app-wrapper a.bg-emerald-800,
+      #booking-app-wrapper button.bg-stone-900.px-8,
+      #booking-app-wrapper button.bg-stone-200.px-6 {
+        min-height: 48px;
+        border: 1px solid transparent !important;
+        border-radius: 8px !important;
+        font-size: 11px !important;
+        font-weight: 600 !important;
+        letter-spacing: 0.14em;
+        line-height: 1.3;
+        text-transform: uppercase;
+        box-shadow: none !important;
+        transition: background 180ms ease, border-color 180ms ease, color 180ms ease, transform 180ms ease;
+      }
+
+      #booking-app-wrapper button.bg-emerald-800.px-6,
+      #booking-app-wrapper button.bg-emerald-800.px-8,
+      #booking-app-wrapper button.bg-emerald-800.w-full,
+      #booking-app-wrapper a.bg-emerald-800 {
+        border-color: var(--vdx-ember) !important;
+        background: var(--vdx-ember) !important;
+        color: var(--vdx-ivory) !important;
+      }
+
+      #booking-app-wrapper button.bg-emerald-800.px-6:hover,
+      #booking-app-wrapper button.bg-emerald-800.px-8:hover,
+      #booking-app-wrapper button.bg-emerald-800.w-full:hover,
+      #booking-app-wrapper a.bg-emerald-800:hover {
+        border-color: var(--vdx-flame) !important;
+        background: var(--vdx-flame) !important;
+        color: var(--vdx-ivory) !important;
+        transform: translateY(-1px);
+      }
+
+      #booking-app-wrapper button.bg-stone-900.px-8 {
+        border-color: var(--vdx-forest) !important;
+        background: var(--vdx-forest) !important;
+        color: var(--vdx-ivory) !important;
+      }
+
+      #booking-app-wrapper button.bg-stone-900.px-8:hover {
+        background: #29552b !important;
+      }
+
+      #booking-app-wrapper button:disabled {
+        transform: none !important;
+      }
+
+      #booking-app-wrapper #payment-actions {
+        border: 1px solid rgba(30, 61, 32, 0.09);
+        background: rgba(245, 232, 208, 0.32) !important;
+      }
+
+      #booking-app-wrapper #mobile-step-bar {
+        border-color: rgba(30, 61, 32, 0.13) !important;
+        border-radius: 14px !important;
+        background: rgba(254, 250, 242, 0.96) !important;
+        box-shadow: 0 18px 42px rgba(30, 61, 32, 0.13) !important;
+      }
+
+      #booking-app-wrapper #mobile-step-bar > div:first-child {
+        background: transparent !important;
+      }
+
+      #booking-app-wrapper #mobile-step-bar > div:first-child span {
+        color: var(--vdx-ember) !important;
+        font-weight: 600 !important;
+        letter-spacing: 0.12em;
+      }
+
+      #booking-app-wrapper .font-mono {
+        color: var(--vdx-forest) !important;
+        font-family: var(--vdx-sans) !important;
+        letter-spacing: 0.06em;
+      }
+
+      @media (max-width: 767px) {
+        #booking-app-wrapper {
+          padding-bottom: 72px !important;
+          background:
+            radial-gradient(circle at 12% 3%, rgba(245, 160, 48, 0.08), transparent 20rem),
+            var(--vdx-ivory) !important;
+        }
+
+        #booking-app-wrapper > div > main {
+          padding: 38px 18px 72px !important;
+        }
+
+        #booking-app-wrapper header {
+          padding-left: 17px;
+        }
+
+        #booking-app-wrapper h1 {
+          font-size: clamp(39px, 12vw, 50px) !important;
+        }
+
+        #booking-app-wrapper .rounded-3xl {
+          border-radius: 16px !important;
+        }
+
+        #booking-app-wrapper button.bg-emerald-800.px-6,
+        #booking-app-wrapper button.bg-emerald-800.px-8,
+        #booking-app-wrapper button.bg-emerald-800.w-full,
+        #booking-app-wrapper a.bg-emerald-800,
+        #booking-app-wrapper button.bg-stone-900.px-8 {
+          width: 100%;
+          justify-content: center;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        #booking-app-wrapper *,
+        #booking-app-wrapper *::before,
+        #booking-app-wrapper *::after {
+          scroll-behavior: auto !important;
+          transition-duration: 0.01ms !important;
+        }
       }
       /* Keep selected/action colors from being replaced by Hello Elementor's button:focus rule. */
       #booking-app-wrapper button.bg-emerald-50:hover,
@@ -166,8 +488,7 @@
 
     <script type="text/babel" data-presets="react">
       /** @jsxRuntime classic */
-      const SITE_URL = window.location.origin;
-      const FALLBACK_IMAGE = `${SITE_URL}/wp-content/uploads/2024/11/retreat-placeholder.webp`;
+      const FALLBACK_IMAGE = "/wp-content/uploads/2024/11/retreat-placeholder.webp";
       let bookingRoot = null;
 
       const getInitialLang = () => {
@@ -182,14 +503,21 @@
         return "en";
       };
 
+      const normalizeLang = (value) => {
+        const normalized = String(value || "").toLowerCase();
+        if (normalized === "vi") return "vn";
+        return ["en", "vn", "de"].includes(normalized) ? normalized : getInitialLang();
+      };
+
       const showInlineError = (message, options = {}) => {
         const { retry = false } = options;
         const container = document.getElementById("root");
         if (!container) return;
         container.innerHTML = "";
         const wrapper = document.createElement("div");
+        wrapper.id = "booking-app-wrapper";
         wrapper.style.padding = "48px 24px";
-        wrapper.style.fontFamily = 'system-ui, -apple-system, "Segoe UI", Roboto, sans-serif';
+        wrapper.style.fontFamily = '"Be Vietnam Pro", system-ui, sans-serif';
         wrapper.style.maxWidth = "560px";
         wrapper.style.margin = "64px auto";
         wrapper.style.textAlign = "center";
@@ -211,8 +539,10 @@
           button.style.color = "#fff";
           button.style.border = "none";
           button.style.padding = "12px 24px";
-          button.style.borderRadius = "999px";
+          button.style.borderRadius = "8px";
           button.style.fontWeight = "600";
+          button.style.letterSpacing = "0.12em";
+          button.style.textTransform = "uppercase";
           button.style.cursor = "pointer";
           button.addEventListener("click", () => {
             button.disabled = true;
@@ -239,10 +569,9 @@
       const fetchRetreats = async (overrideLang = null) => {
         try {
           const params = new URLSearchParams(window.location.search || "");
-          let langParam = overrideLang || params.get("booking_lang") || params.get("lang") || getInitialLang();
-          if (!["en", "vn", "de"].includes(langParam)) {
-            langParam = getInitialLang();
-          }
+          const langParam = normalizeLang(
+            overrideLang || params.get("booking_lang") || params.get("lang") || getInitialLang()
+          );
           const response = await fetch(`/wp-json/retreats/v1/all?lang=${langParam}`);
           if (!response.ok) throw new Error(`HTTP ${response.status}`);
           const rawRetreats = await response.json();
@@ -867,9 +1196,9 @@
 
         const BOOKING_REFERENCE = "VDX-DEMO-001";
         const HEALTHCHECK_URLS = {
-          vn: `${SITE_URL}/healthcheck-2/`,
-          en: `${SITE_URL}/en/healthcheck/`,
-          de: `${SITE_URL}/de/healthcheck/`,
+          vn: "/healthcheck-2/",
+          en: "/healthcheck/",
+          de: "/de/healthcheck/",
         };
 
         const Icons = {
@@ -1093,10 +1422,9 @@
           if (!STEPS.includes(stepParam)) {
             stepParam = "config";
           }
-          let langParam = params.get("booking_lang") || params.get("lang") || getInitialLang();
-          if (!["en", "vn", "de"].includes(langParam)) {
-            langParam = getInitialLang();
-          }
+          const langParam = normalizeLang(
+            params.get("booking_lang") || params.get("lang") || getInitialLang()
+          );
           return { step: stepParam, lang: langParam, recoveryId, recoveryToken };
         };
 
@@ -1946,7 +2274,7 @@
                     booking_id: bookingId, 
                     payment_type: paymentMethod,
                     lang: lang,
-                    return_base: window.location.origin + window.location.pathname
+                    return_base: window.location.pathname
                   }),
                 });
                 if (!urlResponse.ok) throw new Error("Failed to generate OnePay URL");
@@ -3095,7 +3423,7 @@
               <PriceSummary context="confirmed" pricing={pricing} lang={lang} roomName={selectedRoomName} guestsCount={selection.guests} retreatName={selection.retreatName} retreatDate={selection.date} />
               <button
                 type="button"
-                onClick={() => (window.location.href = SITE_URL)}
+                onClick={() => (window.location.href = "/")}
                 className="inline-flex items-center bg-stone-900 text-white px-8 py-4 rounded-full font-bold hover:bg-stone-800 transition"
               >
                 {t("return_home")}
@@ -3247,7 +3575,7 @@
 
           if (recoveryLoading) {
             return (
-              <div className="min-h-screen bg-stone-50 flex items-center justify-center p-6">
+              <div id="booking-app-wrapper" className="min-h-screen bg-stone-50 flex items-center justify-center p-6">
                 <div className="text-center space-y-4">
                   <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-stone-800 mx-auto"></div>
                   <p className="text-stone-500 font-medium">Restoring your booking session...</p>
@@ -3407,7 +3735,7 @@
               const lang = parseRouteFromLocation().lang || getInitialLang();
               const t = (key) => TRANSLATIONS[lang]?.[key] || TRANSLATIONS.en[key] || key;
               return (
-                <div className="min-h-screen bg-brand-ivory font-sans text-stone-900 selection:bg-emerald-100 flex items-center justify-center px-6">
+                <div id="booking-app-wrapper" className="min-h-screen bg-brand-ivory font-sans text-stone-900 selection:bg-emerald-100 flex items-center justify-center px-6">
                   <div className="max-w-md text-center space-y-4">
                     <p className="text-[12px] uppercase tracking-[0.4em] text-stone-400">{t("booking_progress")}</p>
                     <h1 className="text-3xl font-bold text-stone-900">{t("something_went_wrong")}</h1>
@@ -3452,7 +3780,7 @@
           const rootNode = document.getElementById("root");
           if (rootNode) {
             rootNode.innerHTML = `
-              <div class="min-h-[50vh] flex flex-col items-center justify-center space-y-4">
+              <div id="booking-app-wrapper" class="min-h-[50vh] flex flex-col items-center justify-center space-y-4">
                 <div class="w-8 h-8 border-[3px] border-emerald-600 border-t-transparent rounded-full animate-spin"></div>
                 <p class="text-[10px] font-bold uppercase tracking-[0.25em] text-stone-400">Loading Retreats</p>
               </div>
