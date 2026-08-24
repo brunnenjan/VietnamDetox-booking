@@ -2304,6 +2304,7 @@
 
               // If OnePay, redirect to OnePay URL generator
               if (paymentMethod === "onepay_domestic" || paymentMethod === "onepay_intl") {
+                const returnPath = getBookingReturnPath();
                 const urlResponse = await fetch("/wp-json/retreats/v1/onepay-url", {
                   method: "POST",
                   headers: { "Content-Type": "application/json" },
@@ -2311,11 +2312,16 @@
                     booking_id: bookingId, 
                     payment_type: paymentMethod,
                     lang: lang,
-                    return_base: getBookingReturnPath()
+                    return_base: returnPath
                   }),
                 });
                 if (!urlResponse.ok) throw new Error("Failed to generate OnePay URL");
                 const urlData = await urlResponse.json();
+                if (urlData.return_path !== returnPath) {
+                  throw new Error(
+                    `OnePay return path mismatch: expected ${returnPath}, received ${urlData.return_path || "none"}`
+                  );
+                }
                 if (urlData.payment_url) {
                   try {
                     sessionStorage.setItem("vdx_booking_state", JSON.stringify({
