@@ -509,6 +509,43 @@
         return ["en", "vn", "de"].includes(normalized) ? normalized : getInitialLang();
       };
 
+      const normalizeBookingReturnPath = (value) => {
+        if (!value) return "";
+        try {
+          const path = new URL(value, window.location.origin).pathname;
+          const normalizedPath = `/${path.replace(/^\/+|\/+$/g, "")}/`;
+          return ["/booking/", "/vi/dat-cho/", "/de/booking-flow/"].includes(normalizedPath)
+            ? normalizedPath
+            : "";
+        } catch (error) {
+          return "";
+        }
+      };
+
+      const getBookingReturnPath = () => {
+        // Elementor normally runs the app inline. If it is placed in a
+        // same-origin frame, use the parent page rather than the frame URL.
+        if (window.top === window) {
+          return normalizeBookingReturnPath(window.location.href) || "/booking/";
+        }
+
+        const candidates = [];
+        try {
+          candidates.push(window.top.location.href);
+        } catch (error) {
+          // A cross-origin parent cannot be inspected; document.referrer is
+          // the safe fallback in that case.
+        }
+        candidates.push(document.referrer, window.location.href);
+
+        for (const candidate of candidates) {
+          const path = normalizeBookingReturnPath(candidate);
+          if (path) return path;
+        }
+
+        return "/booking/";
+      };
+
       const showInlineError = (message, options = {}) => {
         const { retry = false } = options;
         const container = document.getElementById("root");
@@ -2274,7 +2311,7 @@
                     booking_id: bookingId, 
                     payment_type: paymentMethod,
                     lang: lang,
-                    return_base: window.location.pathname
+                    return_base: getBookingReturnPath()
                   }),
                 });
                 if (!urlResponse.ok) throw new Error("Failed to generate OnePay URL");
