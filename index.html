@@ -554,11 +554,20 @@
         }
       };
 
-      const getBookingReturnPath = () => {
+      const getDefaultBookingReturnPath = (lang) => {
+        const normalizedLang = normalizeLang(lang);
+        if (normalizedLang === "vn") return "/vi/dat-cho/";
+        if (normalizedLang === "de") return "/de/booking-flow/";
+        return "/booking/";
+      };
+
+      const getBookingReturnPath = (lang = getInitialLang()) => {
+        const fallbackPath = getDefaultBookingReturnPath(lang);
+
         // Elementor normally runs the app inline. If it is placed in a
         // same-origin frame, use the parent page rather than the frame URL.
         if (window.top === window) {
-          return normalizeBookingReturnPath(window.location.href) || "/booking/";
+          return normalizeBookingReturnPath(window.location.href) || fallbackPath;
         }
 
         const candidates = [];
@@ -575,7 +584,7 @@
           if (path) return path;
         }
 
-        return "/booking/";
+        return fallbackPath;
       };
 
       const showInlineError = (message, options = {}) => {
@@ -2365,7 +2374,7 @@
 
               // If OnePay, redirect to OnePay URL generator
               if (paymentMethod === "onepay_domestic" || paymentMethod === "onepay_intl") {
-                const returnPath = getBookingReturnPath();
+                const returnPath = getBookingReturnPath(lang);
                 const urlResponse = await fetch("/wp-json/retreats/v1/onepay-url", {
                   method: "POST",
                   headers: { "Content-Type": "application/json" },
