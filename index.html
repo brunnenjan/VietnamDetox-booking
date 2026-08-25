@@ -338,6 +338,15 @@
         accent-color: var(--vdx-ember);
       }
 
+      /*
+       * Use one shape for every text/action button. Icon-only controls remain
+       * circular so their compact hit areas and familiar affordances are kept.
+       */
+      #booking-app-wrapper button:not(.vdx-icon-button):not(.vdx-date-arrow),
+      #booking-app-wrapper a.vdx-action-button {
+        border-radius: 8px !important;
+      }
+
       /* Primary navigation actions: compact, uppercase and ember—not pills. */
       #booking-app-wrapper button.bg-emerald-800.px-6,
       #booking-app-wrapper button.bg-emerald-800.px-8,
@@ -3022,7 +3031,7 @@
                   <div className="flex flex-wrap gap-3">
                     <a
                       href={`mailto:${t("contact_email") || "hello@vietnamdetox.com"}`}
-                      className="inline-flex items-center justify-center px-4 py-2 rounded-full border border-stone-200 text-sm font-semibold text-stone-700 hover:border-emerald-200"
+                      className="vdx-action-button inline-flex items-center justify-center px-4 py-2 rounded-full border border-stone-200 text-sm font-semibold text-stone-700 hover:border-emerald-200"
                     >
                       {t("contact_vd") || "Contact Vietnam Detox"}
                     </a>
@@ -3457,7 +3466,7 @@
                         <div className="flex flex-col gap-2 sm:flex-row">
                           <a
                             href={url}
-                            className="inline-flex items-center justify-center bg-emerald-800 text-white px-4 py-2 rounded-full font-semibold text-sm hover:bg-emerald-900"
+                            className="vdx-action-button inline-flex items-center justify-center bg-emerald-800 text-white px-4 py-2 rounded-full font-semibold text-sm hover:bg-emerald-900"
                             target="_blank"
                             rel="noopener noreferrer"
                           >
@@ -3786,7 +3795,7 @@
                       type="button"
                       ref={closeButtonRef}
                       aria-label="Close gallery"
-                      className="absolute top-4 right-4 text-stone-900 bg-white/70 hover:bg-white rounded-full w-10 h-10 flex items-center justify-center text-xl"
+                      className="vdx-icon-button absolute top-4 right-4 text-stone-900 bg-white/70 hover:bg-white rounded-full w-10 h-10 flex items-center justify-center text-xl"
                       onClick={closeGallery}
                     >
                       <span aria-hidden="true">&times;</span>
@@ -3802,7 +3811,7 @@
                         <>
                           <button
                             type="button"
-                            className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white text-stone-900 rounded-full p-2"
+                            className="vdx-icon-button absolute left-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white text-stone-900 rounded-full p-2"
                             onClick={showPrevImage}
                             aria-label="Previous image"
                           >
@@ -3810,7 +3819,7 @@
                           </button>
                           <button
                             type="button"
-                            className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white text-stone-900 rounded-full p-2"
+                            className="vdx-icon-button absolute right-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white text-stone-900 rounded-full p-2"
                             onClick={showNextImage}
                             aria-label="Next image"
                           >
