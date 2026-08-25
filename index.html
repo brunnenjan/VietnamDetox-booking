@@ -791,8 +791,6 @@
           subtotal: "Subtotal",
           early_bird_discount: "Early Bird –{{discount}}",
           friend_discount: "Shared room discount",
-          maximum_promotion_discount: "Maximum promotion discount ({{maximum}}%)",
-          promotion_cap_info: "Combined Early Bird and friend promotions are limited to {{maximum}}% of the original retreat price.",
           retreat_total: "Retreat total",
           deposit_label: "Deposit",
           deposit_due_label: "Deposit due today",
@@ -969,8 +967,6 @@
           subtotal: "Tạm tính",
           early_bird_discount: "Ưu đãi đặt sớm –{{discount}}",
           friend_discount: "Giảm giá phòng chung",
-          maximum_promotion_discount: "Mức giảm giá khuyến mãi tối đa ({{maximum}}%)",
-          promotion_cap_info: "Tổng ưu đãi đặt sớm và đi cùng bạn được giới hạn ở {{maximum}}% giá gốc của khóa thanh lọc.",
           retreat_total: "Tổng cộng khóa thanh lọc",
           deposit_label: "Đặt cọc",
           deposit_due_label: "Số tiền cọc cần thanh toán",
@@ -1147,8 +1143,6 @@
           subtotal: "Zwischensumme",
           early_bird_discount: "Frühbucher –{{discount}}",
           friend_discount: "Mehrbettzimmer-Rabatt",
-          maximum_promotion_discount: "Maximaler Aktionsrabatt ({{maximum}}%)",
-          promotion_cap_info: "Frühbucher- und Gemeinsam-Rabatte sind zusammen auf {{maximum}}% des ursprünglichen Retreatpreises begrenzt.",
           retreat_total: "Gesamtbetrag",
           deposit_label: "Anzahlung",
           deposit_due_label: "Heute fällige Anzahlung",
@@ -1208,14 +1202,6 @@
         const STEPS = ["config", "details", "review", "health_check", "payment", "screening", "review_state", "confirmed"];
         const PRETTY_PATHS = false;
         const BOOKING_API_ENDPOINT = "/wp-json/retreats/v1/bookings";
-        const PRICES = {
-          superior: 33800000,
-          garden: 38600000,
-        };
-        const TRANSFER_PRICES = {
-          han: 2800000,
-          hph: 2100000,
-        };
 
         const formatVND = (value, l = null) => {
           const localeLang = l || parseRouteFromLocation().lang || getInitialLang();
@@ -1503,7 +1489,6 @@
 
             const showEarlyBird = pricing.earlyBird > 0;
             const showFriend = pricing.friend > 0;
-            const showCappedPromotion = pricing.promotionCapped && pricing.promotionTotal > 0;
             const showDepositLine = context === "review" || context === "payment";
             const showReviewNote = context === "review";
             const depositLabel = context === "payment" ? t("deposit_due_label") : t("deposit_label");
@@ -1537,21 +1522,15 @@
                     </div>
                     <span className="font-semibold whitespace-nowrap">{formatVND(pricing.subtotal, lang)}</span>
                   </div>
-                  {showCappedPromotion && (
-                    <div className="flex justify-between text-emerald-700">
-                      <span>{t("maximum_promotion_discount").replace("{{maximum}}", pricing.maximumTotalDiscount)}</span>
-                      <span>-{formatVND(pricing.promotionTotal, lang)}</span>
-                    </div>
-                  )}
-                  {!showCappedPromotion && showEarlyBird && (
+                  {showEarlyBird && (
                     <div className="flex justify-between text-emerald-700">
                       <span>{t("early_bird_discount").replace("{{discount}}", formatConfiguredDiscount(pricing.earlyBirdConfig, lang))}</span>
                       <span>-{formatVND(pricing.earlyBird, lang)}</span>
                     </div>
                   )}
-                  {!showCappedPromotion && showFriend && (
+                  {showFriend && (
                     <div className="flex justify-between text-emerald-700">
-                      <span>{t("friend_discount")}</span>
+                      <span>{t("save_together").replace("{{discount}}", formatConfiguredDiscount(pricing.friendConfig, lang))}</span>
                       <span>-{formatVND(pricing.friend, lang)}</span>
                     </div>
                   )}
@@ -1564,11 +1543,6 @@
                   <span className="text-stone-500">{t("retreat_total")}</span>
                   <span className="text-2xl font-bold">{formatVND(pricing.total, lang)}</span>
                 </div>
-                {pricing.maximumTotalDiscount > 0 && (
-                  <div className="rounded-2xl border border-emerald-100 bg-emerald-50 px-4 py-3 text-xs leading-relaxed text-emerald-800">
-                    {t("promotion_cap_info").replace("{{maximum}}", pricing.maximumTotalDiscount)}
-                  </div>
-                )}
                 {showDepositLine && (
                   <>
                     <div className="flex justify-between">
@@ -2044,21 +2018,19 @@
               (date) => date.retreatId === selection.retreatId && date.label === selection.date,
             );
             const promotion = selectedDate?.promotion || {};
-            const rawEarlyBird = selectedDate?.isEarlyBirdActive
-              ? calculateConfiguredDiscount(subtotal, promotion.earlyBird, selection.guests)
+            const guestCount = Number(selection.guests) || 0;
+            const isEarlyBirdEligible = !!selectedDate?.isEarlyBirdActive;
+            const isFriendPromotionEligible = guestCount === 2 && Number(promotion.friend?.value) > 0;
+            const rawEarlyBird = isEarlyBirdEligible
+              ? calculateConfiguredDiscount(subtotal, promotion.earlyBird, guestCount)
               : 0;
-            const maximumTotalDiscount = Math.max(0, Number(promotion.maximumTotalDiscount) || 0);
-            const maximumPromotionValue = maximumTotalDiscount > 0
-              ? subtotal * maximumTotalDiscount / 100
-              : Number.POSITIVE_INFINITY;
-            const earlyBird = Math.min(rawEarlyBird, maximumPromotionValue);
+            const earlyBird = rawEarlyBird;
             const friendBase = subtotal - earlyBird;
-            const rawFriend = selection.guests === 2
+            const rawFriend = isFriendPromotionEligible
               ? calculateConfiguredDiscount(friendBase, promotion.friend)
               : 0;
-            const friend = Math.min(rawFriend, Math.max(0, maximumPromotionValue - earlyBird));
+            const friend = rawFriend;
             const promotionTotal = earlyBird + friend;
-            const promotionCapped = Number.isFinite(maximumPromotionValue) && rawEarlyBird + rawFriend > maximumPromotionValue;
             const transport = transportOption?.price || 0;
             const total = subtotal - promotionTotal + transport;
             const deposit = Math.round(total * 0.3);
@@ -2068,8 +2040,6 @@
               earlyBird,
               friend,
               promotionTotal,
-              promotionCapped,
-              maximumTotalDiscount,
               transport,
               total,
               deposit,
