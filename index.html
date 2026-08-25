@@ -659,12 +659,12 @@
           upcoming_retreats: "Upcoming retreats",
           retreats_description: "Choose the experience and date that resonates most with your well-being goals.",
           available_dates: "Available dates",
-          early_bird_label: "Early Bird –10%",
+          early_bird_label: "Early Bird –{{discount}}",
           limited_spots: "Limited spots available",
           guests: "Guests",
           one_guest: "One guest",
           two_guests: "Two guests",
-          save_together: "Save 5% together",
+          save_together: "Save {{discount}} together",
           private_journey: "Fully private journey",
           guest_one: "Guest One",
           guest_two: "Guest Two",
@@ -789,8 +789,10 @@
           investment_summary: "Investment summary",
           real_time_update: "Line items update in real-time.",
           subtotal: "Subtotal",
-          early_bird_discount: "Early Bird –10%",
+          early_bird_discount: "Early Bird –{{discount}}",
           friend_discount: "Shared room discount",
+          maximum_promotion_discount: "Maximum promotion discount ({{maximum}}%)",
+          promotion_cap_info: "Combined Early Bird and friend promotions are limited to {{maximum}}% of the original retreat price.",
           retreat_total: "Retreat total",
           deposit_label: "Deposit",
           deposit_due_label: "Deposit due today",
@@ -835,12 +837,12 @@
           upcoming_retreats: "Các khóa thanh lọc sắp tới",
           retreats_description: "Chọn trải nghiệm và ngày phù hợp nhất với mục tiêu sức khỏe của bạn.",
           available_dates: "Ngày còn trống",
-          early_bird_label: "Ưu đãi đặt sớm –10%",
+          early_bird_label: "Ưu đãi đặt sớm –{{discount}}",
           limited_spots: "Số lượng chỗ có hạn",
           guests: "Khách",
           one_guest: "Một khách",
           two_guests: "Hai khách",
-          save_together: "Tiết kiệm 5% khi đi cùng nhau",
+          save_together: "Tiết kiệm {{discount}} khi đi cùng nhau",
           private_journey: "Hành trình riêng tư",
           guest_one: "Khách thứ nhất",
           guest_two: "Khách thứ hai",
@@ -965,8 +967,10 @@
           investment_summary: "Thông tin thanh toán",
           real_time_update: "Các mục chi phí cập nhật theo thời gian thực.",
           subtotal: "Tạm tính",
-          early_bird_discount: "Ưu đãi đặt sớm –10%",
+          early_bird_discount: "Ưu đãi đặt sớm –{{discount}}",
           friend_discount: "Giảm giá phòng chung",
+          maximum_promotion_discount: "Mức giảm giá khuyến mãi tối đa ({{maximum}}%)",
+          promotion_cap_info: "Tổng ưu đãi đặt sớm và đi cùng bạn được giới hạn ở {{maximum}}% giá gốc của khóa thanh lọc.",
           retreat_total: "Tổng cộng khóa thanh lọc",
           deposit_label: "Đặt cọc",
           deposit_due_label: "Số tiền cọc cần thanh toán",
@@ -1011,12 +1015,12 @@
           upcoming_retreats: "Kommende Retreats",
           retreats_description: "Wählen Sie das Erlebnis, das am besten zu Ihren Wellness-Zielen passt.",
           available_dates: "Verfügbare Termine",
-          early_bird_label: "Frühbucher –10%",
+          early_bird_label: "Frühbucher –{{discount}}",
           limited_spots: "Begrenzte Plätze",
           guests: "Gäste",
           one_guest: "Ein Gast",
           two_guests: "Zwei Gäste",
-          save_together: "5% sparen bei zwei Personen",
+          save_together: "{{discount}} gemeinsam sparen",
           private_journey: "Exklusive Reise",
           guest_one: "Erster Gast",
           guest_two: "Zweiter Gast",
@@ -1141,8 +1145,10 @@
           investment_summary: "Zusammenfassung",
           real_time_update: "Preise aktualisieren sich live.",
           subtotal: "Zwischensumme",
-          early_bird_discount: "Frühbucher –10%",
+          early_bird_discount: "Frühbucher –{{discount}}",
           friend_discount: "Mehrbettzimmer-Rabatt",
+          maximum_promotion_discount: "Maximaler Aktionsrabatt ({{maximum}}%)",
+          promotion_cap_info: "Frühbucher- und Gemeinsam-Rabatte sind zusammen auf {{maximum}}% des ursprünglichen Retreatpreises begrenzt.",
           retreat_total: "Gesamtbetrag",
           deposit_label: "Anzahlung",
           deposit_due_label: "Heute fällige Anzahlung",
@@ -1226,6 +1232,20 @@
           const locale = localeLang === "de" ? "de-DE" : "en-US";
           const formatted = Math.round(value / CURRENCY_RATE).toLocaleString(locale);
           return `~ $${formatted} USD`;
+        };
+
+        const calculateConfiguredDiscount = (baseAmount, config, units = 1) => {
+          const value = Number(config?.value) || 0;
+          if (value <= 0) return 0;
+          if (config?.type === "percentage") {
+            return baseAmount * value / 100;
+          }
+          return value * units;
+        };
+
+        const formatConfiguredDiscount = (config, lang) => {
+          const value = Number(config?.value) || 0;
+          return config?.type === "percentage" ? `${value}%` : formatVND(value, lang);
         };
 
 
@@ -1483,6 +1503,7 @@
 
             const showEarlyBird = pricing.earlyBird > 0;
             const showFriend = pricing.friend > 0;
+            const showCappedPromotion = pricing.promotionCapped && pricing.promotionTotal > 0;
             const showDepositLine = context === "review" || context === "payment";
             const showReviewNote = context === "review";
             const depositLabel = context === "payment" ? t("deposit_due_label") : t("deposit_label");
@@ -1516,13 +1537,19 @@
                     </div>
                     <span className="font-semibold whitespace-nowrap">{formatVND(pricing.subtotal, lang)}</span>
                   </div>
-                  {showEarlyBird && (
+                  {showCappedPromotion && (
                     <div className="flex justify-between text-emerald-700">
-                      <span>{t("early_bird_discount")}</span>
+                      <span>{t("maximum_promotion_discount").replace("{{maximum}}", pricing.maximumTotalDiscount)}</span>
+                      <span>-{formatVND(pricing.promotionTotal, lang)}</span>
+                    </div>
+                  )}
+                  {!showCappedPromotion && showEarlyBird && (
+                    <div className="flex justify-between text-emerald-700">
+                      <span>{t("early_bird_discount").replace("{{discount}}", formatConfiguredDiscount(pricing.earlyBirdConfig, lang))}</span>
                       <span>-{formatVND(pricing.earlyBird, lang)}</span>
                     </div>
                   )}
-                  {showFriend && (
+                  {!showCappedPromotion && showFriend && (
                     <div className="flex justify-between text-emerald-700">
                       <span>{t("friend_discount")}</span>
                       <span>-{formatVND(pricing.friend, lang)}</span>
@@ -1537,6 +1564,11 @@
                   <span className="text-stone-500">{t("retreat_total")}</span>
                   <span className="text-2xl font-bold">{formatVND(pricing.total, lang)}</span>
                 </div>
+                {pricing.maximumTotalDiscount > 0 && (
+                  <div className="rounded-2xl border border-emerald-100 bg-emerald-50 px-4 py-3 text-xs leading-relaxed text-emerald-800">
+                    {t("promotion_cap_info").replace("{{maximum}}", pricing.maximumTotalDiscount)}
+                  </div>
+                )}
                 {showDepositLine && (
                   <>
                     <div className="flex justify-between">
@@ -1923,6 +1955,7 @@
                 location: retreat.location,
                 image: retreat.image,
                 earlyBirdNote: retreat.earlyBirdNote,
+                promotion: retreat.promotion,
               })),
             );
 
@@ -2010,14 +2043,40 @@
             const selectedDate = dateOptions.find(
               (date) => date.retreatId === selection.retreatId && date.label === selection.date,
             );
-            const earlyBird = selectedDate?.isEarlyBirdActive ? Math.round(subtotal * 0.1) : 0;
+            const promotion = selectedDate?.promotion || {};
+            const rawEarlyBird = selectedDate?.isEarlyBirdActive
+              ? calculateConfiguredDiscount(subtotal, promotion.earlyBird, selection.guests)
+              : 0;
+            const maximumTotalDiscount = Math.max(0, Number(promotion.maximumTotalDiscount) || 0);
+            const maximumPromotionValue = maximumTotalDiscount > 0
+              ? subtotal * maximumTotalDiscount / 100
+              : Number.POSITIVE_INFINITY;
+            const earlyBird = Math.min(rawEarlyBird, maximumPromotionValue);
             const friendBase = subtotal - earlyBird;
-            const friend = selection.guests === 2 ? Math.round(friendBase * 0.05) : 0;
+            const rawFriend = selection.guests === 2
+              ? calculateConfiguredDiscount(friendBase, promotion.friend)
+              : 0;
+            const friend = Math.min(rawFriend, Math.max(0, maximumPromotionValue - earlyBird));
+            const promotionTotal = earlyBird + friend;
+            const promotionCapped = Number.isFinite(maximumPromotionValue) && rawEarlyBird + rawFriend > maximumPromotionValue;
             const transport = transportOption?.price || 0;
-            const total = subtotal - earlyBird - friend + transport;
+            const total = subtotal - promotionTotal + transport;
             const deposit = Math.round(total * 0.3);
             const remaining = total - deposit;
-            return { subtotal, earlyBird, friend, transport, total, deposit, remaining };
+            return {
+              subtotal,
+              earlyBird,
+              friend,
+              promotionTotal,
+              promotionCapped,
+              maximumTotalDiscount,
+              transport,
+              total,
+              deposit,
+              remaining,
+              earlyBirdConfig: promotion.earlyBird,
+              friendConfig: promotion.friend,
+            };
           }, [selection, dateOptions, roomsForCurrentRetreat, filteredRoomsForCurrentRetreat, transportOptionsForCurrentRetreat]);
 
           const stripeFee = paymentMethod === "stripe" ? Math.round(pricing.deposit * STRIPE_FEE_RATE) : 0;
@@ -2479,7 +2538,7 @@
                                       <div className="flex flex-wrap gap-1 mt-1 justify-center">
                                         {showEarlyBird && (
                                           <span className={`text-[10px] font-semibold uppercase tracking-[0.2em] ${activeDate ? "text-emerald-100" : "text-emerald-700"}`}>
-                                            {t("early_bird_label")}
+                                            {t("early_bird_label").replace("{{discount}}", formatConfiguredDiscount(dateOption.promotion?.earlyBird, lang))}
                                           </span>
                                         )}
                                         {showLimited && (
@@ -2532,7 +2591,17 @@
                       >
                         <div className="text-left">
                           <p className="font-semibold">{count === 1 ? t("one_guest") : t("two_guests")}</p>
-                          <p className="text-sm text-stone-500">{count === 2 ? t("save_together") : t("private_journey")}</p>
+                          <p className="text-sm text-stone-500">
+                            {count === 2
+                              ? t("save_together").replace(
+                                  "{{discount}}",
+                                  formatConfiguredDiscount(
+                                    RETREATS.find((retreat) => retreat.id === selection.retreatId)?.promotion?.friend,
+                                    lang,
+                                  ),
+                                )
+                              : t("private_journey")}
+                          </p>
                         </div>
                         {count === 2 ? <Icons.Users /> : <Icons.User />}
                       </button>
