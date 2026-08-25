@@ -110,6 +110,33 @@
         color: var(--vdx-body);
         font-family: var(--vdx-sans);
       }
+
+      /*
+       * Elementor embeds the site header above this file with negative template
+       * margins and an overlaid header. Remove the manual page offset and reserve
+       * the real header height instead. These rules are inactive when this file
+       * is opened as a standalone page.
+       */
+      body.vdx-elementor-embed .elementor-location-header {
+        margin: 0 !important;
+      }
+
+      body.vdx-elementor-embed
+      .elementor[data-elementor-type="wp-page"]
+      > .elementor-element:first-child {
+        margin-block-start: 0 !important;
+      }
+
+      body.vdx-elementor-embed #booking-app-wrapper {
+        padding-top: 110px !important;
+      }
+
+      @media (max-width: 1199px) {
+        body.vdx-elementor-embed #booking-app-wrapper {
+          padding-top: 92px !important;
+        }
+      }
+
       .hide-scrollbar::-webkit-scrollbar {
         display: none;
       }
@@ -484,6 +511,11 @@
     </style>
   </head>
   <body class="bg-brand-ivory">
+    <script>
+      if (document.querySelector(".elementor-location-header")) {
+        document.body.classList.add("vdx-elementor-embed");
+      }
+    </script>
     <div id="root"></div>
 
     <script type="text/babel" data-presets="react">
