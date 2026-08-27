@@ -342,9 +342,13 @@
        * Use one shape for every text/action button. Icon-only controls remain
        * circular so their compact hit areas and familiar affordances are kept.
        */
-      #booking-app-wrapper button:not(.vdx-icon-button):not(.vdx-date-arrow),
+      #booking-app-wrapper button:not(.vdx-icon-button):not(.vdx-date-arrow):not(.vdx-date-button),
       #booking-app-wrapper a.vdx-action-button {
         border-radius: 8px !important;
+      }
+
+      #booking-app-wrapper .vdx-date-button {
+        border-radius: 9999px !important;
       }
 
       /* Primary navigation actions: compact, uppercase and ember—not pills. */
@@ -714,7 +718,7 @@
           guests: "Guests",
           one_guest: "One guest",
           two_guests: "Two guests",
-          save_together: "Save {{discount}} together",
+          save_together: "Save 5% together",
           private_journey: "Fully private journey",
           guest_one: "Guest One",
           guest_two: "Guest Two",
@@ -890,7 +894,7 @@
           guests: "Khách",
           one_guest: "Một khách",
           two_guests: "Hai khách",
-          save_together: "Tiết kiệm {{discount}} khi đi cùng nhau",
+          save_together: "Tiết kiệm 5% khi đi cùng nhau",
           private_journey: "Hành trình riêng tư",
           guest_one: "Khách thứ nhất",
           guest_two: "Khách thứ hai",
@@ -1066,7 +1070,7 @@
           guests: "Gäste",
           one_guest: "Ein Gast",
           two_guests: "Zwei Gäste",
-          save_together: "{{discount}} gemeinsam sparen",
+          save_together: "5% gemeinsam sparen",
           private_journey: "Exklusive Reise",
           guest_one: "Erster Gast",
           guest_two: "Zweiter Gast",
@@ -2549,7 +2553,7 @@
                                       event.stopPropagation();
                                       handleRetreatSelection(dateOption);
                                     }}
-                                    className={`flex-shrink-0 px-3 py-2 text-xs md:text-sm rounded-full border transition-all duration-200 ${
+                                    className={`vdx-date-button flex-shrink-0 px-3 py-2 text-xs md:text-sm rounded-full border transition-all duration-200 ${
                                       activeDate ? "bg-emerald-800 text-white border-emerald-800 scale-[1.05] shadow-md" : "border-stone-200 text-stone-600 hover:border-emerald-200 bg-white"
                                     }`}
                                   >
