@@ -463,6 +463,16 @@
           width: 100%;
           justify-content: center;
         }
+
+        /* Keep paired step actions compact beside Back. Their enabled
+           bg-emerald class otherwise triggers the full-width mobile primary-
+           button rule above. */
+        #booking-app-wrapper button.vdx-paired-step-action {
+          flex: 0 0 auto;
+          width: auto !important;
+          min-height: 44px;
+          padding: 10px 16px !important;
+        }
       }
 
       @media (prefers-reduced-motion: reduce) {
@@ -876,7 +886,6 @@
           contact_email: "hello@vietnamdetox.com",
           contact_vd: "Contact Vietnam Detox",
           return_overview: "Return to retreat overview",
-          continue_with_booking: "Continue with booking",
           read_more: "Read more",
           payment_failed: "Payment failed",
           payment_failed_desc: "Something went wrong with your transaction. Please check your details or try a different payment method.",
@@ -1052,7 +1061,6 @@
           contact_email: "hello@vietnamdetox.com",
           contact_vd: "Liên hệ Vietnam Detox",
           return_overview: "Trở lại trang tổng quan",
-          continue_with_booking: "Tiếp tục đặt chỗ",
           read_more: "Xem thêm",
           payment_failed: "Thanh toán không thành công",
           payment_failed_desc: "Đã xảy ra lỗi trong quá trình giao dịch. Vui lòng kiểm tra lại thông tin hoặc thử phương thức thanh toán khác.",
@@ -1228,7 +1236,6 @@
           contact_email: "hello@vietnamdetox.com",
           contact_vd: "Vietnam Detox kontaktieren",
           return_overview: "Zurück zur Retreat-Übersicht",
-          continue_with_booking: "Mit Buchung fortfahren",
           read_more: "Weiterlesen",
           payment_failed: "Zahlung fehlgeschlagen",
           payment_failed_desc: "Bei Ihrer Transaktion ist etwas schiefgelaufen. Bitte überprüfen Sie Ihre Angaben oder versuchen Sie eine andere Zahlungsmethode.",
@@ -2842,7 +2849,7 @@
                   </section>
                 )}
 
-                <div className="flex justify-between items-center">
+                <div className="flex justify-between items-center gap-4">
                   {!bookingMeta.bookingId ? (
                     <button type="button" onClick={() => goToStep("config")} className="inline-flex items-center text-stone-500 font-semibold">
                       <Icons.ChevronLeft /> {t("back")}
@@ -2852,7 +2859,7 @@
                     type="button"
                     disabled={!guestDetailsValid()}
                     onClick={() => goToStep("review")}
-                    className={`inline-flex items-center px-6 py-3 rounded-full font-semibold ${
+                    className={`vdx-paired-step-action inline-flex items-center px-6 py-3 rounded-full font-semibold ${
                       guestDetailsValid() ? "bg-emerald-800 text-white hover:bg-emerald-900" : "bg-stone-200 text-stone-500 cursor-not-allowed"
                     }`}
                   >
@@ -2956,14 +2963,14 @@
                   </ul>
                 </div>
 
-                <div className="flex justify-between items-center">
+                <div className="flex justify-between items-center gap-4">
                   <button type="button" onClick={() => goToStep("details")} className="inline-flex items-center text-stone-500 font-semibold">
                     <Icons.ChevronLeft /> {t("back")}
                   </button>
                   <button
                     type="button"
                     onClick={() => goToStep("health_check")}
-                    className="inline-flex items-center bg-emerald-800 text-white px-6 py-3 rounded-full font-semibold hover:bg-emerald-900"
+                    className="vdx-paired-step-action inline-flex items-center bg-emerald-800 text-white px-6 py-3 rounded-full font-semibold hover:bg-emerald-900"
                   >
                     {t("continue")} <Icons.ChevronRight />
                   </button>
@@ -3050,7 +3057,7 @@
                 </div>
               )}
 
-              <div className="flex justify-between items-center">
+              <div className="flex justify-between items-center gap-4">
                 <button type="button" onClick={() => goToStep("review")} className="inline-flex items-center text-stone-500 font-semibold">
                   <Icons.ChevronLeft /> {t("back")}
                 </button>
@@ -3059,11 +3066,11 @@
                     type="button"
                     disabled={!safetyAllAnswered}
                     onClick={() => goToStep("payment")}
-                    className={`inline-flex items-center px-6 py-3 rounded-full font-semibold ${
+                    className={`vdx-paired-step-action inline-flex items-center px-6 py-3 rounded-full font-semibold ${
                       safetyAllAnswered ? "bg-emerald-800 text-white hover:bg-emerald-900" : "bg-stone-200 text-stone-500 cursor-not-allowed"
                     }`}
                   >
-                    {t("continue_with_booking") || "Continue with booking"} <Icons.ChevronRight />
+                    {t("continue")} <Icons.ChevronRight />
                   </button>
                 )}
               </div>
