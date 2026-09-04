@@ -1637,14 +1637,70 @@
           return startDate >= today;
         };
 
+        const getRetreatDateKey = (value) => {
+          const date = parseRetreatStartDate(value);
+          if (!date) return "";
+          const month = String(date.getMonth() + 1).padStart(2, "0");
+          const day = String(date.getDate()).padStart(2, "0");
+          return `${date.getFullYear()}-${month}-${day}`;
+        };
+
+        const getInitialBookingSelection = (defaultRetreat) => {
+          const params = new URLSearchParams(window.location.search || "");
+          const requestedRetreatId = Number.parseInt(params.get("retreat_id") || "", 10);
+          const requestedPackageSku = String(params.get("package_sku") || "").trim();
+          const requestedStartDate = getRetreatDateKey(params.get("start_date"));
+
+          let retreat = Number.isInteger(requestedRetreatId)
+            ? RETREATS.find((item) => Number(item.id) === requestedRetreatId)
+            : null;
+
+          // A package-only link can still identify its owning retreat, while
+          // retreat_id remains authoritative when both parameters are present.
+          if (!retreat && !Number.isInteger(requestedRetreatId) && requestedPackageSku) {
+            retreat = RETREATS.find((item) =>
+              getRoomsForRetreat(item.id).some(
+                (room) => String(room.sku || "").toLowerCase() === requestedPackageSku.toLowerCase(),
+              ),
+            );
+          }
+
+          const requestedRetreatDates = (Array.isArray(retreat?.dates) ? retreat.dates : [])
+            .filter(isRetreatDateAvailable);
+          if (!retreat || requestedRetreatDates.length === 0) {
+            retreat = defaultRetreat;
+          }
+
+          const availableDates = (Array.isArray(retreat?.dates) ? retreat.dates : [])
+            .filter(isRetreatDateAvailable);
+          const selectedDate = availableDates.find(
+            (date) => requestedStartDate && getRetreatDateKey(date.start) === requestedStartDate,
+          ) || availableDates[0] || { label: "" };
+
+          const packages = getRoomsForRetreat(retreat.id);
+          const selectedPackage = packages.find(
+            (room) => requestedPackageSku && String(room.sku || "").toLowerCase() === requestedPackageSku.toLowerCase(),
+          ) || packages[0] || null;
+          const packageGuestCount = Number(selectedPackage?.person);
+          const guests = packageGuestCount === 2 ? 2 : 1;
+
+          return {
+            retreatId: retreat.id,
+            retreatName: retreat.name,
+            retreatLocation: retreat.location,
+            retreatEarlyBirdNote: retreat.earlyBirdNote,
+            retreatImage: retreat.image || FALLBACK_IMAGE,
+            date: selectedDate.label,
+            guests,
+            roomType: selectedPackage?.id || null,
+            transfer: getTransportOptionsForRetreat(retreat.id)?.[0]?.id ?? null,
+          };
+        };
+
         const App = () => {
           const DEFAULT_RETREAT = RETREATS.find((retreat) =>
             (Array.isArray(retreat.dates) ? retreat.dates : []).some(isRetreatDateAvailable)
           ) || { id: 0, dates: [], image: FALLBACK_IMAGE };
-          const DEFAULT_DATE = DEFAULT_RETREAT.dates?.find(isRetreatDateAvailable) || { label: "" };
-          const DEFAULT_ROOMS = getRoomsForRetreat(DEFAULT_RETREAT.id);
-          const DEFAULT_ROOM_ID = DEFAULT_ROOMS[0]?.id || null;
-          const DEFAULT_TRANSPORT = getTransportOptionsForRetreat(DEFAULT_RETREAT.id)?.[0]?.id ?? null;
           const DEFAULT_PHONE_CODE = getDialCodeForCountry("Vietnam") || "+84";
 
           const [route, setRoute] = useState(parseRouteFromLocation);
@@ -1673,17 +1729,9 @@
             return null;
           });
 
-          const [selection, setSelection] = useState(() => savedState?.selection || ({
-            retreatId: DEFAULT_RETREAT.id,
-            retreatName: DEFAULT_RETREAT.name,
-            retreatLocation: DEFAULT_RETREAT.location,
-            retreatEarlyBirdNote: DEFAULT_RETREAT.earlyBirdNote,
-            retreatImage: DEFAULT_RETREAT.image,
-            date: DEFAULT_DATE.label,
-            guests: 1,
-            roomType: DEFAULT_ROOM_ID,
-            transfer: DEFAULT_TRANSPORT,
-          }));
+          const initialBookingSelection = getInitialBookingSelection(DEFAULT_RETREAT);
+
+          const [selection, setSelection] = useState(() => savedState?.selection || initialBookingSelection);
           const [guestDetails, setGuestDetails] = useState(() => savedState?.guestDetails || ({
             guest1: {
               firstName: "",
