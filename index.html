@@ -744,6 +744,7 @@
           need_company_invoice: "I need an invoice issued to a company",
           company_name: "Company name",
           tax_id: "VAT / Tax ID",
+          company_address: "Company address",
           second_guest: "Second guest",
           second_description: "Used to send their questionnaire and schedule their personal preparation call.",
           back: "Back",
@@ -918,6 +919,7 @@
           need_company_invoice: "Tôi cần xuất hóa đơn cho công ty",
           company_name: "Tên công ty",
           tax_id: "Mã số thuế",
+          company_address: "Địa chỉ công ty",
           second_guest: "Khách thứ hai",
           second_description: "Dùng để gửi bảng hỏi và sắp xếp cuộc gọi chuẩn bị sức khỏe.",
           back: "Quay lại",
@@ -1092,6 +1094,7 @@
           need_company_invoice: "Ich benötige eine Firmenrechnung",
           company_name: "Firmenname",
           tax_id: "Steuernummer",
+          company_address: "Firmenadresse",
           second_guest: "Zweiter Gast",
           second_description: "Für Fragebogen und Vorbereitungsgespräch.",
           back: "Zurück",
@@ -1747,6 +1750,8 @@
               needsCompanyInvoice: false,
               companyName: "",
               taxId: "",
+              companyPhone: "",
+              companyAddress: "",
             },
             guest2: { firstName: "", lastName: "", email: "", phone: "" },
           }));
@@ -2278,7 +2283,12 @@
               g1.city.trim() &&
               g1.postalCode.trim() &&
               g1.country.trim();
-            const companyValid = !g1.needsCompanyInvoice || (g1.companyName.trim() && g1.taxId.trim());
+            const companyValid = !g1.needsCompanyInvoice || (
+              g1.companyName.trim() &&
+              g1.taxId.trim() &&
+              g1.companyPhone?.trim() &&
+              g1.companyAddress?.trim()
+            );
             if (!primaryFieldsFilled || !companyValid) return false;
             if (selection.guests === 1) return true;
 
@@ -2837,6 +2847,8 @@
                         <div className="space-y-4">
                           {renderInput(t("company_name"), primary.companyName, (e) => updateGuest("guest1", "companyName", e.target.value))}
                           {renderInput(t("tax_id"), primary.taxId, (e) => updateGuest("guest1", "taxId", e.target.value))}
+                          {renderInput(t("phone_number"), primary.companyPhone || "", (e) => updateGuest("guest1", "companyPhone", e.target.value), "tel")}
+                          {renderInput(t("company_address"), primary.companyAddress || "", (e) => updateGuest("guest1", "companyAddress", e.target.value))}
                         </div>
                       )}
                     </div>
