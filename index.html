@@ -3101,7 +3101,7 @@
           const PaymentLogos = () => (
             <div className="flex flex-wrap gap-1.5 mt-1.5">
               <span className="px-1.5 py-0.5 bg-[#1434CB] text-white text-[9px] font-bold italic rounded-[3px] tracking-wider leading-tight shadow-sm">VISA</span>
-              <div className="px-1.5 py-0.5 bg-gradient-to-r from-[#202020] to-[#1a1a1a] flex items-center gap-1 rounded-[3px] shadow-sm">
+              <div className="px-1.5 py-0.5 bg-[#202020] flex items-center gap-1 rounded-[3px] shadow-sm">
                 <div className="flex items-center">
                   <div className="w-2.5 h-2.5 rounded-full bg-[#EB001B] opacity-90"></div>
                   <div className="w-2.5 h-2.5 rounded-full bg-[#F79E1B] -ml-1 opacity-90"></div>
@@ -3267,9 +3267,6 @@
                       >
                         {paymentSubmitting ? t("processing_payment") : t("pay_securely_msg").replace("{{amount}}", formatVND(paymentDueNow, lang))}
                       </button>
-                      <div className="text-sm text-stone-600 leading-relaxed flex flex-col gap-2">
-                        {paymentMethod === "onepay_domestic" ? <VietQRLogo /> : <PaymentLogos />}
-                      </div>
                     </div>
                   )}
                 </div>
