@@ -1648,11 +1648,9 @@
           return `${date.getFullYear()}-${month}-${day}`;
         };
 
-        const getInitialBookingSelection = (defaultRetreat) => {
-          const params = new URLSearchParams(window.location.search || "");
+        const getRequestedBookingRetreat = (params) => {
           const requestedRetreatId = Number.parseInt(params.get("retreat_id") || "", 10);
           const requestedPackageSku = String(params.get("package_sku") || "").trim();
-          const requestedStartDate = getRetreatDateKey(params.get("start_date"));
 
           let retreat = Number.isInteger(requestedRetreatId)
             ? RETREATS.find((item) => Number(item.id) === requestedRetreatId)
@@ -1668,11 +1666,30 @@
             );
           }
 
-          const requestedRetreatDates = (Array.isArray(retreat?.dates) ? retreat.dates : [])
-            .filter(isRetreatDateAvailable);
-          if (!retreat || requestedRetreatDates.length === 0) {
-            retreat = defaultRetreat;
-          }
+          return (Array.isArray(retreat?.dates) ? retreat.dates : []).some(isRetreatDateAvailable)
+            ? retreat
+            : null;
+        };
+
+        const getBookingRetreats = () => {
+          const requestedRetreat = getRequestedBookingRetreat(
+            new URLSearchParams(window.location.search || ""),
+          );
+          const retreats = RETREATS.filter((retreat) =>
+            (Array.isArray(retreat.dates) ? retreat.dates : []).some(isRetreatDateAvailable),
+          );
+
+          // Keep API order except for the retreat selected before arriving here.
+          // In-page selections should not make cards jump while browsing.
+          if (!requestedRetreat) return retreats;
+          return [requestedRetreat, ...retreats.filter((retreat) => retreat.id !== requestedRetreat.id)];
+        };
+
+        const getInitialBookingSelection = (defaultRetreat) => {
+          const params = new URLSearchParams(window.location.search || "");
+          const requestedPackageSku = String(params.get("package_sku") || "").trim();
+          const requestedStartDate = getRetreatDateKey(params.get("start_date"));
+          const retreat = getRequestedBookingRetreat(params) || defaultRetreat;
 
           const availableDates = (Array.isArray(retreat?.dates) ? retreat.dates : [])
             .filter(isRetreatDateAvailable);
@@ -2482,7 +2499,7 @@
                   <p className="text-sm text-stone-500">{t("retreats_description")}</p>
                 </div>
                 <div className="space-y-4">
-                  {RETREATS.map((retreat) => {
+                  {getBookingRetreats().map((retreat) => {
                     const retreatDates = dateOptions.filter((option) => option.retreatId === retreat.id);
                     const isActiveRetreat = selection.retreatId === retreat.id;
                     const preferredDate =

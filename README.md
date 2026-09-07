@@ -22,3 +22,12 @@ Invalid or conflicting values are handled independently. A valid retreat and
 package remain selected, while an invalid date falls back to that retreat's
 first available date. Direct visits without parameters retain the normal first
 available retreat, date, and package defaults.
+
+The retreat selected by a valid booking link appears first in the retreat list;
+the remaining retreats keep their API order. Package-only links also move their
+owning retreat to the top. Selecting another retreat within the booking app does
+not reorder the cards. Direct visits keep the API order.
+
+Retreats without upcoming dates (including private retreats with only historical
+dates) are hidden from the booking list. The shared retreats API is unchanged so
+other pages can still display them.
