@@ -1820,6 +1820,15 @@
           const flowStep = STEPS.includes(routeStep) ? routeStep : "config";
           const lang = route?.lang || getInitialLang();
           const paymentMethod = lang === "vn" ? "onepay_domestic" : "onepay_intl";
+          const emailGuestDetails = Object.fromEntries(
+            Object.entries(guestDetails).map(([guestKey, guest]) => [
+              guestKey,
+              {
+                ...guest,
+                emailLanguage: guest.emailLanguage || (lang === "vn" ? "vi" : "en"),
+              },
+            ]),
+          );
 
           const [recoveryLoading, setRecoveryLoading] = useState(!!route.recoveryId);
 
