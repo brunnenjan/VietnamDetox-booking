@@ -700,6 +700,10 @@
 
       const TRANSLATIONS = {
         en: {
+          email_language: "Email language",
+          email_language_hint: "Choose for each guest. You can change this later using the link in any email.",
+          email_language_change_hint: "To change this, use the language link in your email or contact our team.",
+          different_guest_email: "Please use a different email address for each guest.",
           step: "Step",
           plan_journey: "Plan your journey",
           plan_description: "Select the start date, number of guests, and residence. Every price line item updates before we request personal details.",
@@ -875,6 +879,10 @@
           try_again: "Try again"
         },
         vn: {
+          email_language: "Ngôn ngữ email",
+          email_language_hint: "Chọn riêng cho từng khách. Bạn có thể thay đổi qua liên kết trong email.",
+          email_language_change_hint: "Để thay đổi, hãy dùng liên kết ngôn ngữ trong email hoặc liên hệ chúng tôi.",
+          different_guest_email: "Vui lòng dùng địa chỉ email riêng cho mỗi khách.",
           step: "Bước",
           plan_journey: "Lên kế hoạch hành trình",
           plan_description: "Chọn ngày bắt đầu, số khách và chỗ ở. Mọi chi phí sẽ được cập nhật trước khi bạn điền thông tin cá nhân.",
@@ -1050,6 +1058,10 @@
           try_again: "Thử lại"
         },
         de: {
+          email_language: "E-Mail-Sprache",
+          email_language_hint: "Für jeden Gast einzeln wählen. Später über den Link in einer E-Mail änderbar.",
+          email_language_change_hint: "Änderungen sind über den Sprachlink in Ihrer E-Mail oder unser Team möglich.",
+          different_guest_email: "Bitte für jeden Gast eine eigene E-Mail-Adresse verwenden.",
           step: "Schritt",
           plan_journey: "Planen Sie Ihre Reise",
           plan_description: "Wählen Sie Startdatum, Gästeanzahl und Unterkunft. Die Preise aktualisieren sich in Echtzeit bei jeder Auswahl.",
@@ -2315,6 +2327,7 @@
               g2.lastName.trim() &&
               g2.email.trim() &&
               emailPattern.test(g2.email.trim()) &&
+              g2.email.trim().toLowerCase() !== g1.email.trim().toLowerCase() &&
               g2.phone.trim();
             return g2Valid;
           };
@@ -2381,7 +2394,7 @@
                   }
                 : null,
               transport: selectedTransport ? { id: selectedTransport.id, label: selectedTransport.label, price: selectedTransport.price || 0 } : null,
-              guestDetails,
+              guestDetails: emailGuestDetails,
               pricing: {
                 subtotal: pricing.subtotal,
                 earlyBird: pricing.earlyBird,
@@ -2452,7 +2465,7 @@
                   try {
                     sessionStorage.setItem("vdx_booking_state", JSON.stringify({
                       selection,
-                      guestDetails,
+                      guestDetails: emailGuestDetails,
                       paymentMethod,
                       bookingMeta: {
                         bookingId: bookingId ?? null,
@@ -2779,6 +2792,18 @@
           );
 
 
+          const renderEmailLanguage = (guestKey, guest) => (
+            <div className="space-y-2">
+              <label htmlFor={`${guestKey}-email-language`} className="text-[11px] uppercase tracking-[0.2em] text-stone-500">{t("email_language")}</label>
+              <select id={`${guestKey}-email-language`} disabled={!!bookingMeta.bookingId} value={guest.emailLanguage || (lang === "vn" ? "vi" : "en")}
+                onChange={(e) => updateGuest(guestKey, "emailLanguage", e.target.value)}
+                className="w-full border border-stone-200 rounded-2xl p-4 bg-stone-50 focus:ring-2 focus:ring-emerald-100 outline-none">
+                <option value="vi">Tiếng Việt</option><option value="en">English</option>
+              </select>
+              <p className="text-xs text-stone-500">{t(bookingMeta.bookingId ? "email_language_change_hint" : "email_language_hint")}</p>
+            </div>
+          );
+
           const renderGuestDetailsStep = () => {
             const primary = guestDetails.guest1;
             const secondary = guestDetails.guest2;
@@ -2816,6 +2841,7 @@
                       {renderInput(t("first_name"), primary.firstName, (e) => updateGuest("guest1", "firstName", e.target.value))}
                       {renderInput(t("last_name"), primary.lastName, (e) => updateGuest("guest1", "lastName", e.target.value))}
                       {renderInput(t("email_address"), primary.email, (e) => updateGuest("guest1", "email", e.target.value), "email")}
+                      {renderEmailLanguage("guest1", primary)}
                     </div>
                     <div className="space-y-2">
                       <label className="text-[11px] uppercase tracking-[0.2em] text-stone-500">{t("phone_number")}</label>
@@ -2882,6 +2908,10 @@
                       {renderInput(t("first_name"), secondary.firstName, (e) => updateGuest("guest2", "firstName", e.target.value))}
                       {renderInput(t("last_name"), secondary.lastName, (e) => updateGuest("guest2", "lastName", e.target.value))}
                       {renderInput(t("email_address"), secondary.email, (e) => updateGuest("guest2", "email", e.target.value), "email")}
+                      {renderEmailLanguage("guest2", secondary)}
+                      {secondary.email.trim() && secondary.email.trim().toLowerCase() === primary.email.trim().toLowerCase() && (
+                        <p className="text-sm text-red-700" role="alert">{t("different_guest_email")}</p>
+                      )}
                       {renderInput(t("phone_number"), secondary.phone, (e) => updateGuest("guest2", "phone", e.target.value), "tel")}
                     </div>
                   </section>
@@ -2988,6 +3018,7 @@
                           {guest.data.firstName || t("first_name")} {guest.data.lastName || ""}
                         </p>
                         <p className="text-sm text-stone-500">{guest.data.email || "Email pending"}</p>
+                        <p className="text-sm text-stone-500">{t("email_language")}: {(guest.data.emailLanguage || (lang === "vn" ? "vi" : "en")) === "vi" ? "Tiếng Việt" : "English"}</p>
                       </div>
                     ))}
                   </div>
