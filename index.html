@@ -656,7 +656,7 @@
           const langParam = normalizeLang(
             overrideLang || params.get("booking_lang") || params.get("lang") || getInitialLang()
           );
-          const response = await fetch(`/wp-json/retreats/v1/all?lang=${langParam}`);
+          const response = await fetch(`/wp-json/retreats/v1/all?lang=${langParam}&context=booking`);
           if (!response.ok) throw new Error(`HTTP ${response.status}`);
           const rawRetreats = await response.json();
           if (!Array.isArray(rawRetreats) || rawRetreats.length === 0) {
@@ -736,6 +736,12 @@
           primary_guest: "Primary guest",
           primary_description: "This information appears on your booking confirmation and invoice.",
           first_name: "First name",
+          gender: "Gender",
+          gender_choose: "Choose gender",
+          gender_male: "Male",
+          gender_female: "Female",
+          gender_unspecified: "Not specified",
+          gender_change_hint: "Please contact our team to change details on an existing booking.",
           last_name: "Last name",
           email_address: "Email address",
           phone_number: "Phone number",
@@ -915,6 +921,12 @@
           primary_guest: "Khách chính",
           primary_description: "Thông tin này sẽ xuất hiện trên xác nhận đặt chỗ và hóa đơn.",
           first_name: "Tên",
+          gender: "Giới tính",
+          gender_choose: "Chọn giới tính",
+          gender_male: "Nam",
+          gender_female: "Nữ",
+          gender_unspecified: "Chưa cung cấp",
+          gender_change_hint: "Vui lòng liên hệ chúng tôi để thay đổi thông tin của đơn đặt chỗ đã tạo.",
           last_name: "Họ",
           email_address: "Địa chỉ email",
           phone_number: "Số điện thoại",
@@ -1094,6 +1106,12 @@
           primary_guest: "Hauptgast",
           primary_description: "Diese Informationen erscheinen auf Ihrer Buchungsbestätigung.",
           first_name: "Vorname",
+          gender: "Geschlecht",
+          gender_choose: "Geschlecht auswählen",
+          gender_male: "Männlich",
+          gender_female: "Weiblich",
+          gender_unspecified: "Nicht angegeben",
+          gender_change_hint: "Bitte kontaktieren Sie unser Team, um Angaben einer bestehenden Buchung zu ändern.",
           last_name: "Nachname",
           email_address: "E-Mail-Adresse",
           phone_number: "Telefonnummer",
@@ -1766,6 +1784,7 @@
           const [selection, setSelection] = useState(() => savedState?.selection || initialBookingSelection);
           const [guestDetails, setGuestDetails] = useState(() => savedState?.guestDetails || ({
             guest1: {
+              gender: "",
               firstName: "",
               lastName: "",
               email: "",
@@ -1782,7 +1801,7 @@
               companyPhone: "",
               companyAddress: "",
             },
-            guest2: { firstName: "", lastName: "", email: "", phone: "" },
+            guest2: { gender: "", firstName: "", lastName: "", email: "", phone: "" },
           }));
           const [paymentSubmitting, setPaymentSubmitting] = useState(false);
           const [paymentError, setPaymentError] = useState("");
@@ -2313,6 +2332,7 @@
             const g1 = guestDetails.guest1;
             const primaryFieldsFilled =
               g1.firstName.trim() &&
+              (bookingMeta.bookingId || ["male", "female"].includes(g1.gender)) &&
               g1.lastName.trim() &&
               g1.email.trim() &&
               emailPattern.test(g1.email.trim()) &&
@@ -2333,6 +2353,7 @@
             const g2 = guestDetails.guest2;
             const g2Valid =
               g2.firstName.trim() &&
+              (bookingMeta.bookingId || ["male", "female"].includes(g2.gender)) &&
               g2.lastName.trim() &&
               g2.email.trim() &&
               emailPattern.test(g2.email.trim()) &&
@@ -2424,6 +2445,10 @@
 
           const handlePayment = async () => {
             if (paymentSubmitting) return;
+            if (!bookingMeta.bookingId && !guestDetailsValid()) {
+              goToStep("details");
+              return;
+            }
             setPaymentError("");
             setPaymentSubmitting(true);
             try {
@@ -2813,6 +2838,20 @@
             </div>
           );
 
+          const renderGender = (guestKey, guest) => (
+            <div className="space-y-2">
+              <label htmlFor={`${guestKey}-gender`} className="text-[11px] uppercase tracking-[0.2em] text-stone-500">{t("gender")}</label>
+              <select id={`${guestKey}-gender`} name={`${guestKey}-gender`} required disabled={Boolean(bookingMeta.bookingId)}
+                className="w-full border border-stone-200 rounded-2xl p-4 bg-stone-50 focus:ring-2 focus:ring-emerald-100 outline-none disabled:opacity-60"
+                value={guest.gender || ""} onChange={(e) => updateGuest(guestKey, "gender", e.target.value)}>
+                <option value="">{t(bookingMeta.bookingId ? "gender_unspecified" : "gender_choose")}</option>
+                <option value="male">{t("gender_male")}</option>
+                <option value="female">{t("gender_female")}</option>
+              </select>
+              {bookingMeta.bookingId && <p className="text-xs text-stone-500">{t("gender_change_hint")}</p>}
+            </div>
+          );
+
           const renderGuestDetailsStep = () => {
             const primary = guestDetails.guest1;
             const secondary = guestDetails.guest2;
@@ -2849,6 +2888,7 @@
                     <div className="space-y-4">
                       {renderInput(t("first_name"), primary.firstName, (e) => updateGuest("guest1", "firstName", e.target.value))}
                       {renderInput(t("last_name"), primary.lastName, (e) => updateGuest("guest1", "lastName", e.target.value))}
+                      {renderGender("guest1", primary)}
                       {renderInput(t("email_address"), primary.email, (e) => updateGuest("guest1", "email", e.target.value), "email")}
                       {renderEmailLanguage("guest1", primary)}
                     </div>
@@ -2916,6 +2956,7 @@
                     <div className="space-y-4">
                       {renderInput(t("first_name"), secondary.firstName, (e) => updateGuest("guest2", "firstName", e.target.value))}
                       {renderInput(t("last_name"), secondary.lastName, (e) => updateGuest("guest2", "lastName", e.target.value))}
+                      {renderGender("guest2", secondary)}
                       {renderInput(t("email_address"), secondary.email, (e) => updateGuest("guest2", "email", e.target.value), "email")}
                       {renderEmailLanguage("guest2", secondary)}
                       {secondary.email.trim() && secondary.email.trim().toLowerCase() === primary.email.trim().toLowerCase() && (
@@ -3027,6 +3068,7 @@
                           {guest.data.firstName || t("first_name")} {guest.data.lastName || ""}
                         </p>
                         <p className="text-sm text-stone-500">{guest.data.email || "Email pending"}</p>
+                        <p className="text-sm text-stone-500">{t("gender")}: {t(["male", "female"].includes(guest.data.gender) ? `gender_${guest.data.gender}` : "gender_unspecified")}</p>
                         <p className="text-sm text-stone-500">{t("email_language")}: {(guest.data.emailLanguage || (lang === "vn" ? "vi" : "en")) === "vi" ? "Tiếng Việt" : "English"}</p>
                       </div>
                     ))}
