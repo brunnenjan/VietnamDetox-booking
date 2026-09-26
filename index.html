@@ -127,6 +127,14 @@
         margin-block-start: 0 !important;
       }
 
+      /* The page container's default 10px side padding left pale strips beside
+         the booking background. Let the background reach the screen edges. */
+      body.vdx-elementor-embed
+      .elementor[data-elementor-type="wp-page"]
+      > .elementor-element:has(#booking-app-wrapper) {
+        padding-inline: 0 !important;
+      }
+
       body.vdx-elementor-embed #booking-app-wrapper {
         padding-top: 110px !important;
       }
