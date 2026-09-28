@@ -1,5 +1,13 @@
 # Vietnam Detox booking app
 
+## Payment methods
+
+The English payment step offers international cards (selected by default) and
+OnePay domestic QR. The QR option explains that a Vietnamese bank account is
+required. Vietnamese keeps QR as its payment method; German keeps international
+cards. The selected method is used for both the booking and OnePay requests and
+is restored after returning from OnePay, including failed-payment retries.
+
 ## Guest gender
 
 Step 2 requires a gender selection for each guest (English, Vietnamese and German

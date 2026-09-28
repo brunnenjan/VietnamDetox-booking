@@ -199,6 +199,18 @@
         font-family: var(--vdx-sans) !important;
       }
 
+      /* Allow payment copy to wrap even when the host theme keeps buttons on one line. */
+      #booking-app-wrapper button.vdx-payment-method {
+        min-width: 0;
+        max-width: 100%;
+        white-space: normal !important;
+      }
+
+      #booking-app-wrapper .vdx-payment-method p {
+        white-space: normal !important;
+        overflow-wrap: anywhere;
+      }
+
       #booking-app-wrapper > div > main {
         padding-top: clamp(48px, 6vw, 76px) !important;
         padding-bottom: clamp(88px, 9vw, 124px) !important;
@@ -804,6 +816,7 @@
           onepay_domestic: "OnePay · Domestic QR",
           onepay_international: "OnePay · International Cards",
           onepay_domestic_desc: "Pay via local bank apps with QR. No extra fees.",
+          onepay_domestic_requirement: "You need a Vietnamese bank account to pay by QR.",
           onepay_intl_desc: "Pay via Visa, Mastercard, JCB, Amex. Secured by OnePay.",
           stripe_desc: "Secure card payment in USD. A 3.6% processing fee is automatically added to the total.",
           bank_transfer_desc: "Pay in VND via local bank transfer. No extra processing fees.",
@@ -989,6 +1002,7 @@
           onepay_domestic: "OnePay · Quét QR",
           onepay_international: "OnePay · Thẻ quốc tế",
           onepay_domestic_desc: "Thanh toán qua ứng dụng ngân hàng bằng cách quét QR. Không mất phí.",
+          onepay_domestic_requirement: "Bạn cần có tài khoản ngân hàng tại Việt Nam để thanh toán bằng mã QR.",
           onepay_intl_desc: "Thanh toán qua Visa, Mastercard, JCB, Amex. Bảo mật bởi OnePay.",
           stripe_desc: "Thanh toán bằng thẻ qua Stripe (USD). Phí 3.6% sẽ được tự động cộng vào tổng tiền.",
           bank_transfer_desc: "Thanh toán bằng VND qua chuyển khoản ngân hàng nội địa. Không mất phí xử lý.",
@@ -1174,6 +1188,7 @@
           onepay_domestic: "OnePay · Inland ATM / QR",
           onepay_international: "OnePay · Internationale Karten",
           onepay_domestic_desc: "Zahlung über lokale Bank-Apps, ATM-Karten oder QR. Keine Extragebühren.",
+          onepay_domestic_requirement: "Für die Zahlung per QR-Code benötigen Sie ein vietnamesisches Bankkonto.",
           onepay_intl_desc: "Zahlung über Visa, Mastercard, JCB, Amex. Gesichert durch OnePay.",
           stripe_desc: "Sichere Kartenzahlung in USD. 3,6% Gebühr werden automatisch hinzugefügt.",
           bank_transfer_desc: "Zahlung in VND per Banküberweisung. Keine Extragebühren.",
@@ -1855,7 +1870,13 @@
           const routeStep = route?.step;
           const flowStep = STEPS.includes(routeStep) ? routeStep : "config";
           const lang = route?.lang || getInitialLang();
-          const paymentMethod = lang === "vn" ? "onepay_domestic" : "onepay_intl";
+          const availablePaymentMethods = lang === "en"
+            ? ["onepay_intl", "onepay_domestic"]
+            : [lang === "vn" ? "onepay_domestic" : "onepay_intl"];
+          const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(() => savedState?.paymentMethod || null);
+          const paymentMethod = availablePaymentMethods.includes(selectedPaymentMethod)
+            ? selectedPaymentMethod
+            : availablePaymentMethods[0];
           const emailGuestDetails = Object.fromEntries(
             Object.entries(guestDetails).map(([guestKey, guest]) => [
               guestKey,
@@ -3315,20 +3336,36 @@
               <div className="space-y-6">
                 <div>
                   <p className="text-xs uppercase tracking-[0.3em] text-stone-400 font-semibold mb-4">{t("payment_method")}</p>
-                  <div className="grid grid-cols-1 gap-4">
-                    <button
-                      type="button"
-                      aria-pressed={true}
-                      className="p-4 sm:p-5 border-2 rounded-2xl flex items-center justify-between gap-3 transition-all border-emerald-600 bg-emerald-50 ring-4 ring-emerald-600/10 shadow-lg"
-                    >
-                      <div className="min-w-0 flex-1 text-left flex flex-col justify-center">
-                        <p className="font-semibold leading-none">{t(paymentMethod === "onepay_domestic" ? "onepay_domestic" : "onepay_international")}</p>
-                        {paymentMethod === "onepay_domestic" ? <VietQRLogo /> : <PaymentLogos />}
-                      </div>
-                      <span className="shrink-0" aria-hidden="true">
-                        {paymentMethod === "onepay_domestic" ? <Icons.Building /> : <Icons.CreditCard />}
-                      </span>
-                    </button>
+                  <div className={`grid grid-cols-1 gap-4 ${availablePaymentMethods.length > 1 ? "sm:grid-cols-2" : ""}`}>
+                    {availablePaymentMethods.map((method) => {
+                      const isDomestic = method === "onepay_domestic";
+                      const isSelected = paymentMethod === method;
+                      return (
+                        <button
+                          key={method}
+                          type="button"
+                          aria-pressed={isSelected}
+                          disabled={paymentSubmitting}
+                          onClick={() => {
+                            setSelectedPaymentMethod(method);
+                            setPaymentError("");
+                          }}
+                          className={`vdx-payment-method p-4 sm:p-5 border-2 rounded-2xl flex items-start justify-between gap-3 transition-all disabled:opacity-60 disabled:cursor-not-allowed ${isSelected ? "border-emerald-600 bg-emerald-50 ring-4 ring-emerald-600/10 shadow-lg" : "border-stone-200 bg-white hover:border-emerald-600"}`}
+                        >
+                          <div className="min-w-0 flex-1 text-left flex flex-col justify-center">
+                            <p className="font-semibold leading-snug">{t(isDomestic ? "onepay_domestic" : "onepay_international")}</p>
+                            {isDomestic ? <VietQRLogo /> : <PaymentLogos />}
+                            <p className="mt-3 text-sm text-stone-600 leading-relaxed">{t(isDomestic ? "onepay_domestic_desc" : "onepay_intl_desc")}</p>
+                            {isDomestic && (
+                              <p className="mt-3 text-sm font-semibold text-stone-800 leading-relaxed">{t("onepay_domestic_requirement")}</p>
+                            )}
+                          </div>
+                          <span className="shrink-0" aria-hidden="true">
+                            {isDomestic ? <Icons.Building /> : <Icons.CreditCard />}
+                          </span>
+                        </button>
+                      );
+                    })}
                   </div>
                 </div>
 
