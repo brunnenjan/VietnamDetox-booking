@@ -1741,10 +1741,9 @@
             (Array.isArray(retreat.dates) ? retreat.dates : []).some(isRetreatDateAvailable),
           );
 
-          // Keep API order except for the retreat selected before arriving here.
-          // In-page selections should not make cards jump while browsing.
-          if (!requestedRetreat) return retreats;
-          return [requestedRetreat, ...retreats.filter((retreat) => retreat.id !== requestedRetreat.id)];
+          // A link from a retreat page shows only that retreat, so another one cannot be
+          // chosen by accident. Opening the booking page directly lists all retreats in API order.
+          return requestedRetreat ? [requestedRetreat] : retreats;
         };
 
         const getInitialBookingSelection = (defaultRetreat) => {
@@ -2127,8 +2126,13 @@
 
           useEffect(() => {
             if (recoveryLoading || bookingMeta.bookingId || hasValidDateSelection) return;
+            // Stay within the retreat the guest arrived for; it is the only one listed.
+            const requestedRetreat = getRequestedBookingRetreat(new URLSearchParams(window.location.search || ""));
+            const fallbackDates = requestedRetreat
+              ? dateOptions.filter((date) => date.retreatId === requestedRetreat.id)
+              : dateOptions;
             const fallbackDate =
-              dateOptions.find((date) => date.retreatId === selection.retreatId) || dateOptions[0];
+              fallbackDates.find((date) => date.retreatId === selection.retreatId) || fallbackDates[0];
             if (!fallbackDate) {
               setSelection((prev) => ({
                 ...prev,

@@ -50,10 +50,11 @@ package remain selected, while an invalid date falls back to that retreat's
 first available date. Direct visits without parameters retain the normal first
 available retreat, date, and package defaults.
 
-The retreat selected by a valid booking link appears first in the retreat list;
-the remaining retreats keep their API order. Package-only links also move their
-owning retreat to the top. Selecting another retreat within the booking app does
-not reorder the cards. Direct visits keep the API order.
+A valid booking link shows **only** its retreat, with that retreat's dates,
+guests, packages and transfers, so guests coming from a retreat page cannot pick
+another retreat by accident. Package-only links do the same for their owning
+retreat. Direct visits (no parameters) list every bookable retreat in API order.
+A `retreat_id` that is unknown or has no upcoming dates falls back to the full list.
 
 Retreats without upcoming dates (including private retreats with only historical
 dates) are hidden from the booking list. The shared retreats API is unchanged so
