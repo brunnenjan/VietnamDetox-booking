@@ -21,6 +21,28 @@ salutations use Mr./Ms. in English or Anh/Chị in Vietnamese. Existing bookings
 without gender remain recoverable; their gender field is read-only and corrections
 go through staff rather than silently changing only the browser state.
 
+## Phone country codes
+
+Both guests' phone numbers have a searchable country picker covering every country
+and territory (`PHONE_COUNTRIES`: ISO code, ITU dial code and English name). Names are
+shown in the booking language via `Intl.DisplayNames`. The search matches English or
+translated names without accents ("viet", "duc"), ISO codes and dial codes ("44",
+"+84"). Arrow keys, Enter and Escape work, and the list scrolls to the current country.
+Flags are emoji. Windows has no flag emoji, so there the app loads Twemoji's flag-only
+font from jsDelivr (`country-flag-emoji-polyfill`).
+
+- Guest 1's code follows the country of residence typed in step 2 (English, Vietnamese or
+  German names, plus aliases such as "USA" and "UK") until a code is picked by hand.
+- Guest 2 follows guest 1 until it is changed separately.
+- Pasting "+49 151…" or "0049 151…" into the number selects that country when the
+  field loses focus.
+
+The booking payload now carries the code. `guestDetails.*.phone` and `purchase_phone`
+are sent as `"+84 912 345 678"`, so the API stores the number with its country code.
+The national trunk 0 is dropped, except for Italy, San Marino and the Vatican. Before
+this, only the local number was sent and the selected code was lost. No API change is
+needed.
+
 ## URL preselection
 
 The app requests `/wp-json/retreats/v1/all?lang=…&context=booking`. This API

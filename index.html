@@ -367,6 +367,62 @@
         accent-color: var(--vdx-ember);
       }
 
+      /* Phone country picker: matches the fields and ignores the theme's button styles. */
+      #booking-app-wrapper button.vdx-phone-country {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        width: 100%;
+        min-height: 52px;
+        margin: 0;
+        padding: 0 14px !important;
+        border: 1px solid rgba(30, 61, 32, 0.18) !important;
+        border-radius: 8px !important;
+        background: var(--vdx-white) !important;
+        color: var(--vdx-ink) !important;
+        font-size: 16px !important;
+        font-weight: 400 !important;
+        letter-spacing: normal !important;
+        text-transform: none !important;
+        box-shadow: none !important;
+        cursor: pointer;
+      }
+
+      #booking-app-wrapper button.vdx-phone-country:hover {
+        background: var(--vdx-white) !important;
+        color: var(--vdx-ink) !important;
+      }
+
+      #booking-app-wrapper button.vdx-phone-country:focus-visible,
+      #booking-app-wrapper button.vdx-phone-country[aria-expanded="true"] {
+        border-color: var(--vdx-ember) !important;
+        outline: none !important;
+        box-shadow: 0 0 0 3px rgba(224, 100, 32, 0.13) !important;
+      }
+
+      #booking-app-wrapper .vdx-phone-country-menu {
+        position: absolute;
+        z-index: 60;
+        top: calc(100% + 6px);
+        left: 0;
+        width: min(20rem, calc(100vw - 3rem));
+        overflow: hidden;
+        border: 1px solid var(--vdx-border);
+        border-radius: 12px;
+        background: var(--vdx-white);
+        box-shadow: 0 18px 40px rgba(28, 28, 24, 0.14);
+      }
+
+      #booking-app-wrapper .vdx-phone-country-menu input[type="search"] {
+        min-height: 44px;
+      }
+
+      #booking-app-wrapper .vdx-flag {
+        font-family: "Twemoji Country Flags", "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif !important;
+        line-height: 1;
+      }
+
       /*
        * Use one shape for every text/action button. Icon-only controls remain
        * circular so their compact hit areas and familiar affordances are kept.
@@ -775,6 +831,9 @@
           email_address: "Email address",
           phone_number: "Phone number",
           phone_helper: "Helpful in case we need to reach you shortly before arrival.",
+          country_code: "Country code",
+          search_country: "Search country or code",
+          no_country_match: "No matching country",
           invoice_helper: "We use this information only to issue your booking confirmation and invoice if required.",
           street_house: "Street & house number",
           city: "City",
@@ -961,6 +1020,9 @@
           email_address: "Địa chỉ email",
           phone_number: "Số điện thoại",
           phone_helper: "Giúp chúng tôi liên hệ với bạn trước khi đến.",
+          country_code: "Mã quốc gia",
+          search_country: "Tìm quốc gia hoặc mã",
+          no_country_match: "Không tìm thấy quốc gia phù hợp",
           invoice_helper: "Chúng tôi chỉ sử dụng thông tin này để xuất xác nhận đặt chỗ và hóa đơn nếu cần.",
           street_house: "Số nhà & tên đường",
           city: "Thành phố",
@@ -1147,6 +1209,9 @@
           email_address: "E-Mail-Adresse",
           phone_number: "Telefonnummer",
           phone_helper: "Hilfreich für kurzfristige Erreichbarkeit.",
+          country_code: "Ländervorwahl",
+          search_country: "Land oder Vorwahl suchen",
+          no_country_match: "Kein passendes Land",
           invoice_helper: "Nur für Buchungsbestätigung und Rechnung verwendet.",
           street_house: "Straße & Hausnummer",
           city: "Stadt",
@@ -1498,21 +1563,95 @@
           ),
         };
 
-        const COUNTRY_DIAL_CODES = {
-          vietnam: "+84",
-          "united states": "+1",
-          usa: "+1",
-          canada: "+1",
-          singapore: "+65",
-          australia: "+61",
-          germany: "+49",
-          france: "+33",
-          "united kingdom": "+44",
-          uk: "+44",
-          thailand: "+66",
-          japan: "+81",
-        };
-        const PHONE_CODE_OPTIONS = Array.from(new Set(Object.values(COUNTRY_DIAL_CODES)));
+        // Every country/territory: ISO 3166-1 alpha-2, ITU dial code, English name.
+        // Names shown to guests are localised with Intl.DisplayNames.
+        const PHONE_COUNTRIES = [
+          ["AF", "+93", "Afghanistan"], ["AX", "+358", "Åland Islands"], ["AL", "+355", "Albania"],
+          ["DZ", "+213", "Algeria"], ["AS", "+1", "American Samoa"], ["AD", "+376", "Andorra"],
+          ["AO", "+244", "Angola"], ["AI", "+1", "Anguilla"], ["AG", "+1", "Antigua and Barbuda"],
+          ["AR", "+54", "Argentina"], ["AM", "+374", "Armenia"], ["AW", "+297", "Aruba"],
+          ["AU", "+61", "Australia"], ["AT", "+43", "Austria"], ["AZ", "+994", "Azerbaijan"],
+          ["BS", "+1", "Bahamas"], ["BH", "+973", "Bahrain"], ["BD", "+880", "Bangladesh"],
+          ["BB", "+1", "Barbados"], ["BY", "+375", "Belarus"], ["BE", "+32", "Belgium"],
+          ["BZ", "+501", "Belize"], ["BJ", "+229", "Benin"], ["BM", "+1", "Bermuda"],
+          ["BT", "+975", "Bhutan"], ["BO", "+591", "Bolivia"], ["BQ", "+599", "Caribbean Netherlands"],
+          ["BA", "+387", "Bosnia and Herzegovina"], ["BW", "+267", "Botswana"], ["BR", "+55", "Brazil"],
+          ["IO", "+246", "British Indian Ocean Territory"], ["VG", "+1", "British Virgin Islands"], ["BN", "+673", "Brunei"],
+          ["BG", "+359", "Bulgaria"], ["BF", "+226", "Burkina Faso"], ["BI", "+257", "Burundi"],
+          ["KH", "+855", "Cambodia"], ["CM", "+237", "Cameroon"], ["CA", "+1", "Canada"],
+          ["CV", "+238", "Cape Verde"], ["KY", "+1", "Cayman Islands"], ["CF", "+236", "Central African Republic"],
+          ["TD", "+235", "Chad"], ["CL", "+56", "Chile"], ["CN", "+86", "China"],
+          ["CX", "+61", "Christmas Island"], ["CC", "+61", "Cocos (Keeling) Islands"], ["CO", "+57", "Colombia"],
+          ["KM", "+269", "Comoros"], ["CG", "+242", "Congo - Brazzaville"], ["CD", "+243", "Congo - Kinshasa"],
+          ["CK", "+682", "Cook Islands"], ["CR", "+506", "Costa Rica"], ["CI", "+225", "Côte d'Ivoire"],
+          ["HR", "+385", "Croatia"], ["CU", "+53", "Cuba"], ["CW", "+599", "Curaçao"],
+          ["CY", "+357", "Cyprus"], ["CZ", "+420", "Czechia"], ["DK", "+45", "Denmark"],
+          ["DJ", "+253", "Djibouti"], ["DM", "+1", "Dominica"], ["DO", "+1", "Dominican Republic"],
+          ["EC", "+593", "Ecuador"], ["EG", "+20", "Egypt"], ["SV", "+503", "El Salvador"],
+          ["GQ", "+240", "Equatorial Guinea"], ["ER", "+291", "Eritrea"], ["EE", "+372", "Estonia"],
+          ["SZ", "+268", "Eswatini"], ["ET", "+251", "Ethiopia"], ["FK", "+500", "Falkland Islands"],
+          ["FO", "+298", "Faroe Islands"], ["FJ", "+679", "Fiji"], ["FI", "+358", "Finland"],
+          ["FR", "+33", "France"], ["GF", "+594", "French Guiana"], ["PF", "+689", "French Polynesia"],
+          ["GA", "+241", "Gabon"], ["GM", "+220", "Gambia"], ["GE", "+995", "Georgia"],
+          ["DE", "+49", "Germany"], ["GH", "+233", "Ghana"], ["GI", "+350", "Gibraltar"],
+          ["GR", "+30", "Greece"], ["GL", "+299", "Greenland"], ["GD", "+1", "Grenada"],
+          ["GP", "+590", "Guadeloupe"], ["GU", "+1", "Guam"], ["GT", "+502", "Guatemala"],
+          ["GG", "+44", "Guernsey"], ["GN", "+224", "Guinea"], ["GW", "+245", "Guinea-Bissau"],
+          ["GY", "+592", "Guyana"], ["HT", "+509", "Haiti"], ["HN", "+504", "Honduras"],
+          ["HK", "+852", "Hong Kong"], ["HU", "+36", "Hungary"], ["IS", "+354", "Iceland"],
+          ["IN", "+91", "India"], ["ID", "+62", "Indonesia"], ["IR", "+98", "Iran"],
+          ["IQ", "+964", "Iraq"], ["IE", "+353", "Ireland"], ["IM", "+44", "Isle of Man"],
+          ["IL", "+972", "Israel"], ["IT", "+39", "Italy"], ["JM", "+1", "Jamaica"],
+          ["JP", "+81", "Japan"], ["JE", "+44", "Jersey"], ["JO", "+962", "Jordan"],
+          ["KZ", "+7", "Kazakhstan"], ["KE", "+254", "Kenya"], ["KI", "+686", "Kiribati"],
+          ["XK", "+383", "Kosovo"], ["KW", "+965", "Kuwait"], ["KG", "+996", "Kyrgyzstan"],
+          ["LA", "+856", "Laos"], ["LV", "+371", "Latvia"], ["LB", "+961", "Lebanon"],
+          ["LS", "+266", "Lesotho"], ["LR", "+231", "Liberia"], ["LY", "+218", "Libya"],
+          ["LI", "+423", "Liechtenstein"], ["LT", "+370", "Lithuania"], ["LU", "+352", "Luxembourg"],
+          ["MO", "+853", "Macao"], ["MG", "+261", "Madagascar"], ["MW", "+265", "Malawi"],
+          ["MY", "+60", "Malaysia"], ["MV", "+960", "Maldives"], ["ML", "+223", "Mali"],
+          ["MT", "+356", "Malta"], ["MH", "+692", "Marshall Islands"], ["MQ", "+596", "Martinique"],
+          ["MR", "+222", "Mauritania"], ["MU", "+230", "Mauritius"], ["YT", "+262", "Mayotte"],
+          ["MX", "+52", "Mexico"], ["FM", "+691", "Micronesia"], ["MD", "+373", "Moldova"],
+          ["MC", "+377", "Monaco"], ["MN", "+976", "Mongolia"], ["ME", "+382", "Montenegro"],
+          ["MS", "+1", "Montserrat"], ["MA", "+212", "Morocco"], ["MZ", "+258", "Mozambique"],
+          ["MM", "+95", "Myanmar"], ["NA", "+264", "Namibia"], ["NR", "+674", "Nauru"],
+          ["NP", "+977", "Nepal"], ["NL", "+31", "Netherlands"], ["NC", "+687", "New Caledonia"],
+          ["NZ", "+64", "New Zealand"], ["NI", "+505", "Nicaragua"], ["NE", "+227", "Niger"],
+          ["NG", "+234", "Nigeria"], ["NU", "+683", "Niue"], ["NF", "+672", "Norfolk Island"],
+          ["KP", "+850", "North Korea"], ["MK", "+389", "North Macedonia"], ["MP", "+1", "Northern Mariana Islands"],
+          ["NO", "+47", "Norway"], ["OM", "+968", "Oman"], ["PK", "+92", "Pakistan"],
+          ["PW", "+680", "Palau"], ["PS", "+970", "Palestine"], ["PA", "+507", "Panama"],
+          ["PG", "+675", "Papua New Guinea"], ["PY", "+595", "Paraguay"], ["PE", "+51", "Peru"],
+          ["PH", "+63", "Philippines"], ["PL", "+48", "Poland"], ["PT", "+351", "Portugal"],
+          ["PR", "+1", "Puerto Rico"], ["QA", "+974", "Qatar"], ["RE", "+262", "Réunion"],
+          ["RO", "+40", "Romania"], ["RU", "+7", "Russia"], ["RW", "+250", "Rwanda"],
+          ["BL", "+590", "Saint Barthélemy"], ["SH", "+290", "Saint Helena"], ["KN", "+1", "Saint Kitts and Nevis"],
+          ["LC", "+1", "Saint Lucia"], ["MF", "+590", "Saint Martin"], ["PM", "+508", "Saint Pierre and Miquelon"],
+          ["VC", "+1", "Saint Vincent and the Grenadines"], ["WS", "+685", "Samoa"], ["SM", "+378", "San Marino"],
+          ["ST", "+239", "São Tomé and Príncipe"], ["SA", "+966", "Saudi Arabia"], ["SN", "+221", "Senegal"],
+          ["RS", "+381", "Serbia"], ["SC", "+248", "Seychelles"], ["SL", "+232", "Sierra Leone"],
+          ["SG", "+65", "Singapore"], ["SX", "+1", "Sint Maarten"], ["SK", "+421", "Slovakia"],
+          ["SI", "+386", "Slovenia"], ["SB", "+677", "Solomon Islands"], ["SO", "+252", "Somalia"],
+          ["ZA", "+27", "South Africa"], ["KR", "+82", "South Korea"], ["SS", "+211", "South Sudan"],
+          ["ES", "+34", "Spain"], ["LK", "+94", "Sri Lanka"], ["SD", "+249", "Sudan"],
+          ["SR", "+597", "Suriname"], ["SJ", "+47", "Svalbard and Jan Mayen"], ["SE", "+46", "Sweden"],
+          ["CH", "+41", "Switzerland"], ["SY", "+963", "Syria"], ["TW", "+886", "Taiwan"],
+          ["TJ", "+992", "Tajikistan"], ["TZ", "+255", "Tanzania"], ["TH", "+66", "Thailand"],
+          ["TL", "+670", "Timor-Leste"], ["TG", "+228", "Togo"], ["TK", "+690", "Tokelau"],
+          ["TO", "+676", "Tonga"], ["TT", "+1", "Trinidad and Tobago"], ["TN", "+216", "Tunisia"],
+          ["TR", "+90", "Türkiye"], ["TM", "+993", "Turkmenistan"], ["TC", "+1", "Turks and Caicos Islands"],
+          ["TV", "+688", "Tuvalu"], ["UG", "+256", "Uganda"], ["UA", "+380", "Ukraine"],
+          ["AE", "+971", "United Arab Emirates"], ["GB", "+44", "United Kingdom"], ["US", "+1", "United States"],
+          ["UY", "+598", "Uruguay"], ["VI", "+1", "U.S. Virgin Islands"], ["UZ", "+998", "Uzbekistan"],
+          ["VU", "+678", "Vanuatu"], ["VA", "+39", "Vatican City"], ["VE", "+58", "Venezuela"],
+          ["VN", "+84", "Vietnam"], ["WF", "+681", "Wallis and Futuna"], ["EH", "+212", "Western Sahara"],
+          ["YE", "+967", "Yemen"], ["ZM", "+260", "Zambia"], ["ZW", "+263", "Zimbabwe"],
+        ].map(([iso, dial, name]) => ({ iso, dial, name }));
+        const PHONE_COUNTRY_BY_ISO = Object.fromEntries(PHONE_COUNTRIES.map((country) => [country.iso, country]));
+        // Shared dial codes resolve to their main country (older saved bookings only kept the code).
+        const MAIN_COUNTRY_FOR_DIAL = { "+1": "US", "+7": "RU", "+39": "IT", "+44": "GB", "+47": "NO", "+61": "AU", "+212": "MA", "+262": "RE", "+358": "FI", "+590": "GP", "+599": "CW" };
+        const DEFAULT_PHONE_COUNTRY = "VN";
 
         const SAFETY_QUESTIONS = [
           {
@@ -1566,10 +1705,253 @@
         const getRoomsForRetreat = (retreatId) => ROOMS_BY_RETREAT[retreatId] || [];
         const getTransportOptionsForRetreat = (retreatId) => TRANSPORT_BY_RETREAT[retreatId] || [];
 
-        const getDialCodeForCountry = (countryName) => {
-          if (!countryName) return null;
-          const normalized = countryName.trim().toLowerCase();
-          return COUNTRY_DIAL_CODES[normalized] || null;
+        const intlLocaleFor = (lang) => (lang === "vn" ? "vi" : lang === "de" ? "de" : "en");
+        const regionNamesByLocale = {};
+        const getCountryName = (iso, lang) => {
+          const locale = intlLocaleFor(lang);
+          try {
+            regionNamesByLocale[locale] = regionNamesByLocale[locale] || new Intl.DisplayNames([locale], { type: "region" });
+            const name = regionNamesByLocale[locale].of(iso);
+            if (name && name !== iso) return name;
+          } catch (error) {
+            // Older browsers without Intl.DisplayNames use the English list.
+          }
+          return PHONE_COUNTRY_BY_ISO[iso]?.name || iso;
+        };
+
+        // Lower case, without accents (đ → d), so "Việt Nam" matches "viet nam".
+        const normalizeCountryText = (value) =>
+          String(value || "").replace(/[đĐ]/g, "d").normalize("NFD").replace(/[̀-ͯ]/g, "")
+            .toLowerCase().replace(/[^a-z0-9+]+/g, " ").trim();
+
+        const COUNTRY_NAME_ALIASES = {
+          usa: "US", "united states of america": "US", america: "US", uk: "GB", england: "GB", scotland: "GB", wales: "GB",
+          "northern ireland": "GB", britain: "GB", "great britain": "GB", "viet nam": "VN", korea: "KR", "republic of korea": "KR",
+          "czech republic": "CZ", holland: "NL", turkey: "TR", uae: "AE", "russian federation": "RU", macau: "MO",
+          "ivory coast": "CI", burma: "MM", swaziland: "SZ", "east timor": "TL", macedonia: "MK", vatican: "VA",
+          deutschland: "DE", osterreich: "AT", schweiz: "CH",
+        };
+        let countryNameLookup = null;
+        /** Country of residence text → ISO code, in English, Vietnamese or German. */
+        const findCountryIso = (text) => {
+          const key = normalizeCountryText(text);
+          if (!key) return null;
+          if (!countryNameLookup) {
+            countryNameLookup = { ...COUNTRY_NAME_ALIASES };
+            PHONE_COUNTRIES.forEach((country) => {
+              countryNameLookup[normalizeCountryText(country.name)] = country.iso;
+              ["en", "vn", "de"].forEach((lang) => {
+                countryNameLookup[normalizeCountryText(getCountryName(country.iso, lang))] = country.iso;
+              });
+            });
+          }
+          return countryNameLookup[key] || null;
+        };
+
+        const getDialCode = (iso) => PHONE_COUNTRY_BY_ISO[iso]?.dial || "";
+        const countryForDial = (dial) =>
+          MAIN_COUNTRY_FOR_DIAL[dial] || PHONE_COUNTRIES.find((country) => country.dial === dial)?.iso || DEFAULT_PHONE_COUNTRY;
+        // The picker stores the country; states saved before it only have the dial code.
+        const getGuestPhoneCountry = (guest) =>
+          (guest?.phoneCountry && PHONE_COUNTRY_BY_ISO[guest.phoneCountry]) ? guest.phoneCountry : countryForDial(guest?.phoneCountryCode);
+
+        /** "+49 151…" or "0049 151…" → the guest with that country selected and only the national number left. */
+        const withSplitPhone = (guest) => {
+          const match = String(guest?.phone || "").trim().match(/^(?:\+|00)\s*(\d[\d\s().-]*)$/);
+          if (!match) return guest;
+          const digits = match[1].replace(/\D/g, "");
+          const country = PHONE_COUNTRIES.reduce((best, item) =>
+            digits.startsWith(item.dial.slice(1)) && (!best || item.dial.length > best.dial.length) ? item : best, null);
+          if (!country) return guest;
+          let index = 0;
+          for (let skip = country.dial.length - 1; index < match[1].length && skip > 0; index += 1) {
+            if (/\d/.test(match[1][index])) skip -= 1;
+          }
+          // Keep a chosen country that shares the dial code (e.g. Jersey on +44).
+          const current = getGuestPhoneCountry(guest);
+          const iso = getDialCode(current) === country.dial ? current : countryForDial(country.dial);
+          return { ...guest, phone: match[1].slice(index).replace(/^[\s.-]+/, ""), phoneCountry: iso, phoneCountryCode: country.dial, phoneCodeManuallySet: true };
+        };
+
+        /** The number as sent to Vietnam Detox: dial code + national number. */
+        const formatPhoneWithCountry = (guest) => {
+          const phone = String(guest?.phone || "").trim();
+          if (!phone) return "";
+          if (/^(\+|00)/.test(phone)) return phone.replace(/^00/, "+");
+          const dial = getDialCode(getGuestPhoneCountry(guest));
+          // Most countries drop the leading trunk 0 after the dial code; Italy, the Vatican and San Marino keep it.
+          return `${dial} ${["+39", "+378"].includes(dial) ? phone : phone.replace(/^0(?=\d)/, "")}`;
+        };
+
+        const flagEmoji = (iso) => String.fromCodePoint(...[...iso].map((letter) => 0x1f1e6 + letter.charCodeAt(0) - 65));
+        let flagFontChecked = false;
+        // Windows has no colour flag emoji; load Twemoji's flag-only font there.
+        const ensureFlagFont = () => {
+          if (flagFontChecked) return;
+          flagFontChecked = true;
+          try {
+            const canvas = document.createElement("canvas");
+            canvas.width = canvas.height = 20;
+            const context = canvas.getContext("2d", { willReadFrequently: true });
+            context.textBaseline = "top";
+            context.font = "16px sans-serif";
+            context.fillText(flagEmoji("VN"), 0, 0);
+            const pixels = context.getImageData(0, 0, 20, 20).data;
+            for (let i = 0; i < pixels.length; i += 4) {
+              if (pixels[i + 3] && (pixels[i] !== pixels[i + 1] || pixels[i + 1] !== pixels[i + 2])) return;
+            }
+          } catch (error) {
+            return;
+          }
+          const style = document.createElement("style");
+          style.textContent = '@font-face{font-family:"Twemoji Country Flags";unicode-range:U+1F1E6-1F1FF;font-display:swap;'
+            + 'src:url("https://cdn.jsdelivr.net/npm/country-flag-emoji-polyfill@0.1.10/dist/TwemojiCountryFlags.woff2") format("woff2")}';
+          document.head.appendChild(style);
+        };
+
+        let phonePickerCount = 0;
+        const PhoneCountryPicker = ({ value, onChange, lang, t }) => {
+          const [open, setOpen] = useState(false);
+          const [query, setQuery] = useState("");
+          const [active, setActive] = useState(0);
+          const rootRef = useRef(null);
+          const buttonRef = useRef(null);
+          const searchRef = useRef(null);
+          const listRef = useRef(null);
+          const listId = useRef(`vdx-phone-countries-${(phonePickerCount += 1)}`).current;
+          const selected = PHONE_COUNTRY_BY_ISO[value] || PHONE_COUNTRY_BY_ISO[DEFAULT_PHONE_COUNTRY];
+
+          useEffect(ensureFlagFont, []);
+
+          const countries = useMemo(() => {
+            const collator = new Intl.Collator(intlLocaleFor(lang));
+            return PHONE_COUNTRIES
+              .map((country) => ({ ...country, label: getCountryName(country.iso, lang) }))
+              .sort((a, b) => collator.compare(a.label, b.label));
+          }, [lang]);
+
+          // Search by localised or English name, ISO code, or dial code ("84", "+84").
+          const results = useMemo(() => {
+            const term = normalizeCountryText(query);
+            if (!term) return countries;
+            if (/^\+?\d+$/.test(term.replace(/\s/g, ""))) {
+              const digits = term.replace(/\D/g, "");
+              return countries.filter((country) => country.dial.slice(1).startsWith(digits));
+            }
+            return countries.filter((country) =>
+              normalizeCountryText(country.label).includes(term) || normalizeCountryText(country.name).includes(term)
+              || country.iso.toLowerCase() === term);
+          }, [countries, query]);
+
+          useEffect(() => {
+            if (!open) return undefined;
+            setQuery("");
+            setActive(Math.max(0, countries.findIndex((country) => country.iso === selected.iso)));
+            if (searchRef.current) searchRef.current.focus();
+            const closeOutside = (event) => {
+              if (rootRef.current && !rootRef.current.contains(event.target)) setOpen(false);
+            };
+            document.addEventListener("mousedown", closeOutside);
+            document.addEventListener("touchstart", closeOutside);
+            return () => {
+              document.removeEventListener("mousedown", closeOutside);
+              document.removeEventListener("touchstart", closeOutside);
+            };
+          }, [open]);
+
+          useEffect(() => {
+            if (!open || !listRef.current) return;
+            const option = listRef.current.querySelector(`[data-index="${active}"]`);
+            if (option) option.scrollIntoView({ block: "nearest" });
+          }, [open, active, results]);
+
+          const choose = (country) => {
+            onChange(country.iso);
+            setOpen(false);
+            if (buttonRef.current) buttonRef.current.focus();
+          };
+
+          const handleKeyDown = (event) => {
+            if (event.key === "ArrowDown") {
+              event.preventDefault();
+              setActive((index) => Math.min(results.length - 1, index + 1));
+            } else if (event.key === "ArrowUp") {
+              event.preventDefault();
+              setActive((index) => Math.max(0, index - 1));
+            } else if (event.key === "Enter") {
+              event.preventDefault();
+              if (results[active]) choose(results[active]);
+            } else if (event.key === "Escape") {
+              event.preventDefault();
+              setOpen(false);
+              if (buttonRef.current) buttonRef.current.focus();
+            } else if (event.key === "Tab") {
+              setOpen(false);
+            }
+          };
+
+          return (
+            <div className="relative" ref={rootRef}>
+              <button
+                type="button"
+                ref={buttonRef}
+                className="vdx-phone-country"
+                onClick={() => setOpen((isOpen) => !isOpen)}
+                aria-haspopup="listbox"
+                aria-expanded={open}
+                aria-label={`${t("country_code")}: ${getCountryName(selected.iso, lang)} ${selected.dial}`}
+              >
+                <span className="flex items-center gap-2">
+                  <span className="vdx-flag text-xl" aria-hidden="true">{flagEmoji(selected.iso)}</span>
+                  <span>{selected.dial}</span>
+                </span>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                  <path d="m6 9 6 6 6-6" />
+                </svg>
+              </button>
+              {open && (
+                <div className="vdx-phone-country-menu">
+                  <div className="p-2 border-b border-stone-100">
+                    <input
+                      ref={searchRef}
+                      type="search"
+                      value={query}
+                      onChange={(event) => { setQuery(event.target.value); setActive(0); }}
+                      onKeyDown={handleKeyDown}
+                      placeholder={t("search_country")}
+                      aria-label={t("search_country")}
+                      role="combobox"
+                      aria-expanded="true"
+                      aria-controls={listId}
+                      aria-activedescendant={results[active] ? `${listId}-${results[active].iso}` : undefined}
+                      autoComplete="off"
+                      className="w-full px-3"
+                    />
+                  </div>
+                  <div ref={listRef} id={listId} role="listbox" className="max-h-64 overflow-y-auto py-1">
+                    {results.length === 0 && <div className="px-4 py-3 text-sm text-stone-500">{t("no_country_match")}</div>}
+                    {results.map((country, index) => (
+                      <div
+                        key={country.iso}
+                        id={`${listId}-${country.iso}`}
+                        data-index={index}
+                        role="option"
+                        aria-selected={country.iso === selected.iso}
+                        onMouseDown={(event) => event.preventDefault()}
+                        onClick={() => choose(country)}
+                        onMouseEnter={() => setActive(index)}
+                        className={`flex items-center gap-3 px-4 py-2 text-sm cursor-pointer ${index === active ? "bg-emerald-50" : ""} ${country.iso === selected.iso ? "font-semibold text-emerald-900" : "text-stone-700"}`}
+                      >
+                        <span className="vdx-flag text-lg" aria-hidden="true">{flagEmoji(country.iso)}</span>
+                        <span className="flex-1 truncate">{country.label}</span>
+                        <span className="text-stone-400 tabular-nums">{country.dial}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          );
         };
 
           const PriceSummary = ({ context = "default", pricing, paymentMethod, stripeFee, paymentDueNow, lang, roomName, guestsCount, retreatName, retreatDate }) => {
@@ -1782,7 +2164,7 @@
           const DEFAULT_RETREAT = RETREATS.find((retreat) =>
             (Array.isArray(retreat.dates) ? retreat.dates : []).some(isRetreatDateAvailable)
           ) || { id: 0, dates: [], image: FALLBACK_IMAGE };
-          const DEFAULT_PHONE_CODE = getDialCodeForCountry("Vietnam") || "+84";
+          const DEFAULT_PHONE_CODE = getDialCode(DEFAULT_PHONE_COUNTRY);
 
           const [route, setRoute] = useState(parseRouteFromLocation);
           const [isTransitioning, setIsTransitioning] = useState(false);
@@ -1820,6 +2202,7 @@
               lastName: "",
               email: "",
               phone: "",
+              phoneCountry: DEFAULT_PHONE_COUNTRY,
               phoneCountryCode: DEFAULT_PHONE_CODE,
               phoneCodeManuallySet: false,
               street: "",
@@ -1832,7 +2215,10 @@
               companyPhone: "",
               companyAddress: "",
             },
-            guest2: { gender: "", firstName: "", lastName: "", email: "", phone: "" },
+            guest2: {
+              gender: "", firstName: "", lastName: "", email: "", phone: "",
+              phoneCountry: DEFAULT_PHONE_COUNTRY, phoneCountryCode: DEFAULT_PHONE_CODE, phoneCodeManuallySet: false,
+            },
           }));
           const [paymentSubmitting, setPaymentSubmitting] = useState(false);
           const [paymentError, setPaymentError] = useState("");
@@ -1881,6 +2267,8 @@
               guestKey,
               {
                 ...guest,
+                // The API stores this field as is, so it carries the selected dial code.
+                phone: formatPhoneWithCountry(guest),
                 emailLanguage: guest.emailLanguage || (lang === "vn" ? "vi" : "en"),
               },
             ]),
@@ -1923,8 +2311,8 @@
                     }
                     if (data.guestDetails) {
                       setGuestDetails(prev => ({
-                        guest1: { ...prev.guest1, ...data.guestDetails.guest1 },
-                        guest2: { ...prev.guest2, ...data.guestDetails.guest2 },
+                        guest1: withSplitPhone({ ...prev.guest1, ...data.guestDetails.guest1 }),
+                        guest2: withSplitPhone({ ...prev.guest2, ...data.guestDetails.guest2 }),
                       }));
                     }
                     if (data.bookingMeta) {
@@ -2259,24 +2647,38 @@
             setSafetyAnswers((prev) => ({ ...prev, [questionId]: value }));
           };
 
+          // Until a phone country is chosen by hand, it follows the country of residence.
           const handlePrimaryCountryChange = (value) => {
             setGuestDetails((prev) => {
-              const nextGuest1 = { ...prev.guest1, country: value };
-              if (!nextGuest1.phoneCodeManuallySet) {
-                const dial = getDialCodeForCountry(value);
-                if (dial) {
-                  nextGuest1.phoneCountryCode = dial;
-                }
+              const next = { ...prev, guest1: { ...prev.guest1, country: value } };
+              const iso = findCountryIso(value);
+              if (iso) {
+                ["guest1", "guest2"].forEach((guestKey) => {
+                  if (!next[guestKey].phoneCodeManuallySet) {
+                    next[guestKey] = { ...next[guestKey], phoneCountry: iso, phoneCountryCode: getDialCode(iso) };
+                  }
+                });
               }
-              return { ...prev, guest1: nextGuest1 };
+              return next;
             });
           };
 
-          const handlePrimaryPhoneCodeChange = (value) => {
-            setGuestDetails((prev) => ({
-              ...prev,
-              guest1: { ...prev.guest1, phoneCountryCode: value, phoneCodeManuallySet: true },
-            }));
+          // Guest 2's phone country follows guest 1's until it is changed separately.
+          const updateGuestPhoneCountry = (guestKey, iso) => {
+            setGuestDetails((prev) => {
+              const next = { ...prev, [guestKey]: { ...prev[guestKey], phoneCountry: iso, phoneCountryCode: getDialCode(iso), phoneCodeManuallySet: true } };
+              if (guestKey === "guest1" && !prev.guest2.phoneCodeManuallySet) {
+                next.guest2 = { ...prev.guest2, phoneCountry: iso, phoneCountryCode: getDialCode(iso) };
+              }
+              return next;
+            });
+          };
+
+          const normalizeGuestPhone = (guestKey) => {
+            setGuestDetails((prev) => {
+              const guest = withSplitPhone(prev[guestKey]);
+              return guest === prev[guestKey] ? prev : { ...prev, [guestKey]: guest };
+            });
           };
 
           const handleRetreatSelection = (dateOption) => {
@@ -2414,7 +2816,7 @@
             const purchaseFirstName = guestDetails.guest1.firstName?.trim() || "";
             const purchaseLastName = guestDetails.guest1.lastName?.trim() || "";
             const purchaseEmail = guestDetails.guest1.email?.trim() || "";
-            const purchasePhone = guestDetails.guest1.phone?.trim() || "";
+            const purchasePhone = formatPhoneWithCountry(guestDetails.guest1);
             const packageType = selectedRoom?.type || selectedRoom?.roomType || "";
             const transportType = selectedTransport?.label ?? selectedTransport?.id ?? "";
             return {
@@ -2898,6 +3300,32 @@
             const primary = guestDetails.guest1;
             const secondary = guestDetails.guest2;
 
+            // Pasted "+49 …" numbers select their country when the field loses focus.
+            const renderPhone = (guestKey, guest, helper) => (
+              <div className="space-y-2">
+                <label className="text-[11px] uppercase tracking-[0.2em] text-stone-500">{t("phone_number")}</label>
+                <div className="flex flex-col sm:flex-row gap-3">
+                  <div className="sm:w-36 shrink-0">
+                    <PhoneCountryPicker
+                      value={getGuestPhoneCountry(guest)}
+                      onChange={(iso) => updateGuestPhoneCountry(guestKey, iso)}
+                      lang={lang}
+                      t={t}
+                    />
+                  </div>
+                  <input
+                    type="tel"
+                    autoComplete="tel-national"
+                    className="flex-1 border border-stone-200 rounded-2xl p-4 bg-stone-50 focus:ring-2 focus:ring-emerald-100 outline-none"
+                    value={guest.phone}
+                    onChange={(e) => updateGuest(guestKey, "phone", e.target.value)}
+                    onBlur={() => normalizeGuestPhone(guestKey)}
+                  />
+                </div>
+                {helper && <p className="text-xs text-stone-500">{helper}</p>}
+              </div>
+            );
+
             const renderInput = (label, value, onChange, type = "text", helper) => (
               <div className="space-y-2">
                 <label className="text-[11px] uppercase tracking-[0.2em] text-stone-500">{label}</label>
@@ -2934,31 +3362,7 @@
                       {renderInput(t("email_address"), primary.email, (e) => updateGuest("guest1", "email", e.target.value), "email")}
                       {renderEmailLanguage("guest1", primary)}
                     </div>
-                    <div className="space-y-2">
-                      <label className="text-[11px] uppercase tracking-[0.2em] text-stone-500">{t("phone_number")}</label>
-                      <div className="flex flex-col sm:flex-row gap-3">
-                        <div className="sm:w-32">
-                          <select
-                            className="w-full border border-stone-200 rounded-2xl p-4 bg-stone-50 focus:ring-2 focus:ring-emerald-100 outline-none"
-                            value={primary.phoneCountryCode}
-                            onChange={(e) => handlePrimaryPhoneCodeChange(e.target.value)}
-                          >
-                            {[...PHONE_CODE_OPTIONS].sort().map((code) => (
-                              <option key={code} value={code}>
-                                {code}
-                              </option>
-                            ))}
-                          </select>
-                        </div>
-                        <input
-                          type="tel"
-                          className="flex-1 border border-stone-200 rounded-2xl p-4 bg-stone-50 focus:ring-2 focus:ring-emerald-100 outline-none"
-                          value={primary.phone}
-                          onChange={(e) => updateGuest("guest1", "phone", e.target.value)}
-                        />
-                      </div>
-                      <p className="text-xs text-stone-500">{t("phone_helper")}</p>
-                    </div>
+                    {renderPhone("guest1", primary, t("phone_helper"))}
                     <div className="space-y-2">
                       <p className="text-xs text-stone-500">
                         {t("invoice_helper")}
@@ -3004,7 +3408,7 @@
                       {secondary.email.trim() && secondary.email.trim().toLowerCase() === primary.email.trim().toLowerCase() && (
                         <p className="text-sm text-red-700" role="alert">{t("different_guest_email")}</p>
                       )}
-                      {renderInput(t("phone_number"), secondary.phone, (e) => updateGuest("guest2", "phone", e.target.value), "tel")}
+                      {renderPhone("guest2", secondary)}
                     </div>
                   </section>
                 )}
