@@ -362,6 +362,15 @@
         box-shadow: 0 0 0 3px rgba(224, 100, 32, 0.13) !important;
       }
 
+      /* Resident document number: checked as the guest types. */
+      #booking-app-wrapper input.vdx-field-invalid:not([type="checkbox"]):not([type="radio"]) {
+        border-color: var(--vdx-flame) !important;
+      }
+
+      #booking-app-wrapper input.vdx-field-valid:not([type="checkbox"]):not([type="radio"]) {
+        border-color: var(--vdx-forest) !important;
+      }
+
       #booking-app-wrapper input[type="checkbox"],
       #booking-app-wrapper input[type="radio"] {
         accent-color: var(--vdx-ember);
@@ -802,6 +811,22 @@
           two_guests: "Two guests",
           save_together: "Save {{discount}} together",
           private_journey: "Fully private journey",
+          resident_offer: "Vietnam resident offer (optional)",
+          resident_offer_desc: "{{discount}} off for each guest with a Vietnamese Citizen ID (CCCD). Vietnam residence card holders: our team checks the card and applies the offer manually. We check the original document before confirming your booking.",
+          resident_document: "Resident document",
+          resident_none: "No resident document",
+          resident_citizen_id: "Vietnamese Citizen ID (CCCD)",
+          resident_card: "Vietnam residence card",
+          resident_number: "Document number",
+          resident_cccd_hint: "Enter the 12-digit number.",
+          resident_cccd_valid: "Valid Citizen ID. The {{discount}} resident offer is included in your price.",
+          resident_cccd_invalid: "This Citizen ID number is not valid. Please check it, or choose “No resident document” to continue.",
+          resident_card_note: "Our team will check your residence card and apply the resident offer manually.",
+          resident_discount_line: "Vietnam resident –{{discount}}",
+          resident_partial: "1 of 2 guests",
+          max_discount_note: "Offers are capped at {{discount}} of the package price.",
+          resident_review_applied: "Resident offer applied (CCCD)",
+          resident_review_manual: "Residence card – checked by our team",
           guest_one: "Guest One",
           guest_two: "Guest Two",
           accommodation: "Accommodation",
@@ -991,6 +1016,22 @@
           two_guests: "Hai khách",
           save_together: "Tiết kiệm {{discount}} khi đi cùng nhau",
           private_journey: "Hành trình riêng tư",
+          resident_offer: "Ưu đãi cư dân Việt Nam (không bắt buộc)",
+          resident_offer_desc: "Giảm {{discount}} cho mỗi khách có Căn cước công dân Việt Nam (CCCD). Với khách có thẻ tạm trú hoặc thường trú tại Việt Nam, đội ngũ của chúng tôi sẽ kiểm tra thẻ và áp dụng ưu đãi thủ công. Chúng tôi kiểm tra giấy tờ gốc trước khi xác nhận đặt chỗ.",
+          resident_document: "Giấy tờ cư trú",
+          resident_none: "Không có giấy tờ cư trú",
+          resident_citizen_id: "Căn cước công dân Việt Nam (CCCD)",
+          resident_card: "Thẻ tạm trú hoặc thường trú",
+          resident_number: "Số giấy tờ",
+          resident_cccd_hint: "Nhập đủ 12 chữ số.",
+          resident_cccd_valid: "CCCD hợp lệ. Ưu đãi cư dân {{discount}} đã được tính vào giá.",
+          resident_cccd_invalid: "Số CCCD không hợp lệ. Vui lòng kiểm tra lại, hoặc chọn “Không có giấy tờ cư trú” để tiếp tục.",
+          resident_card_note: "Đội ngũ của chúng tôi sẽ kiểm tra thẻ và áp dụng ưu đãi cư dân thủ công.",
+          resident_discount_line: "Ưu đãi cư dân Việt Nam –{{discount}}",
+          resident_partial: "1 trong 2 khách",
+          max_discount_note: "Tổng ưu đãi tối đa {{discount}} giá gói.",
+          resident_review_applied: "Đã áp dụng ưu đãi cư dân (CCCD)",
+          resident_review_manual: "Thẻ tạm trú/thường trú – đội ngũ của chúng tôi sẽ kiểm tra",
           guest_one: "Khách thứ nhất",
           guest_two: "Khách thứ hai",
           accommodation: "Chỗ ở",
@@ -1180,6 +1221,22 @@
           two_guests: "Zwei Gäste",
           save_together: "{{discount}} gemeinsam sparen",
           private_journey: "Exklusive Reise",
+          resident_offer: "Angebot für Einwohner Vietnams (optional)",
+          resident_offer_desc: "{{discount}} Rabatt für jeden Gast mit vietnamesischem Personalausweis (CCCD). Inhaber einer vietnamesischen Aufenthaltskarte: Unser Team prüft die Karte und gewährt das Angebot manuell. Vor der Buchungsbestätigung prüfen wir das Originaldokument.",
+          resident_document: "Nachweis",
+          resident_none: "Kein Nachweis",
+          resident_citizen_id: "Vietnamesischer Personalausweis (CCCD)",
+          resident_card: "Vietnamesische Aufenthaltskarte",
+          resident_number: "Dokumentnummer",
+          resident_cccd_hint: "Geben Sie die 12-stellige Nummer ein.",
+          resident_cccd_valid: "Gültige CCCD-Nummer. Der Einwohnerrabatt von {{discount}} ist im Preis enthalten.",
+          resident_cccd_invalid: "Diese CCCD-Nummer ist ungültig. Bitte prüfen Sie sie oder wählen Sie „Kein Nachweis“, um fortzufahren.",
+          resident_card_note: "Unser Team prüft Ihre Aufenthaltskarte und gewährt das Einwohnerangebot manuell.",
+          resident_discount_line: "Einwohnerrabatt Vietnam –{{discount}}",
+          resident_partial: "1 von 2 Gästen",
+          max_discount_note: "Die Angebote sind auf {{discount}} des Paketpreises begrenzt.",
+          resident_review_applied: "Einwohnerrabatt angewendet (CCCD)",
+          resident_review_manual: "Aufenthaltskarte – wird von unserem Team geprüft",
           guest_one: "Erster Gast",
           guest_two: "Zweiter Gast",
           accommodation: "Unterkunft",
@@ -1403,6 +1460,41 @@
         const formatConfiguredDiscount = (config, lang) => {
           const value = Number(config?.value) || 0;
           return config?.type === "percentage" ? `${value}%` : formatVND(value, lang);
+        };
+
+        // Offers apply in this order, each on the price left after the previous one: Vietnam
+        // resident, Early Bird, Join with a Friend. Together they never exceed the retreat's cap
+        // (20% of the package price unless set). Same rules as kendocustom/includes/promotions.php.
+        const DEFAULT_MAXIMUM_DISCOUNT = 20;
+        const GUEST_KEYS = ["guest1", "guest2"];
+        const emptyResidentDocs = () => ({ guest1: { type: "", number: "" }, guest2: { type: "", number: "" } });
+
+        // Vietnamese Citizen ID (CCCD): 3-digit province code, century/gender digit (0–3 for
+        // 1900–2099), 2-digit birth year, 6 digits. No public check digit; the team checks the original.
+        const CITIZEN_ID_PROVINCES = new Set(
+          "001 002 004 006 008 010 011 012 014 015 017 019 020 022 024 025 026 027 030 031 033 034 035 036 037 038 040 042 044 045 046 048 049 051 052 054 056 058 060 062 064 066 067 068 070 072 074 075 077 079 080 082 083 084 086 087 089 091 092 093 094 095 096".split(" "),
+        );
+        const isValidCitizenId = (value) => {
+          if (!/^\d{12}$/.test(value) || !CITIZEN_ID_PROVINCES.has(value.slice(0, 3))) return false;
+          const century = Number(value[3]);
+          if (century > 3) return false;
+          const year = (century < 2 ? 1900 : 2000) + Number(value.slice(4, 6));
+          return year <= new Date().getFullYear() && value.slice(6) !== "000000";
+        };
+
+        const normalizeResidentNumber = (type, value) => (type === "citizen-id"
+          ? String(value || "").replace(/\D/g, "").slice(0, 12)
+          : String(value || "").toUpperCase().replace(/[^A-Z0-9 -]/g, "").slice(0, 32));
+
+        /** none | incomplete | valid | invalid (CCCD) | manual (residence card, checked by staff). */
+        const getResidentDocStatus = (doc) => {
+          const number = String(doc?.number || "");
+          if (doc?.type === "citizen-id") {
+            if (number.length < 12) return "incomplete";
+            return isValidCitizenId(number) ? "valid" : "invalid";
+          }
+          if (doc?.type === "residence-card") return number.trim() ? "manual" : "incomplete";
+          return "none";
         };
 
 
@@ -1993,6 +2085,15 @@
                     </div>
                     <span className="font-semibold whitespace-nowrap">{formatVND(pricing.subtotal, lang)}</span>
                   </div>
+                  {pricing.resident > 0 && (
+                    <div className="flex justify-between gap-3 text-emerald-700">
+                      <span>
+                        {t("resident_discount_line").replace("{{discount}}", formatConfiguredDiscount(pricing.residentConfig, lang))}
+                        {pricing.residentGuests < guestsCount ? ` · ${t("resident_partial")}` : ""}
+                      </span>
+                      <span className="whitespace-nowrap">-{formatVND(pricing.resident, lang)}</span>
+                    </div>
+                  )}
                   {showEarlyBird && (
                     <div className="flex justify-between text-emerald-700">
                       <span>{t("early_bird_discount").replace("{{discount}}", formatConfiguredDiscount(pricing.earlyBirdConfig, lang))}</span>
@@ -2004,6 +2105,9 @@
                       <span>{t("save_together").replace("{{discount}}", formatConfiguredDiscount(pricing.friendConfig, lang))}</span>
                       <span>-{formatVND(pricing.friend, lang)}</span>
                     </div>
+                  )}
+                  {pricing.capped && (
+                    <p className="text-xs text-stone-500">{t("max_discount_note").replace("{{discount}}", `${pricing.maximumPercent}%`)}</p>
                   )}
                   <div className="flex justify-between text-stone-500">
                     <span>{t("airport_transfer").replace(" (optional)", "")}</span>
@@ -2157,6 +2261,7 @@
             guests,
             roomType: selectedPackage?.id || null,
             transfer: getTransportOptionsForRetreat(retreat.id)?.[0]?.id ?? null,
+            residentDocs: emptyResidentDocs(),
           };
         };
 
@@ -2459,6 +2564,10 @@
                 }
             }
 
+            // An unfinished or invalid CCCD keeps the guest on step 1 until it is fixed or removed.
+            if (!bookingMeta.bookingId && !residentDocsReady && ["details", "review", "health_check", "payment"].includes(targetStep)) {
+              targetStep = "config";
+            }
             if (targetStep === "payment" && !safetyCleared && !bookingMeta.bookingId) {
               targetStep = "health_check";
             }
@@ -2570,6 +2679,33 @@
           }, [roomsForCurrentRetreat, selection.guests]);
           const transportOptionsForCurrentRetreat = useMemo(() => getTransportOptionsForRetreat(selection.retreatId), [selection.retreatId]);
 
+          // Vietnam resident offer: one document per guest. Only a valid CCCD lowers the price;
+          // residence cards are saved for the team, who apply the offer after checking them.
+          const residentDocs = { ...emptyResidentDocs(), ...(selection.residentDocs || {}) };
+          const activeGuestKeys = GUEST_KEYS.slice(0, selection.guests === 2 ? 2 : 1);
+          const residentConfig = RETREATS.find((retreat) => retreat.id === selection.retreatId)?.promotion?.resident;
+          const residentPercent = Number(residentConfig?.value) || 0;
+          const residentStatuses = Object.fromEntries(
+            activeGuestKeys.map((guestKey) => [guestKey, getResidentDocStatus(residentDocs[guestKey])]),
+          );
+          const residentGuestCount = residentPercent > 0
+            ? activeGuestKeys.filter((guestKey) => residentStatuses[guestKey] === "valid").length
+            : 0;
+          // An unfinished or invalid CCCD blocks Continue until it is fixed or the document is removed.
+          const residentDocsReady = residentPercent <= 0
+            || activeGuestKeys.every((guestKey) => ["none", "valid", "manual"].includes(residentStatuses[guestKey]));
+
+          const updateResidentDoc = (guestKey, changes) => {
+            setSelection((prev) => {
+              const docs = { ...emptyResidentDocs(), ...(prev.residentDocs || {}) };
+              const doc = { ...docs[guestKey], ...changes };
+              // A number typed for one document type is not valid for another.
+              if (!doc.type || ("type" in changes && changes.type !== docs[guestKey].type)) doc.number = "";
+              doc.number = normalizeResidentNumber(doc.type, doc.number);
+              return { ...prev, residentDocs: { ...docs, [guestKey]: doc } };
+            });
+          };
+
           const pricing = useMemo(() => {
             const roomOptions = filteredRoomsForCurrentRetreat.length ? filteredRoomsForCurrentRetreat : roomsForCurrentRetreat;
             const room = roomOptions.find((r) => r.id === selection.roomType) || roomOptions[0];
@@ -2584,22 +2720,43 @@
             const guestCount = Number(selection.guests) || 0;
             const isEarlyBirdEligible = !!selectedDate?.isEarlyBirdActive;
             const isFriendPromotionEligible = guestCount === 2 && Number(promotion.friend?.value) > 0;
+            // 1. Vietnam resident: on each qualifying guest's share of the package.
+            const residentValue = Number(promotion.resident?.value) || 0;
+            const residentGuests = residentValue > 0 && guestCount > 0 ? Math.min(guestCount, residentGuestCount) : 0;
+            const rawResident = residentGuests > 0 ? subtotal * residentGuests / guestCount * residentValue / 100 : 0;
+            const afterResident = subtotal - rawResident;
+            // 2. Early Bird, on the price after the resident offer.
             const rawEarlyBird = isEarlyBirdEligible
-              ? calculateConfiguredDiscount(subtotal, promotion.earlyBird, guestCount)
+              ? Math.min(Math.max(0, afterResident), calculateConfiguredDiscount(afterResident, promotion.earlyBird, guestCount))
               : 0;
-            const earlyBird = rawEarlyBird;
-            const friendBase = subtotal - earlyBird;
+            // 3. Join with a Friend, on the price after both.
             const rawFriend = isFriendPromotionEligible
-              ? calculateConfiguredDiscount(friendBase, promotion.friend)
+              ? calculateConfiguredDiscount(Math.max(0, afterResident - rawEarlyBird), promotion.friend)
               : 0;
-            const friend = rawFriend;
-            const promotionTotal = earlyBird + friend;
+            // The cap trims the last-applied offers first.
+            const maximumPercent = Number(promotion.maximumTotalDiscount) > 0
+              ? Math.min(100, Number(promotion.maximumTotalDiscount))
+              : DEFAULT_MAXIMUM_DISCOUNT;
+            const amounts = { resident: rawResident, earlyBird: rawEarlyBird, friend: rawFriend };
+            let excess = rawResident + rawEarlyBird + rawFriend - subtotal * maximumPercent / 100;
+            const capped = excess > 0.000001;
+            if (capped) {
+              ["friend", "earlyBird", "resident"].forEach((offer) => {
+                const reduction = Math.min(amounts[offer], excess);
+                amounts[offer] -= reduction;
+                excess -= reduction;
+              });
+            }
+            const { resident, earlyBird, friend } = amounts;
+            const promotionTotal = resident + earlyBird + friend;
             const transport = transportOption?.price || 0;
             const total = subtotal - promotionTotal + transport;
             const deposit = Math.round(total * 0.3);
             const remaining = total - deposit;
             return {
               subtotal,
+              resident,
+              residentGuests: resident > 0 ? residentGuests : 0,
               earlyBird,
               friend,
               promotionTotal,
@@ -2607,10 +2764,13 @@
               total,
               deposit,
               remaining,
+              capped,
+              maximumPercent,
+              residentConfig: promotion.resident,
               earlyBirdConfig: promotion.earlyBird,
               friendConfig: promotion.friend,
             };
-          }, [selection, dateOptions, roomsForCurrentRetreat, filteredRoomsForCurrentRetreat, transportOptionsForCurrentRetreat]);
+          }, [selection, dateOptions, roomsForCurrentRetreat, filteredRoomsForCurrentRetreat, transportOptionsForCurrentRetreat, residentGuestCount]);
 
           const stripeFee = paymentMethod === "stripe" ? Math.round(pricing.deposit * STRIPE_FEE_RATE) : 0;
           const paymentDueNow = pricing.deposit + stripeFee;
@@ -2868,9 +3028,18 @@
                   }
                 : null,
               transport: selectedTransport ? { id: selectedTransport.id, label: selectedTransport.label, price: selectedTransport.price || 0 } : null,
-              guestDetails: emailGuestDetails,
+              // The API re-checks each CCCD and recalculates the price; residence cards go to the team.
+              guestDetails: Object.fromEntries(
+                Object.entries(emailGuestDetails).map(([guestKey, guest]) => [
+                  guestKey,
+                  residentPercent > 0 && activeGuestKeys.includes(guestKey) && residentDocs[guestKey].type
+                    ? { ...guest, residentDocument: { type: residentDocs[guestKey].type, number: residentDocs[guestKey].number } }
+                    : guest,
+                ]),
+              ),
               pricing: {
                 subtotal: pricing.subtotal,
+                resident: pricing.resident,
                 earlyBird: pricing.earlyBird,
                 friend: pricing.friend,
                 transport: pricing.transport,
@@ -3168,6 +3337,84 @@
                 </div>
               </section>
 
+              {residentPercent > 0 && (
+                <section className="space-y-4" aria-labelledby="vdx-resident-offer-title">
+                  <div>
+                    <p id="vdx-resident-offer-title" className="text-xs uppercase tracking-[0.3em] text-stone-400 font-semibold">{t("resident_offer")}</p>
+                    <p className="text-sm text-stone-500">
+                      {t("resident_offer_desc").replace("{{discount}}", formatConfiguredDiscount(residentConfig, lang))}
+                    </p>
+                  </div>
+                  <div className="space-y-3">
+                    {activeGuestKeys.map((guestKey, index) => {
+                      const doc = residentDocs[guestKey];
+                      const status = residentStatuses[guestKey];
+                      const fieldId = `vdx-${guestKey}-resident`;
+                      const message = status === "valid"
+                        ? t("resident_cccd_valid").replace("{{discount}}", formatConfiguredDiscount(residentConfig, lang))
+                        : status === "invalid"
+                          ? t("resident_cccd_invalid")
+                          : status === "manual"
+                            ? t("resident_card_note")
+                            : doc.type === "citizen-id"
+                              ? t("resident_cccd_hint")
+                              : "";
+                      return (
+                        <div key={guestKey} className="bg-white border border-stone-100 rounded-2xl p-4 md:p-5 space-y-3">
+                          {activeGuestKeys.length > 1 && (
+                            <p className="font-semibold text-stone-900">{t(index === 0 ? "guest_one" : "guest_two")}</p>
+                          )}
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            <div className="space-y-2">
+                              <label htmlFor={`${fieldId}-type`} className="text-[11px] uppercase tracking-[0.2em] text-stone-500">{t("resident_document")}</label>
+                              <select
+                                id={`${fieldId}-type`}
+                                className="w-full border border-stone-200 rounded-2xl p-4 bg-stone-50 focus:ring-2 focus:ring-emerald-100 outline-none"
+                                value={doc.type}
+                                onChange={(e) => updateResidentDoc(guestKey, { type: e.target.value })}
+                              >
+                                <option value="">{t("resident_none")}</option>
+                                <option value="citizen-id">{t("resident_citizen_id")}</option>
+                                <option value="residence-card">{t("resident_card")}</option>
+                              </select>
+                            </div>
+                            {doc.type && (
+                              <div className="space-y-2">
+                                <label htmlFor={`${fieldId}-number`} className="text-[11px] uppercase tracking-[0.2em] text-stone-500">{t("resident_number")}</label>
+                                <input
+                                  id={`${fieldId}-number`}
+                                  type="text"
+                                  inputMode={doc.type === "citizen-id" ? "numeric" : "text"}
+                                  autoComplete="off"
+                                  spellCheck={false}
+                                  value={doc.number}
+                                  onChange={(e) => updateResidentDoc(guestKey, { number: e.target.value })}
+                                  aria-invalid={status === "invalid"}
+                                  aria-describedby={message ? `${fieldId}-status` : undefined}
+                                  className={`w-full border border-stone-200 rounded-2xl p-4 bg-stone-50 focus:ring-2 focus:ring-emerald-100 outline-none ${
+                                    status === "invalid" ? "vdx-field-invalid" : status === "valid" ? "vdx-field-valid" : ""
+                                  }`}
+                                />
+                              </div>
+                            )}
+                          </div>
+                          {message && (
+                            <p
+                              id={`${fieldId}-status`}
+                              role="status"
+                              aria-live="polite"
+                              className={`text-sm ${status === "invalid" ? "text-rose-600" : status === "valid" ? "text-stone-800 font-semibold" : "text-stone-500"}`}
+                            >
+                              {message}
+                            </p>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </section>
+              )}
+
               <section className="space-y-4">
                 <p className="text-xs uppercase tracking-[0.3em] text-stone-400 font-semibold">{t("accommodation")}</p>
                 <div className="bg-emerald-50 border border-emerald-100 rounded-3xl p-5 text-left">
@@ -3255,10 +3502,10 @@
               <div className="flex justify-end">
                 <button
                   type="button"
-                  disabled={!hasValidDateSelection}
+                  disabled={!hasValidDateSelection || !residentDocsReady}
                   onClick={() => goToStep("details")}
                   className={`inline-flex items-center px-6 py-3 rounded-full font-semibold transition ${
-                    hasValidDateSelection
+                    hasValidDateSelection && residentDocsReady
                       ? "bg-emerald-800 text-white hover:bg-emerald-900"
                       : "bg-stone-200 text-stone-500 cursor-not-allowed"
                   }`}
@@ -3443,8 +3690,8 @@
             const transferOption =
               transportOptionsForCurrentRetreat.find((option) => option.id === selection.transfer) || transportOptionsForCurrentRetreat[0];
             const guests = [
-              { label: t("guest_one"), data: guestDetails.guest1 },
-              ...(selection.guests === 2 ? [{ label: t("guest_two"), data: guestDetails.guest2 }] : []),
+              { key: "guest1", label: t("guest_one"), data: guestDetails.guest1 },
+              ...(selection.guests === 2 ? [{ key: "guest2", label: t("guest_two"), data: guestDetails.guest2 }] : []),
             ];
 
             return (
@@ -3516,6 +3763,11 @@
                         <p className="text-sm text-stone-500">{guest.data.email || "Email pending"}</p>
                         <p className="text-sm text-stone-500">{t("gender")}: {t(["male", "female"].includes(guest.data.gender) ? `gender_${guest.data.gender}` : "gender_unspecified")}</p>
                         <p className="text-sm text-stone-500">{t("email_language")}: {(guest.data.emailLanguage || (lang === "vn" ? "vi" : "en")) === "vi" ? "Tiếng Việt" : "English"}</p>
+                        {residentPercent > 0 && residentDocs[guest.key]?.type && (
+                          <p className="text-sm text-stone-500">
+                            {t(residentStatuses[guest.key] === "valid" ? "resident_review_applied" : "resident_review_manual")}
+                          </p>
+                        )}
                       </div>
                     ))}
                   </div>
