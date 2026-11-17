@@ -831,7 +831,7 @@
           save_together: "Save {{discount}} together",
           private_journey: "Fully private journey",
           resident_offer: "Vietnam resident offer (optional)",
-          resident_offer_desc: "{{discount}} off for each guest with a Vietnamese Citizen ID (CCCD). Vietnam residence card holders: our team checks the card and applies the offer manually. We check the original document before confirming your booking.",
+          resident_offer_desc: "{{discount}} off the whole package when at least one guest has a Vietnamese Citizen ID (CCCD). Vietnam residence card holders: our team checks the card and applies the offer manually. We check the original document before confirming your booking.",
           resident_document: "Resident document",
           resident_none: "No resident document",
           resident_citizen_id: "Vietnamese Citizen ID (CCCD)",
@@ -842,7 +842,7 @@
           resident_cccd_invalid: "This Citizen ID number is not valid. Please check it, or choose “No resident document” to continue.",
           resident_card_note: "Our team will check your residence card and apply the resident offer manually.",
           resident_discount_line: "Vietnam resident –{{discount}}",
-          resident_partial: "1 of 2 guests",
+          resident_already_applied: "The resident offer already applies to your whole booking.",
           max_discount_note: "Offers are capped at {{discount}} of the package price.",
           resident_review_applied: "Resident offer applied (CCCD)",
           resident_review_manual: "Residence card – checked by our team",
@@ -1036,7 +1036,7 @@
           save_together: "Tiết kiệm {{discount}} khi đi cùng nhau",
           private_journey: "Hành trình riêng tư",
           resident_offer: "Ưu đãi cư dân Việt Nam (không bắt buộc)",
-          resident_offer_desc: "Giảm {{discount}} cho mỗi khách có Căn cước công dân Việt Nam (CCCD). Với khách có thẻ tạm trú hoặc thường trú tại Việt Nam, đội ngũ của chúng tôi sẽ kiểm tra thẻ và áp dụng ưu đãi thủ công. Chúng tôi kiểm tra giấy tờ gốc trước khi xác nhận đặt chỗ.",
+          resident_offer_desc: "Giảm {{discount}} cho cả gói khi có ít nhất một khách có Căn cước công dân Việt Nam (CCCD). Với khách có thẻ tạm trú hoặc thường trú tại Việt Nam, đội ngũ của chúng tôi sẽ kiểm tra thẻ và áp dụng ưu đãi thủ công. Chúng tôi kiểm tra giấy tờ gốc trước khi xác nhận đặt chỗ.",
           resident_document: "Giấy tờ cư trú",
           resident_none: "Không có giấy tờ cư trú",
           resident_citizen_id: "Căn cước công dân Việt Nam (CCCD)",
@@ -1047,7 +1047,7 @@
           resident_cccd_invalid: "Số CCCD không hợp lệ. Vui lòng kiểm tra lại, hoặc chọn “Không có giấy tờ cư trú” để tiếp tục.",
           resident_card_note: "Đội ngũ của chúng tôi sẽ kiểm tra thẻ và áp dụng ưu đãi cư dân thủ công.",
           resident_discount_line: "Ưu đãi cư dân Việt Nam –{{discount}}",
-          resident_partial: "1 trong 2 khách",
+          resident_already_applied: "Ưu đãi cư dân đã được áp dụng cho toàn bộ đặt chỗ của bạn.",
           max_discount_note: "Tổng ưu đãi tối đa {{discount}} giá gói.",
           resident_review_applied: "Đã áp dụng ưu đãi cư dân (CCCD)",
           resident_review_manual: "Thẻ tạm trú/thường trú – đội ngũ của chúng tôi sẽ kiểm tra",
@@ -1241,7 +1241,7 @@
           save_together: "{{discount}} gemeinsam sparen",
           private_journey: "Exklusive Reise",
           resident_offer: "Angebot für Einwohner Vietnams (optional)",
-          resident_offer_desc: "{{discount}} Rabatt für jeden Gast mit vietnamesischem Personalausweis (CCCD). Inhaber einer vietnamesischen Aufenthaltskarte: Unser Team prüft die Karte und gewährt das Angebot manuell. Vor der Buchungsbestätigung prüfen wir das Originaldokument.",
+          resident_offer_desc: "{{discount}} Rabatt auf das gesamte Paket, wenn mindestens ein Gast einen vietnamesischen Personalausweis (CCCD) hat. Inhaber einer vietnamesischen Aufenthaltskarte: Unser Team prüft die Karte und gewährt das Angebot manuell. Vor der Buchungsbestätigung prüfen wir das Originaldokument.",
           resident_document: "Nachweis",
           resident_none: "Kein Nachweis",
           resident_citizen_id: "Vietnamesischer Personalausweis (CCCD)",
@@ -1252,7 +1252,7 @@
           resident_cccd_invalid: "Diese CCCD-Nummer ist ungültig. Bitte prüfen Sie sie oder wählen Sie „Kein Nachweis“, um fortzufahren.",
           resident_card_note: "Unser Team prüft Ihre Aufenthaltskarte und gewährt das Einwohnerangebot manuell.",
           resident_discount_line: "Einwohnerrabatt Vietnam –{{discount}}",
-          resident_partial: "1 von 2 Gästen",
+          resident_already_applied: "Das Einwohnerangebot gilt bereits für Ihre gesamte Buchung.",
           max_discount_note: "Die Angebote sind auf {{discount}} des Paketpreises begrenzt.",
           resident_review_applied: "Einwohnerrabatt angewendet (CCCD)",
           resident_review_manual: "Aufenthaltskarte – wird von unserem Team geprüft",
@@ -2108,7 +2108,6 @@
                     <div className="flex justify-between gap-3 text-emerald-700">
                       <span>
                         {t("resident_discount_line").replace("{{discount}}", formatConfiguredDiscount(pricing.residentConfig, lang))}
-                        {pricing.residentGuests < guestsCount ? ` · ${t("resident_partial")}` : ""}
                       </span>
                       <span className="whitespace-nowrap">-{formatVND(pricing.resident, lang)}</span>
                     </div>
@@ -2698,8 +2697,8 @@
           }, [roomsForCurrentRetreat, selection.guests]);
           const transportOptionsForCurrentRetreat = useMemo(() => getTransportOptionsForRetreat(selection.retreatId), [selection.retreatId]);
 
-          // Vietnam resident offer: one document per guest. Only a valid CCCD lowers the price;
-          // residence cards are saved for the team, who apply the offer after checking them.
+          // Vietnam resident offer: one document per guest. One valid CCCD lowers the price of the
+          // whole package; residence cards are saved for the team, who apply the offer after checking them.
           const residentDocs = { ...emptyResidentDocs(), ...(selection.residentDocs || {}) };
           const activeGuestKeys = GUEST_KEYS.slice(0, selection.guests === 2 ? 2 : 1);
           const residentConfig = RETREATS.find((retreat) => retreat.id === selection.retreatId)?.promotion?.resident;
@@ -2739,10 +2738,11 @@
             const guestCount = Number(selection.guests) || 0;
             const isEarlyBirdEligible = !!selectedDate?.isEarlyBirdActive;
             const isFriendPromotionEligible = guestCount === 2 && Number(promotion.friend?.value) > 0;
-            // 1. Vietnam resident: on each qualifying guest's share of the package.
+            // 1. Vietnam resident: the whole package once at least one guest has a valid CCCD, also when
+            //    the other guest sharing the room is not a Vietnamese citizen.
             const residentValue = Number(promotion.resident?.value) || 0;
             const residentGuests = residentValue > 0 && guestCount > 0 ? Math.min(guestCount, residentGuestCount) : 0;
-            const rawResident = residentGuests > 0 ? subtotal * residentGuests / guestCount * residentValue / 100 : 0;
+            const rawResident = residentGuests > 0 ? subtotal * residentValue / 100 : 0;
             const afterResident = subtotal - rawResident;
             // 2. Early Bird, on the price after the resident offer.
             const rawEarlyBird = isEarlyBirdEligible
@@ -3374,7 +3374,7 @@
                         : status === "invalid"
                           ? t("resident_cccd_invalid")
                           : status === "manual"
-                            ? t("resident_card_note")
+                            ? t(residentGuestCount > 0 ? "resident_already_applied" : "resident_card_note")
                             : doc.type === "citizen-id"
                               ? t("resident_cccd_hint")
                               : "";
