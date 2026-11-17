@@ -390,6 +390,20 @@
         cursor: not-allowed;
       }
 
+      /* Dropdowns and single-line fields share one box. Tailwind's p-4 / rounded-2xl / bg-stone-50
+         reached the selects (rem-based, so 69px tall at a 20px browser font) but lost to the theme's
+         input rules, leaving selects taller, rounder and tinted next to 52px inputs. */
+      #booking-app-wrapper select:not([multiple]),
+      #booking-app-wrapper input:not([type="checkbox"]):not([type="radio"]):not([type="search"]) {
+        height: 52px;
+        padding-top: 0 !important;
+        padding-bottom: 0 !important;
+        padding-left: 16px !important;
+        border-radius: 8px !important;
+        background-color: var(--vdx-white) !important;
+        line-height: 1.3 !important;
+      }
+
       #booking-app-wrapper input[type="checkbox"],
       #booking-app-wrapper input[type="radio"] {
         accent-color: var(--vdx-ember);
